@@ -2,6 +2,22 @@
 
 小记
 
+————————————————————————————————————————
+
+2017/10/10 上午9:58:21
+
+黑科技
+https://github.com/jawil/blog/issues/24
+
+[].forEach.call($$("*"),function(a){
+  a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)
+})
+
+React
+http://www.w3cplus.com/react/introducing-react.html
+
+一切只如昨夜，一切只成追忆
+
 
 ————————————————————————————————————————
 
@@ -13,9 +29,30 @@ http://es6.ruanyifeng.com/#docs/object
 浏览器渲染
 https://juejin.im/post/59d489156fb9a00a571d6509?utm_source=gold_browser_extension
 
+浏览器渲染过程与性能优化
+https://juejin.im/post/59d489156fb9a00a571d6509?utm_source=gold_browser_extension
+ 
+移动 Web 开发问题和优化小结 ★
+https://juejin.im/post/59c4c9d85188254f58412d17?utm_source=gold_browser_extension
+
+美团点评酒旅前端的技术体系
+
+https://juejin.im/entry/59db11f8518825350f42506c?utm_source=gold_browser_extension
+
 next Day
 
 http://es6.ruanyifeng.com/#docs/iterator
+
+CSS
+
+国服第一切图仔，好屌的样子
+
+https://github.com/chokcoco/iCSS
+
+text-align-last: justify;	文字对齐
+caret-color: red;		光标颜色
+
+
 
 ————————————————————————————————————————
 
