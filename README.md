@@ -4,6 +4,19 @@
 
 ————————————————————————————————————————
 
+2017/10/12 上午9:42:27
+
+React 初学
+http://www.w3cplus.com/react/events-in-react.html
+
+生命周期
+http://www.w3cplus.com/react/component-lifecycle.html
+
+通关
+https://freecodecamp.cn/home
+
+————————————————————————————————————————
+
 2017/10/10 上午9:58:21
 
 黑科技
