@@ -1,6 +1,19 @@
 # daily-record
 
 小记
+————————————————————————————————————————
+
+#shadow{
+	border-radius: 50%;
+ 	margin: 0 auto;
+      	height: 7.6rem;
+      	width: 7.6rem;
+     	 background: #FFEC99;
+      	box-shadow: 0 0 0 (1.373333rem / 2) rgba(251, 174, 41, .4), 0 0 0 1.55rem rgba(255, 185, 75, .2);
+}
+
+水波背景 canavs
+http://www.cnblogs.com/zjfree/p/5379308.html
 
 ————————————————————————————————————————
 
