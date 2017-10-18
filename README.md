@@ -3,6 +3,7 @@
 小记
 ————————————————————————————————————————
 
+2017/10/18 下午6:30:08
 #shadow{
 	border-radius: 50%;
  	margin: 0 auto;
@@ -14,6 +15,7 @@
 
 水波背景 canavs
 http://www.cnblogs.com/zjfree/p/5379308.html
+http://www.zhangxinxu.com/wordpress/2013/09/css3-animation-requestanimationframe-tween-%E5%8A%A8%E7%94%BB%E7%AE%97%E6%B3%95/
 
 ————————————————————————————————————————
 
