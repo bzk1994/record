@@ -1,6 +1,15 @@
 # daily-record
 
 小记
+
+————————————————————————————————————————
+
+2017/10/19 下午6:31:40
+
+canvas 卡顿优化
+http://www.cnblogs.com/iamzhanglei/archive/2011/11/29/2267868.html
+https://freecodecamp.cn/challenges/convert-html-entities
+
 ————————————————————————————————————————
 
 2017/10/18 下午6:30:08
