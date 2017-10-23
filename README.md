@@ -4,6 +4,34 @@
 
 ————————————————————————————————————————
 
+2017/10/23 下午3:37:05
+
+Vue - md5
+https://www.npmjs.com/package/md5
+
+UC浏览器图片点击方法
+http://www.cnblogs.com/joyho/articles/5017544.html
+
+百度统计 埋点
+
+￼
+
+this.baiduStatistics('c418b26238ad9b52d91411d8a5662ea2')
+
+baiduStatistics (key) {
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement('script')
+        hm.src = `https://hm.baidu.com/hm.js?${key}`
+        var s = document.getElementsByTagName('script')[0]
+        s.parentNode.insertBefore(hm, s)
+      })()
+    }
+
+window._hmt.push('_getCouponSuccess', 'status', '领取礼包成功')
+
+————————————————————————————————————————
+
 2017/10/19 下午6:31:40
 
 canvas 卡顿优化
