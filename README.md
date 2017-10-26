@@ -2,6 +2,142 @@
 
 小记
 
+
+
+————————————————————————————————————————
+
+2017/10/26 下午2:11:14
+
+修改分享图标、内容
+微信
+https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
+QQ
+http://open.mobile.qq.com/api/mqq/index
+
+```
+后端调用微信返回
+shareWxandQQ () {
+      let href = window.location.href
+      let params = {
+        redirectUri: href,
+        url: href
+      }
+      Common.getWxShareData(params)
+        .then(res => {
+          let data = {
+            title: ‘title’,
+            desc: ‘ desc’,
+            link: href,
+            imgUrl: ‘imgUrl’
+          }
+          Common.shareWxandQQ(Object.assign(data, res))
+        })
+    },
+
+const getWxShareData = params => {
+  let data = {
+    mobile: '',
+    source: 'wx',
+    version: 1,
+    sessionKey: ''
+  }
+  return new Promise(resolve => {
+    axios.post(settings.GET_WX_DATA, Object.assign(data, params))
+      .then(res => {
+        if (res.success && res.result) {
+          resolve(res.result)
+        }
+      }, err => {
+        _Toast(err.errorMsg)
+      })
+  })
+}
+
+/**
+ * 详见 https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
+ * @param {*} data
+ * 封装分享Methods
+ */
+const shareWxandQQ = data => {
+  shareQQ(data)
+  wx.config({
+    debug: false,
+    appId: data.appid,
+    timestamp: data.timestamp,
+    nonceStr: data.nonceStr,
+    signature: data.signature,
+    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ']
+  })
+
+  // 分享到朋友圈
+  wx.onMenuShareTimeline({
+    title: data.title,
+    link: data.link,
+    imgUrl: data.imgUrl,
+    success: () => {},
+    cancel: () => {}
+  })
+
+  // 分享给朋友
+  wx.onMenuShareAppMessage({
+    title: data.title,
+    desc: data.desc || '',
+    link: data.url,
+    imgUrl: data.imgUrl,
+    type: 'link',
+    dataUrl: '',
+    success: () => {},
+    cancel: () => {}
+  })
+
+  // 分享到QQ
+  wx.onMenuShareQQ({
+    title: data.title,
+    desc: data.desc,
+    link: data.link,
+    imgUrl: data.imgUrl,
+    success: () => {},
+    cancel: () => {}
+  })
+  wx.error(() => {})
+}
+
+const shareQQ = data => {
+  // QQ分享
+  let createMateArr = [
+    {
+      itemprop: 'name',
+      content: data.title
+    },
+    {
+      itemprop: 'image',
+      content: data.imgUrl
+    },
+    {
+      name: 'description',
+      itemprop: 'description',
+      content: data.desc
+    }
+  ]
+  for (let item of createMateArr) {
+    let meta = document.createElement('meta')
+    Object.keys(item).forEach((name, index) => {
+      meta.setAttribute(name, item[name])
+    })
+    let s = document.getElementsByTagName('meta')[0]
+    s.parentNode.insertBefore(meta, s)
+  }
+  if (window.mqq) {
+    window.mqq.invoke('data', 'setShareInfo', {
+      share_url: data.link,
+      title: data.title,
+      desc: data.desc,
+      image_url: data.imgUrl
+    })
+  }
+}
+```
+
 ————————————————————————————————————————
 
 2017/10/23 下午3:37:05
