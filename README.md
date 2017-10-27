@@ -165,7 +165,7 @@ http://www.cnblogs.com/joyho/articles/5017544.html
 百度统计 埋点
 
 ￼
-
+```
 this.baiduStatistics('c418b26238ad9b52d91411d8a5662ea2')
 
 baiduStatistics (key) {
@@ -179,7 +179,7 @@ baiduStatistics (key) {
     }
 
 window._hmt.push('_getCouponSuccess', 'status', '领取礼包成功')
-
+```
 ————————————————————————————————————————
 
 2017/10/19 下午6:31:40
@@ -191,6 +191,7 @@ https://freecodecamp.cn/challenges/convert-html-entities
 ————————————————————————————————————————
 
 2017/10/18 下午6:30:08
+```
 #shadow{
 	border-radius: 50%;
  	margin: 0 auto;
@@ -199,6 +200,7 @@ https://freecodecamp.cn/challenges/convert-html-entities
      	 background: #FFEC99;
       	box-shadow: 0 0 0 (1.373333rem / 2) rgba(251, 174, 41, .4), 0 0 0 1.55rem rgba(255, 185, 75, .2);
 }
+```
 
 水波背景 canavs
 http://www.cnblogs.com/zjfree/p/5379308.html
@@ -223,10 +225,11 @@ https://freecodecamp.cn/home
 
 黑科技
 https://github.com/jawil/blog/issues/24
-
+```
 [].forEach.call($$("*"),function(a){
   a.style.outline="1px solid #"+(~~(Math.random()*(1<<24))).toString(16)
 })
+```
 
 React
 http://www.w3cplus.com/react/introducing-react.html
@@ -282,20 +285,21 @@ https://juejin.im/post/59c9ca9c6fb9a00a6b6e7e09?utm_source=gold_browser_extensio
 lazy load img
 
 
-document.documentElement.clientHeight 	获取屏幕可视窗口高度
-element.offsetTop						获取元素相对于文档顶部的距离
+document.documentElement.clientHeight 		获取屏幕可视窗口高度
+element.offsetTop				获取元素相对于文档顶部的距离
 document.documentElement.scrollTop		获取浏览器窗口顶部与文档顶部之间的距离，就是滚动条滚动的距离
 
 2 - 3 < 1	在可视区域
 ￼
 
 getBoundingClientRect()
-
+```
 function isInSight(el) {
   const bound = el.getBoundingClientRect();
   const clientHeight = window.innerHeight;
   return bound.top <= clientHeight + 100;
 }
+```
 
 函数节流与防抖
 http://www.bootcss.com/p/underscore/#each
