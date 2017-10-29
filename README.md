@@ -4,6 +4,20 @@
 
 ————————————————————————————————————————
 
+2017/10/29 下午3:30:00
+
+iphoneX适配
+https://juejin.im/post/59f302eb518825550f53d839?utm_source=gold_browser_extension
+
+HTTPS为什么安全
+http://www.jianshu.com/p/ed6491169b24
+
+
+https 引入http
+https://segmentfault.com/q/1010000005872734
+
+————————————————————————————————————————
+
 2017/10/27 上午9:41:24
 
 微信初始化需放在ready方法中
