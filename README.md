@@ -4,6 +4,25 @@
 
 ————————————————————————————————————————
 
+2017/11/2 下午2:49:19
+
+h5与原生交互
+http://www.jianshu.com/p/e37ccf32cb5b
+http://blog.csdn.net/yanghua_kobe/article/details/8209751
+
+————————————————————————————————————————
+
+
+2017/10/30 上午10:23:29
+
+WebViewJavascriptBridge
+https://github.com/marcuswestin/WebViewJavascriptBridge
+http://www.cnblogs.com/jiang-xiao-yan/p/5345755.html
+http://www.jianshu.com/p/ca496cb680fe
+
+————————————————————————————————————————
+
+
 2017/10/29 下午3:30:00
 
 iphoneX适配
