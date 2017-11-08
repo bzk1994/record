@@ -3,6 +3,16 @@
 小记
 
 ————————————————————————————————————————
+
+2017/11/6 下午2:21:04
+
+krpano.com
+https://krpano.com/plugins/videoplayer/#opensource
+https://segmentfault.com/a/1190000005819777
+Tweenmax
+https://segmentfault.com/a/1190000007496078
+
+————————————————————————————————————————
 2017/11/6 下午4:55:24
 
 WebViewJavascriptBridge 原理解析
