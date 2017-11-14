@@ -4,6 +4,15 @@
 
 ————————————————————————————————————————
 
+2017/11/14 上午11:29:10
+https://juejin.im/post/5a098b5bf265da431a42b227?utm_source=gold_browser_extension
+
+redux
+http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_one_basic_usages.html
+http://www.redux.org.cn/
+
+————————————————————————————————————————
+
 2017/11/13 下午2:15:57
 
 TCP/IP 协议
