@@ -3,6 +3,15 @@
 小记
 
 ————————————————————————————————————————
+1
+2017/11/17 上午9:43:28
+
+https://juejin.im/post/5a09361c6fb9a0451704b103?utm_medium=fe&utm_source=weixinqun
+
+移动端浏览器前端优化策略
+https://juejin.im/post/59ff2dbe5188254dd935c8ab?utm_source=gold_browser_extension
+
+————————————————————————————————————————
 
 2017/11/14 上午11:29:10
 https://juejin.im/post/5a098b5bf265da431a42b227?utm_source=gold_browser_extension
