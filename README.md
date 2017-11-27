@@ -3,12 +3,29 @@
 小记
 
 ————————————————————————————————————————
-1
+
+2017/11/27 下午5:28:42
+
+Redux
+
+https://github.com/react-guide/redux-tutorial-cn/blob/master/02_about-state-and-meet-redux.js
+
+MongoDb
+
+http://www.yiibai.com/mongodb/mongodb_quick_guide.html
+
+观察者 
+
+https://juejin.im/post/5a16810d6fb9a0450e75c958?utm_source=gold_browser_extension
+
+————————————————————————————————————————
+
 2017/11/17 上午9:43:28
 
 https://juejin.im/post/5a09361c6fb9a0451704b103?utm_medium=fe&utm_source=weixinqun
 
 移动端浏览器前端优化策略
+
 https://juejin.im/post/59ff2dbe5188254dd935c8ab?utm_source=gold_browser_extension
 
 ————————————————————————————————————————
