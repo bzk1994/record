@@ -4,6 +4,18 @@
 
 ————————————————————————————————————————
 
+2017/11/28 上午10:18:59
+
+移动端页面的 JavaScript 开销
+
+https://juejin.im/entry/5a161926f265da432153b321?utm_source=gold_browser_extension
+
+redux async
+
+https://github.com/react-guide/redux-tutorial-cn/blob/master/07_dispatch-async-action-1.js
+
+————————————————————————————————————————
+
 2017/11/27 下午5:28:42
 
 Redux
