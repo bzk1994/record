@@ -4,6 +4,22 @@
 
 ————————————————————————————————————————
 
+2017/11/29 下午2:10:29
+
+Mongo
+
+https://docs.mongodb.com/manual/mongo/
+
+优化模式
+
+https://juejin.im/post/5a1ea58e5188252ae93ab5c5?utm_source=gold_browser_extension
+
+JS运行机制
+
+https://juejin.im/post/59e85eebf265da430d571f89?utm_source=gold_browser_extension
+
+————————————————————————————————————————
+
 2017/11/28 上午10:18:59
 
 移动端页面的 JavaScript 开销
@@ -472,15 +488,4 @@ http://www.cnblogs.com/520yang/articles/4807408.html
 
 nprogress	加载
 
-Promise 4.3	es6-promise
-
-Promise resolve reject catch add race
-
-Jq $.Deferred =>  jq ajax
-
-Mock.js
-
-函数节流（throttle）与函数去抖（debounce）
-
-————————————————————————————————————————
-
+Promise 4.3	
