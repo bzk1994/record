@@ -2,6 +2,23 @@
 
 小记
 
+
+————————————————————————————————————————
+
+2017/12/4 下午12:12:21
+
+Ant UI
+https://ant.design/components/steps-cn/
+
+Async
+http://es6.ruanyifeng.com/?search=synic&x=0&y=0#docs/async
+
+简历
+https://juejin.im/post/5a22b4455188253e2470c991?utm_source=gold_browser_extension
+
+JavaScript 执行机制
+https://juejin.im/post/59e85eebf265da430d571f89?utm_source=gold_browser_extension
+
 ————————————————————————————————————————
 
 2017/11/29 下午2:10:29
