@@ -2,6 +2,39 @@
 
 小记
 
+————————————————————————————————————————
+
+2017/12/11 上午9:54:22
+
+Ts
+
+https://github.com/xcatliu/typescript-tutorial
+
+禅意花园
+
+http://bonsaiden.github.io/JavaScript-Garden/zh/#function.this
+
+又要开始路题库
+
+https://www.freecodecamp.cn/zhanghao-zhoushan
+
+  
+————————————————————————————————————————
+
+2017/12/8 下午5:40:03
+
+webview字体大小
+
+http://blog.csdn.net/fungleo/article/details/73309396
+
+禅意花园
+
+http://bonsaiden.github.io/JavaScript-Garden/zh/#function.this
+
+css手册
+
+http://www.css88.com/book/css/properties/flexible-box/box-align.htm
+ ————————————————————————————————————————
 
 ————————————————————————————————————————
 
