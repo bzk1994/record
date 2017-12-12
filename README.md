@@ -4,6 +4,53 @@
 
 ————————————————————————————————————————
 
+2017/12/12 下午17:45:18
+
+HTTP缓存机制
+
+https://juejin.im/post/5a1d4e546fb9a0450f21af23?utm_medium=fe&utm_source=weixinqun
+
+Autoprefixer
+
+https://www.w3cplus.com/PostCSS/using-postcss-for-cross-browser-compatibility.html
+
+
+```
+const postcssLoader = {
+    loader: 'postcss-loader',
+    options: {}
+  }
+
+// generate loader string to be used with extract text plugin
+  function generateLoaders(loader, loaderOptions) {
+    var loaders = [cssLoader, postcssLoader]
+    if (loader) {
+      loaders.push({
+        loader: loader + '-loader',
+        options: Object.assign({}, loaderOptions, {
+          sourceMap: options.sourceMap
+        })
+      })
+    }
+
+    // Extract CSS when that option is specified
+    // (which is the case during production build)
+    if (options.extract) {
+      return ExtractTextPlugin.extract({
+        use: loaders,
+        fallback: 'vue-style-loader'
+      })
+    } else {
+      return ['vue-style-loader'].concat(loaders)
+    }
+  }
+```
+
+"webpack": "^2.6.1"
+"vue": "^2.3.3"
+
+————————————————————————————————————————
+
 2017/12/11 上午9:54:22
 
 Ts
