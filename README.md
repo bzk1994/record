@@ -2,6 +2,17 @@
 
 小记
 
+
+————————————————————————————————————————
+
+2017/12/14 下午4:34:51
+
+Promise
+
+https://www.cnblogs.com/fsjohnhuang/p/4135149.html
+
+http://es6.ruanyifeng.com/?search=synic&x=0&y=0#docs/promise
+
 ————————————————————————————————————————
 
 2017/12/13 下午4:07:00"
