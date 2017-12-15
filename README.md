@@ -2,6 +2,16 @@
 
 小记
 
+————————————————————————————————————————
+
+2017/12/15 上午9:49:23
+
+CSS3下条纹&方格斜纹背景的实现
+
+http://www.zhangxinxu.com/wordpress/2011/04/%E5%B0%8Ftipcss3%E4%B8%8B%E6%9D%A1%E7%BA%B9%E6%96%B9%E6%A0%BC%E6%96%9C%E7%BA%B9%E8%83%8C%E6%99%AF%E7%9A%84%E5%AE%9E%E7%8E%B0/
+
+css3实现一个div设置多张背景图片及background-image属性
+https://www.w3cplus.com/css3/css-secrets/striped-backgrounds.html
 
 ————————————————————————————————————————
 
