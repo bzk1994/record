@@ -2,6 +2,25 @@
 
 小记
 
+
+————————————————————————————————————————
+
+2017/12/19 下午1:26:06
+
+requestAnimationFrame
+
+http://www.zhangxinxu.com/wordpress/2013/09/css3-animation-requestanimationframe-tween-%E5%8A%A8%E7%94%BB%E7%AE%97%E6%B3%95/
+
+https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestAnimationFrame
+
+ajax跨域
+
+https://juejin.im/entry/5a379a7b5188252b145b269e?utm_source=gold_browser_extension
+
+JavaScript 实用技巧和写法建议
+
+https://juejin.im/post/5a0c199851882531926e4297?utm_source=gold_browser_extension
+
 ————————————————————————————————————————
 
 2017/12/15 上午9:49:23
