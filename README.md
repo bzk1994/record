@@ -2,6 +2,27 @@
 
 小记
 
+————————————————————————————————————————
+
+2017/12/25 下午5:27:55
+
+熟悉JS
+
+http://www.cnblogs.com/TomXu/archive/2011/12/15/2288411.html
+
+Vue 插件
+
+https://cn.vuejs.org/v2/guide/plugins.html
+
+https://segmentfault.com/a/1190000010559711
+
+优化
+
+https://segmentfault.com/a/1190000011213814
+
+https://juejin.im/entry/58947598128fe1006ca2b85d
+
+https://juejin.im/post/59c4c9d85188254f58412d17
 
 ————————————————————————————————————————
 
