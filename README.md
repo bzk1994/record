@@ -4,6 +4,30 @@
 
 ————————————————————————————————————————
 
+2017/12/26 上午10:21:55
+
+网页性能管理详解
+
+http://www.ruanyifeng.com/blog/2015/09/web-page-performance-in-depth.html
+
+Performance
+
+https://segmentfault.com/a/1190000011516068
+
+https://blog.coding.net/blog/Chome-Timeline
+
+window.requestAnimationFrame()、window.requestIdleCallback()
+
+CSS动画之硬件加速
+
+https://www.w3cplus.com/css3/introduction-to-hardware-acceleration-css-animations.html
+
+WebPageTest 优化网站
+
+http://www.webryan.net/2013/01/use-webpagetest-to-analyze-web-performance/
+
+————————————————————————————————————————
+
 2017/12/25 下午5:27:55
 
 熟悉JS
@@ -392,6 +416,7 @@ directives: {
       }
     }
   }
+  
 
 ```
 getBodyWidth() {
