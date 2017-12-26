@@ -258,9 +258,11 @@ https://juejin.im/post/59ff2dbe5188254dd935c8ab?utm_source=gold_browser_extensio
 ————————————————————————————————————————
 
 2017/11/14 上午11:29:10
+
 https://juejin.im/post/5a098b5bf265da431a42b227?utm_source=gold_browser_extension
 
 redux
+
 http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_one_basic_usages.html
 http://www.redux.org.cn/
 
@@ -269,15 +271,19 @@ http://www.redux.org.cn/
 2017/11/13 下午2:15:57
 
 TCP/IP 协议
+
 https://juejin.im/post/5a069b6d51882509e5432656?utm_source=gold_browser_extension
 
 Ant ui
+
 https://ant.design/components/modal-cn/
 
 Es6 修饰器 Decorator
+
 http://es6.ruanyifeng.com/#docs/decorator
 
 async / await
+
 https://juejin.im/entry/5a0032a051882546b15be7ab?utm_source=gold_browser_extension
 
 ————————————————————————————————————————
@@ -285,9 +291,11 @@ https://juejin.im/entry/5a0032a051882546b15be7ab?utm_source=gold_browser_extensi
 2017/11/12 下午8:35:28
 
 cssModules
+
 https://www.npmjs.com/package/react-css-modules
 
 Nginx反向代理
+
 https://www.cnblogs.com/gabrielchen/p/5066120.html
 
 ————————————————————————————————————————
@@ -295,6 +303,7 @@ https://www.cnblogs.com/gabrielchen/p/5066120.html
 2017/11/8 下午2:21:04
 
 A-FRAME
+
 https://aframe.io/docs/0.5.0/introduction/visual-inspector-and-dev-tools.html
 
 ————————————————————————————————————————
@@ -302,21 +311,26 @@ https://aframe.io/docs/0.5.0/introduction/visual-inspector-and-dev-tools.html
 2017/11/6 下午2:21:04
 
 krpano.com
+
 https://krpano.com/plugins/videoplayer/#opensource
 https://segmentfault.com/a/1190000005819777
 Tweenmax
+
 https://segmentfault.com/a/1190000007496078
 
 ————————————————————————————————————————
 2017/11/6 下午4:55:24
 
 WebViewJavascriptBridge 原理解析
+
 https://juejin.im/entry/58e4a76a44d904006d2a7778
 
 百度统计埋点
+
 http://tongji.baidu.com/open/api/more?p=guide_trackEvent
 
 vuex
+
 https://juejin.im/post/59f66bd7f265da432d275d30?utm_source=gold_browser_extension
 
 ————————————————————————————————————————
@@ -324,6 +338,7 @@ https://juejin.im/post/59f66bd7f265da432d275d30?utm_source=gold_browser_extensio
 2017/11/2 下午2:49:19
 
 h5与原生交互
+
 http://www.jianshu.com/p/e37ccf32cb5b
 http://blog.csdn.net/yanghua_kobe/article/details/8209751
 
@@ -333,6 +348,7 @@ http://blog.csdn.net/yanghua_kobe/article/details/8209751
 2017/10/30 上午10:23:29
 
 WebViewJavascriptBridge
+
 https://github.com/marcuswestin/WebViewJavascriptBridge
 http://www.cnblogs.com/jiang-xiao-yan/p/5345755.html
 http://www.jianshu.com/p/ca496cb680fe
@@ -343,13 +359,16 @@ http://www.jianshu.com/p/ca496cb680fe
 2017/10/29 下午3:30:00
 
 iphoneX适配
+
 https://juejin.im/post/59f302eb518825550f53d839?utm_source=gold_browser_extension
 
 HTTPS为什么安全
+
 http://www.jianshu.com/p/ed6491169b24
 
 
 https 引入http
+
 https://segmentfault.com/q/1010000005872734
 
 ————————————————————————————————————————
@@ -367,25 +386,13 @@ wx.ready(() => {
 
 修改分享图标、内容
 微信
-https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
-QQ
-http://open.mobile.qq.com/api/mqq/index
 
-```
-后端调用微信返回
-shareWxandQQ () {
-      let href = window.location.href
-      let params = {
-        redirectUri: href,
-        url: href
-      }
-      Common.getWxShareData(params)
-        .then(res => {
-          let data = {
-            title: ‘title’,
-            desc: ‘ desc’,
-            link: href,
-            imgUrl: ‘imgUrl
+https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
+
+QQ
+
+http://open.mobile.qq.com/api/mqq/index
+ 
 ————————————————————————————————————————
 
 2017/12/21 
