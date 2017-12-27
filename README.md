@@ -4,6 +4,66 @@
 
 ————————————————————————————————————————
 
+应用优化-用户体验放在第一位
+
+DNS预解析
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="https://www.xqchuxing.com" />
+ <link rel="dns-prefetch" href="https://xqsite.oss-cn-hangzhou.aliyuncs.com " />
+
+页面渲染优化
+
+* 1.HTML文档结构层次尽量少，最好不深于六层；
+* 2.脚本尽量后放，放在</body>前即可；
+* 3.少量首屏样式内联放在<head>标签内；
+* 4.样式结构层次尽量简单；
+* 5.在脚本中尽量减少DOM操作，尽量缓存访问DOM的样式信息，避免过度触发回流；
+* 6.减少通过JavaScript代码修改元素样式，尽量使用修改class名方式操作样式或动画；
+* 7.动画尽量使用在绝对定位或固定定位的元素上；
+* 8.隐藏在屏幕外，或在页面滚动时，尽量停止动画；
+* 9.尽量缓存DOM查找，查找器尽量简洁；
+* 10.涉及多域名的网站，可以开启域名预解析
+* 减少重排和重绘
+
+
+css3过渡动画开启硬件加速
+
+.translate3d{ 
+	-webkit-transform: translate3d(0, 0, 0); 
+	-moz-transform: translate3d(0, 0, 0); 
+	-ms-transform: translate3d(0, 0, 0); 
+	transform: translate3d(0, 0, 0); 
+}
+
+		
+性能调试
+
+* Performance
+* lighthouse
+	
+移动端click屏幕产生200-300 ms的延迟响应
+
+
+图片优化
+
+Type:
+
+* JPEG：颜色非常丰富的图片（例如照片）
+* PNG–8：色彩相对单一的图片
+* PNG–24：局部透明的图片
+* GIF：动图
+
+
+- 压缩、懒加载、base64 		// 如何实现懒加载
+- 使用图片 CDN 进行分发
+- 阴影、渐变、动画及形状，允许我们构造适当风格的DOM元素。
+
+Webpack对于性能优化？
+<script defer src="script.js">  defer与async diff
+fastClick 如何实现？ Toutchend
+
+————————————————————————————————————————
+
 2017/12/26 上午10:21:55
 
 网页性能管理详解
