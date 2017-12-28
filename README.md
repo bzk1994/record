@@ -305,15 +305,19 @@ http://www.css88.com/book/css/properties/flexible-box/box-align.htm
 2017/12/4 下午12:12:21
 
 Ant UI
+
 https://ant.design/components/steps-cn/
 
 Async
+
 http://es6.ruanyifeng.com/?search=synic&x=0&y=0#docs/async
 
 简历
+
 https://juejin.im/post/5a22b4455188253e2470c991?utm_source=gold_browser_extension
 
 JavaScript 执行机制
+
 https://juejin.im/post/59e85eebf265da430d571f89?utm_source=gold_browser_extension
 
 ————————————————————————————————————————
@@ -524,6 +528,8 @@ https://juejin.im/post/5a2f92c65188253e2470f16d
 
 ————————————————————————————————————————
 
+```
+// vue add directives
 $("input").on("focus",function(){
     this.scrollIntoView();
 })
@@ -538,7 +544,7 @@ directives: {
       }
     }
   }
-  
+```
 
 ```
 getBodyWidth() {
