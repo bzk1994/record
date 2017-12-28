@@ -108,7 +108,9 @@ Type:
 - 阴影、渐变、动画及形状，允许我们构造适当风格的DOM元素。
 
 Webpack对于性能优化？
+
 <script defer src="script.js">  defer与async diff
+	
 fastClick 如何实现？ Toutchend
 
 ————————————————————————————————————————
