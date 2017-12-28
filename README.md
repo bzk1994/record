@@ -77,14 +77,15 @@ DNS预解析
 
 css3过渡动画开启硬件加速
 
+```
 .translate3d{ 
 	-webkit-transform: translate3d(0, 0, 0); 
 	-moz-transform: translate3d(0, 0, 0); 
 	-ms-transform: translate3d(0, 0, 0); 
 	transform: translate3d(0, 0, 0); 
 }
+```
 
-		
 性能调试
 
 * Performance
@@ -102,16 +103,19 @@ Type:
 * PNG–24：局部透明的图片
 * GIF：动图
 
-
 - 压缩、懒加载、base64 		// 如何实现懒加载
 - 使用图片 CDN 进行分发
 - 阴影、渐变、动画及形状，允许我们构造适当风格的DOM元素。
 
+
+```
 Webpack对于性能优化？
 
 <script defer src="script.js">  defer与async diff
-	
+
 fastClick 如何实现？ Toutchend
+```
+	
 
 ————————————————————————————————————————
 
