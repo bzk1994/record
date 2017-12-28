@@ -4,6 +4,55 @@
 
 ————————————————————————————————————————
 
+2017/12/28 下午4:10:38
+
+Life is not a race, but a journey to be savored each step of the way.
+
+Chrome DevTools 性能调试
+
+https://www.jianshu.com/p/471950517b07
+
+https://www.jianshu.com/p/b8cdcd9bfad8
+
+https://www.jianshu.com/p/504bde348956
+
+
+Vue 插件开发
+
+官网
+
+https://cn.vuejs.org/v2/guide/plugins.html#ad
+
+Mint-ui Toast style used
+
+PostCSS深入学习: 结合BEM和SUIT方法使用PostCSS
+
+https://www.w3cplus.com/PostCSS/using-postcss-with-bem-and-suit-methodologies.html
+
+```
+// 基于基础组件toast.vue,再扩展新逻辑.
+var ToastConstructor = Vue.extend(’./toast.vue’)
+
+var instance = new  ToastConstructor()
+
+document.body.appendChild(instance.$el);
+
+event.target.parentNode.removeChild(event.target);
+
+// 在下次 DOM 更新循环结束之后执行延迟回调
+Vue.nextTick  
+
+
+```
+
+Vue 中 extend / component / mixins / extends 的区别
+
+https://segmentfault.com/a/1190000010095089
+
+————————————————————————————————————————
+
+2017/12/27 下午4:10:38
+
 应用优化-用户体验放在第一位
 
 DNS预解析
@@ -135,6 +184,7 @@ CSS3下条纹&方格斜纹背景的实现
 http://www.zhangxinxu.com/wordpress/2011/04/%E5%B0%8Ftipcss3%E4%B8%8B%E6%9D%A1%E7%BA%B9%E6%96%B9%E6%A0%BC%E6%96%9C%E7%BA%B9%E8%83%8C%E6%99%AF%E7%9A%84%E5%AE%9E%E7%8E%B0/
 
 css3实现一个div设置多张背景图片及background-image属性
+
 https://www.w3cplus.com/css3/css-secrets/striped-backgrounds.html
 
 ————————————————————————————————————————
