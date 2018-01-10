@@ -4,6 +4,22 @@
 
 ————————————————————————————————————————
 
+2018/1/10 下午10:34:02
+
+Use es6 in mongodb
+
+http://cnodejs.org/topic/56460e0d89b4b49902e7fbd3
+
+增删改查
+
+http://blog.csdn.net/u012810020/article/details/54582051
+
+bluebirdjs
+
+http://bluebirdjs.com/docs/api/promisification.html
+
+————————————————————————————————————————
+
 2018/1/9 下午2:34:40
 
 mogoose
