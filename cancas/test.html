@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Circle</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    #canvas {
+      margin: 100px;
+      border: 1px solid lightblue;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+</body>
+
+<script>
+  // 1.	屏幕中随机产生n个蓝色大小不一的气泡，坐标随机 √
+  // 2.	红色气泡跟随鼠标移动 √
+  // 3.	当红色气泡会与蓝色气泡发生碰撞效果(类似桌球) √
+  // 4.	红色气泡会被屏幕边缘阻挡 √
+  // 5.	蓝色气泡左右屏上下屏互通 √
+  // 6.	蓝色气泡的运动及互动行为请自由发挥
+  // blue 677 * 662 600  
+  // red 696 * 696 630
+  window.requestAnimFrame = (function () {
+    return window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      function (callback) {
+        window.setTimeout(callback, 1000 / 60);
+      };
+  })();
+
+  function Circle() {
+
+    var CANVAS_WIDTH = 800;
+    var CANVAS_HEIGHT = 400;
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+    var circlesNumber = 21;
+    var circles = []
+    var redCircle = {}
+
+    this.init = function () {
+      for (var i = 0; i < circlesNumber; i++) {
+        var model = buildCircleParams('blue', i)
+        circles.push(model)
+        createCircle(model)
+      }
+      redCircle = buildCircleParams('red', 666)
+      createCircle(redCircle)
+      requestAnimFrame(animateCilcle)
+      canvas.addEventListener('mousemove', moveRedCircle, false)
+    }
+
+    function moveRedCircle(e) {
+      redCircle.left = handleXBoundary(e.offsetX, redCircle.r);
+      redCircle.top = handleYBoundary(e.offsetY, redCircle.r);
+      redCircle.centerX = redCircle.left + redCircle.r;
+      redCircle.centerY = redCircle.top + redCircle.r;
+      createCircle(redCircle)
+    }
+
+    function collisionCheck() {
+      for (var j = 0; j < circles.length; j++) {
+        var diffX = Math.abs(circles[j].centerX - redCircle.centerX);
+        var diffY = Math.abs(circles[j].centerY - redCircle.centerY);
+        var distance = Math.sqrt(diffX * diffX + diffY * diffY)
+        // 简单处理图片边款
+        if (distance < (circles[j].r * 600 / 670 + redCircle.r * 630 / 696)) {
+          handleCollision(circles[j], redCircle)
+        }
+      }
+    }
+
+    function handleCollision(circles, redCircle) {
+      if (redCircle.centerX > circles.centerX) {
+        circles.directionX = 1
+      } else {
+        circles.directionX = 0
+      }
+      if (redCircle.centerY > circles.centerY) {
+        circles.directionY = 1
+      } else {
+        circles.directionY = 0
+      }
+    }
+
+    function handleXBoundary(x, r) {
+      var offsetX
+      offsetX = x - r < 0 ? 0 : x - r
+      offsetX = x + r > CANVAS_WIDTH ? CANVAS_WIDTH - r * 2 : offsetX
+      return offsetX
+    }
+    function handleYBoundary(y, r) {
+      var offsetY
+      offsetY = y - r < 0 ? 0 : y - r
+      offsetY = y + r > CANVAS_HEIGHT ? CANVAS_HEIGHT - r * 2 : offsetY
+      return offsetY
+    }
+
+    function buildCircleParams(url, i) {
+      var left = url === 'red' ? CANVAS_WIDTH / 2 - 50 : creatRandom(0, CANVAS_WIDTH - 100)
+      var top = url === 'red' ? CANVAS_HEIGHT / 2 - 50 : creatRandom(0, CANVAS_HEIGHT - 100)
+      var width = url === 'red' ? 100 : creatRandom(50, 100);
+      var r = width / 2;
+      return {
+        index: i,
+        url: url,
+        left: left,
+        r: r,
+        top: top,
+        centerX: left + r,
+        centerY: top + r,
+        width: width,
+        directionX: creatRandom(0, 1),
+        directionY: creatRandom(0, 1),
+        speedX: creatRandom(1, 2),
+        speedY: creatRandom(1, 2)
+      }
+    }
+
+    function createCircle(circle) {
+      var img = document.createElement("img");
+      var url = './' + circle.url + '.png';
+      img.src = url;
+      ctx.drawImage(img, circle.left, circle.top, circle.width, circle.width)
+    }
+
+    function animateCilcle() {
+      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+      circles.map(function (item, i) {
+        moveCircles('blue', circles[i])
+      })
+      createCircle(redCircle)
+      collisionCheck()
+      requestAnimFrame(animateCilcle)
+    }
+
+    function moveCircles(url, circle) {
+      var img = document.createElement("img");
+      var url = './' + url + '.png';
+      img.src = url;
+      var directionX = circle.directionX
+      var directionY = circle.directionY
+      circle.left = directionX ? circle.left - circle.speedX : circle.left + circle.speedX
+      circle.top = directionY ? circle.top - circle.speedY : circle.top + circle.speedY
+
+      // 互通
+      if (circle.top < - circle.width) {
+        circle.top = CANVAS_HEIGHT
+      } else if (circle.top > CANVAS_HEIGHT) {
+        circle.top = 0
+      }
+
+      if (circle.left < - circle.width) {
+        circle.left = CANVAS_WIDTH
+      } else if (circle.left > CANVAS_WIDTH) {
+        circle.left = - circle.width
+      }
+
+      circle.centerX = circle.left + circle.r;
+      circle.centerY = circle.top + circle.r;
+
+      ctx.drawImage(img, circle.left, circle.top, circle.width, circle.width);
+    }
+
+    function creatRandom(start, end) {
+      return start + Math.floor((end - start + 1) * Math.random())
+    }
+
+  }
+
+  var circle = new Circle()
+
+  circle.init()
+
+</script>
+
+</html>
