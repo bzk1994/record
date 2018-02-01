@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>layout-两列布局</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: #fff;
+  }
+
+  h3 {
+    color: lightblue;
+    line-height: 80px;
+  }
+
+  /* float + margin-left */
+
+  .content {
+    margin-bottom: 20px;
+    line-height: 50px;
+  }
+
+  .left {
+    background: lightblue;
+  }
+
+  .right {
+    background: lightcoral;
+  }
+
+  .content-float .left {
+    width: 200px;
+    float: left;
+  }
+
+  .content-float .right {
+    margin-left: 200px;
+  }
+
+  /* absolute */
+
+  .content-absolute .left {}
+
+  .content-absolute .right {}
+</style>
+
+<body>
+  <h3>float + margin-left</h3>
+  <div class="content content-float">
+    <div class="left">
+      <p>Hello</p>
+      <p>I'am left</p>
+    </div>
+    <div class="right">
+      <p>Hi</p>
+      <p>I'am right</p>
+    </div>
+  </div>
+
+  <h3>absolute</h3>
+  <div class="content content-absolute">
+    <div class="left">
+      <p>Hello</p>
+      <p>I'am left</p>
+    </div>
+    <div class="right">
+      <p>Hi</p>
+      <p>I'am right</p>
+    </div>
+  </div>
+
+</body>
+
+</html>
