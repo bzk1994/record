@@ -49,9 +49,32 @@
   .content-absolute .left {}
 
   .content-absolute .right {}
+
+  .flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-flow: row wrap;
+  }
+
+  .flex div {
+    width: 70px;
+    height: 70px;
+    background: red;
+    margin: 10px;
+  }
 </style>
 
 <body>
+  <h3>flex</h3>
+  <div class="flex">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
   <h3>float + margin-left</h3>
   <div class="content content-float">
     <div class="left">
