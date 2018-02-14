@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Card</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    div {
+      margin-bottom: 20px;
+    }
+
+    #canvas-plan-1 {
+      width: 447px;
+      height: 324px;
+      background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1518602963124&di=92dcaad1d27317a51f277c4436468886&imgtype=0&src=http%3A%2F%2Fwww.tp88.net%2Fpicture%2Fuploads%2Fallimg%2F151207%2F1-15120G64550.jpg');
+      background-repeat: no-repeat;
+      background-size: 100%;
+    }
+
+    #canvas-plan-2 {}
+  </style>
+</head>
+
+<body>
+  <!-- Plan 1 -->
+  <div id="canvas-plan-1">
+    <canvas id="canvas1"></canvas>
+  </div>
+
+  <!-- Plan 2 -->
+  <div id="canvas-plan-2">
+    <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1518602963124&di=92dcaad1d27317a51f277c4436468886&imgtype=0&src=http%3A%2F%2Fwww.tp88.net%2Fpicture%2Fuploads%2Fallimg%2F151207%2F1-15120G64550.jpg"
+      alt="">
+    <canvas id="canvas2"></canvas>
+  </div>
+</body>
+
+<script>
+  const canvasW = 447
+  const canvasH = 324
+
+  class Card1 {
+    constructor() {
+      this.canvas = document.querySelector('#canvas1')
+      this.context = this.canvas.getContext('2d')
+      this.init()
+    }
+
+    init() {
+      this.canvas.width = canvasW
+      this.canvas.height = canvasH
+      this.context.fillStyle = '#d1d1d1'
+      this.context.fillRect(0, 0, canvasW, canvasH)
+      this.context.globalCompositeOperation = 'destination-out'
+      this.bindEvent()
+    }
+
+    bindEvent() {
+      this.canvas.addEventListener('touchmove', e => {
+        e.preventDefault()
+        const { pageX, pageY } = e.touches[0]
+        const { left, top } = this.canvas.getBoundingClientRect()
+        this.context.arc(pageX - left, pageY - top, 30, 0, Math.PI * 2)
+        this.context.closePath()
+        this.context.fillStyle = "#fff"
+        this.context.fill()
+        if (this.getPercentage({
+          context: this.context,
+          width: canvasW,
+          height: canvasH
+        }) > 90) {
+          console.log('刮奖成功！')
+        }
+      }, false)
+    }
+
+    getPercentage({ context, width, height }) {
+      const imageData = context.getImageData(0, 0, width, height)
+      const pixles = imageData.data
+      const pixlesLength = pixles.length
+      let transPixs = []
+      for (let i = 0; i < pixlesLength; i += 4) {
+        let a = pixles[i + 3]
+        if (a === 0) {
+          transPixs.push(i)
+        }
+      }
+      return (transPixs.length / (pixlesLength / 4) * 100).toFixed(2)
+    }
+  }
+
+  class Card2 {
+    constructor() {
+      this.canvas = document.querySelector('#canvas2')
+      this.context = this.canvas.getContext('2d')
+      this.canvas.width = canvasW
+      this.canvas.height = canvasH
+      this.init()
+    }
+
+    init() {
+
+    }
+  }
+
+  new Card1()
+
+  new Card2()
+
+</script>
+
+</html>
