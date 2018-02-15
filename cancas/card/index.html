@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Card</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    div {
+      margin-bottom: 20px;
+    }
+
+    #canvas-plan-1 {
+      width: 447px;
+      height: 324px;
+      background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1518602963124&di=92dcaad1d27317a51f277c4436468886&imgtype=0&src=http%3A%2F%2Fwww.tp88.net%2Fpicture%2Fuploads%2Fallimg%2F151207%2F1-15120G64550.jpg');
+      background-repeat: no-repeat;
+      background-size: 100%;
+    }
+
+    #canvas-plan-2,
+    #canvas-plan-3 {
+      position: relative;
+    }
+
+    #canvas2,
+    #canvas3 {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    img {
+      display: block;
+      width: 447px;
+      height: 324px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Plan 1 -->
+  <div id="canvas-plan-1">
+    <canvas id="canvas1"></canvas>
+  </div>
+
+  <!-- Plan 2 -->
+  <div id="canvas-plan-2">
+    <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1518635229946&di=2f874399b1c058ffa8bad916e2a215fe&imgtype=0&src=http%3A%2F%2Fimgq.duitang.com%2Fuploads%2Fitem%2F201501%2F20%2F20150120220021_LYkWX.png"
+      alt="">
+    <canvas data-bg="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1518602963124&di=92dcaad1d27317a51f277c4436468886&imgtype=0&src=http%3A%2F%2Fwww.tp88.net%2Fpicture%2Fuploads%2Fallimg%2F151207%2F1-15120G64550.jpg"
+      id="canvas2" />
+  </div>
+
+  <!-- Plan 3 -->
+  <div id="canvas-plan-3">
+    <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1518635229946&di=2f874399b1c058ffa8bad916e2a215fe&imgtype=0&src=http%3A%2F%2Fimgq.duitang.com%2Fuploads%2Fitem%2F201501%2F20%2F20150120220021_LYkWX.png"
+      alt="">
+    <canvas data-bg="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1518602963124&di=92dcaad1d27317a51f277c4436468886&imgtype=0&src=http%3A%2F%2Fwww.tp88.net%2Fpicture%2Fuploads%2Fallimg%2F151207%2F1-15120G64550.jpg"
+      id="canvas3" />
+  </div>
+
+</body>
+
+<script>
+  const canvasW = 447
+  const canvasH = 324
+
+  class Card1 {
+    constructor() {
+      this.canvas = document.querySelector('#canvas1')
+      this.context = this.canvas.getContext('2d')
+      this.init()
+    }
+
+    init() {
+      this.canvas.width = canvasW
+      this.canvas.height = canvasH
+      this.context.fillStyle = '#d1d1d1'
+      this.context.fillRect(0, 0, canvasW, canvasH)
+      this.context.globalCompositeOperation = 'destination-out'
+      this.bindEvent()
+    }
+
+    bindEvent() {
+      this.canvas.addEventListener('touchstart', e => {
+        this.render(e)
+      })
+      this.canvas.addEventListener('touchmove', e => {
+        e.preventDefault()
+        this.render(e)
+        if (this.getPercentage({
+          context: this.context,
+          width: canvasW,
+          height: canvasH
+        }) > 90) {
+          console.log('刮奖成功！')
+        }
+      }, false)
+    }
+
+    render(e) {
+      const { clientX, clientY } = e.touches[0]
+      const { left, top } = this.canvas.getBoundingClientRect()
+      this.context.arc(clientX - left, clientY - top, 20, 0, Math.PI * 2, false)
+      this.context.closePath()
+      this.context.fillStyle = "#fff"
+      this.context.fill()
+    }
+
+    getPercentage({ context, width, height }) {
+      const imageData = context.getImageData(0, 0, width, height)
+      const pixles = imageData.data
+      const pixlesLength = pixles.length
+      let transPixs = []
+      for (let i = 0; i < pixlesLength; i += 4) {
+        if (pixles[i + 3] === 0) {
+          transPixs.push(i)
+        }
+      }
+      return (transPixs.length / (pixlesLength / 4) * 100).toFixed(2)
+    }
+  }
+
+  class Card2 {
+    constructor() {
+      this.canvas = document.querySelector('#canvas2')
+      this.context = this.canvas.getContext('2d')
+      this.canvas.width = canvasW
+      this.canvas.height = canvasH
+      this.moveing = false
+      this.img = new Image()
+      this.img.src = this.canvas.getAttribute('data-bg')
+      this.init()
+    }
+
+    init() {
+      this.bindEvent()
+    }
+
+    bindEvent() {
+      this.canvas.addEventListener('touchstart', e => {
+        e.preventDefault()
+        this.moveing = true
+        const { clientX, clientY } = e.touches[0]
+        const { left, top } = this.canvas.getBoundingClientRect()
+        this.touchX = clientX - left
+        this.touchY = clientY - top
+        this.loop()
+      }, false)
+      this.canvas.addEventListener('touchmove', e => {
+        e.preventDefault()
+        if (this.moveing) {
+          const { clientX, clientY } = e.touches[0]
+          const { left, top } = this.canvas.getBoundingClientRect()
+          this.touchX = clientX - left
+          this.touchY = clientY - top
+        }
+      }, false)
+      this.canvas.addEventListener('touchend', e => {
+        this.moveing = false
+      }, false)
+    }
+
+    render() {
+      this.context.save() // 保存Canvas的状态
+      this.context.beginPath() // 重置路径
+      this.context.arc(this.touchX, this.touchY, 20, 0, Math.PI * 2, false)
+      this.context.clip() // 从原始画布中剪切
+      this.context.drawImage(this.img, 0, 0, this.canvas.width, this.canvas.height, 0, 0, this.canvas.width, this.canvas.height) // 裁剪
+      this.context.restore() // 恢复到canvas.save()状态
+    }
+
+    loop() {
+      if (this.moveing) {
+        requestAnimationFrame(() => {
+          this.loop()
+        })
+        this.render()
+      }
+    }
+  }
+
+  class Card3 {
+    constructor() {
+      this.canvas = document.querySelector('#canvas3')
+      this.context = this.canvas.getContext('2d')
+      this.canvas.width = canvasW
+      this.canvas.height = canvasH
+      this.moveing = false
+      this.init()
+    }
+
+    init() {
+      this.img = new Image()
+      this.img.onload = () => {
+        // 创建 pattern 对象 指定元素 绘制 img
+        this.context.strokeStyle = this.context.createPattern(this.img, 'no-repeat')
+        this.context.lineCap = "round" // 端点样式
+        this.context.lineJoin = "round" // 边角样式
+        this.context.lineWidth = "40"
+      }
+      this.img.src = this.canvas.getAttribute('data-bg')
+      this.bindEvent()
+    }
+
+    bindEvent() {
+      this.canvas.addEventListener('touchstart', e => {
+        e.preventDefault()
+        const { left, top } = this.canvas.getBoundingClientRect()
+        const { clientX, clientY } = e.touches[0]
+        this.moveing = true
+        this.context.beginPath()
+        this.context.moveTo(clientX - left, clientY - top)
+      }, false)
+
+      this.canvas.addEventListener('touchmove', e => {
+        e.preventDefault()
+        const { left, top } = this.canvas.getBoundingClientRect()
+        const { clientX, clientY } = e.touches[0]
+        if (this.moveing) {
+          this.context.lineTo(clientX - left, clientY - top)
+          this.context.stroke()
+        }
+      }, false)
+
+      this.canvas.addEventListener('touchend', e => {
+        e.preventDefault()
+        this.moveing = false
+      }, false)
+    }
+  }
+
+  new Card1()
+
+  new Card2()
+
+  new Card3()
+
+</script>
+
+</html>
