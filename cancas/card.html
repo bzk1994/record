@@ -7,6 +7,7 @@
   <title>Card</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.4/??flexible_css.js,flexible.js"></script>
 
   <style>
     * {
@@ -19,8 +20,7 @@
     }
 
     #canvas-plan-1 {
-      width: 447px;
-      height: 324px;
+      width: 100%;
       background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1518602963124&di=92dcaad1d27317a51f277c4436468886&imgtype=0&src=http%3A%2F%2Fwww.tp88.net%2Fpicture%2Fuploads%2Fallimg%2F151207%2F1-15120G64550.jpg');
       background-repeat: no-repeat;
       background-size: 100%;
@@ -40,8 +40,8 @@
 
     img {
       display: block;
-      width: 447px;
-      height: 324px;
+      width: 10rem;
+      height: 7.248322147651rem;
     }
   </style>
 </head>
@@ -72,21 +72,36 @@
 </body>
 
 <script>
-  const canvasW = 447
-  const canvasH = 324
+  const canvasW = document.documentElement.clientWidth
+  const canvasH = document.documentElement.clientWidth * 324 / 447
 
   class Card1 {
     constructor() {
       this.canvas = document.querySelector('#canvas1')
       this.context = this.canvas.getContext('2d')
-      this.init()
+      this.img = new Image();
+      this.img.onload = () => {
+        this.init();
+      }
+      this.img.crossOrigin = "anonymous"; //关键
+      this.img.src = 'http://meipu1.video.meipai.com/b6775d2c-8ef8-40d6-aa81-ee08f807d49a.jpg';
     }
 
     init() {
       this.canvas.width = canvasW
       this.canvas.height = canvasH
-      this.context.fillStyle = '#d1d1d1'
-      this.context.fillRect(0, 0, canvasW, canvasH)
+      this.context.drawImage(
+        this.img,
+        0,
+        0,
+        this.img.width,
+        this.img.height,
+        0,
+        0,
+        this.canvas.width,
+        this.canvas.height) // 裁剪
+      // this.context.fillStyle = '#d1d1d1'
+      // this.context.fillRect(0, 0, canvasW, canvasH)
       this.context.globalCompositeOperation = 'destination-out'
       this.bindEvent()
     }
@@ -103,7 +118,8 @@
           width: canvasW,
           height: canvasH
         }) > 90) {
-          console.log('刮奖成功！')
+          console.log('刮奖成功！');
+          this.context.drawImage(this.img, 0, 0, this.img.width, this.img.height, 0, 0, this.canvas.width, this.canvas.height) // 裁剪
         }
       }, false)
     }
@@ -121,6 +137,7 @@
       const imageData = context.getImageData(0, 0, width, height)
       const pixles = imageData.data
       const pixlesLength = pixles.length
+
       let transPixs = []
       for (let i = 0; i < pixlesLength; i += 4) {
         if (pixles[i + 3] === 0) {
@@ -139,6 +156,14 @@
       this.canvas.height = canvasH
       this.moveing = false
       this.img = new Image()
+      // this.img.width = canvasW
+      // this.img.height = canvasH
+      this.img.onload = () => {
+        // this.img.width = canvasW
+        // this.img.height = canvasH
+
+        console.log(this.img.width, this.img.height)
+      }
       this.img.src = this.canvas.getAttribute('data-bg')
       this.init()
     }
@@ -176,7 +201,12 @@
       this.context.beginPath() // 重置路径
       this.context.arc(this.touchX, this.touchY, 20, 0, Math.PI * 2, false)
       this.context.clip() // 从原始画布中剪切
-      this.context.drawImage(this.img, 0, 0, this.canvas.width, this.canvas.height, 0, 0, this.canvas.width, this.canvas.height) // 裁剪
+      this.context.drawImage(
+        this.img,
+        0, 0,
+        this.img.width, this.img.height,
+        0, 0,
+        this.img.width, this.img.height) // 裁剪
       this.context.restore() // 恢复到canvas.save()状态
     }
 
@@ -202,6 +232,8 @@
 
     init() {
       this.img = new Image()
+      // this.img.width = canvasW
+      // this.img.height = canvasH
       this.img.onload = () => {
         // 创建 pattern 对象 指定元素 绘制 img
         this.context.strokeStyle = this.context.createPattern(this.img, 'no-repeat')
