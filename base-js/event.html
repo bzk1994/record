@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>DOM Event</title>
+  <style>
+    li {
+      border: 1px solid black;
+    }
+
+    ul {
+      background-color: red;
+      padding: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <ul>
+    <li>iPhone</li>
+    <li>iPad</li>
+    <li>Macbook</li>
+    <li>iPod</li>
+  </ul>
+</body>
+<script>
+  var parent = document.querySelector('ul')
+  parent.addEventListener('click', function (e) {
+    var el = e.target
+    console.log(e.currentTarget, e.target)
+    while (el.tagName !== 'LI') {
+      if (el === parent) {
+        el = null
+        break
+      }
+      el = el.parentNode
+      console.log(el)
+    }
+    if (el) {
+      console.log(el.innerText)
+    } else {
+      console.log('未命中')
+    }
+  })
+</script>
+
+</html>
