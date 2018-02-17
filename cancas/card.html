@@ -79,27 +79,21 @@
     constructor() {
       this.canvas = document.querySelector('#canvas1')
       this.context = this.canvas.getContext('2d')
-      this.img = new Image();
+      this.img = new Image()
       this.img.onload = () => {
-        this.init();
+        this.init()
       }
-      this.img.crossOrigin = "anonymous"; //关键
-      this.img.src = 'http://meipu1.video.meipai.com/b6775d2c-8ef8-40d6-aa81-ee08f807d49a.jpg';
+      // ps: The canvas has been tainted by cross-origin data.
+      // 图片服务添(CND)加CROS（跨域） Access-Control-Allow-Origin:*
+      // Set img.crossOrigin = "anonymous"
+      this.img.crossOrigin = "anonymous"
+      this.img.src = 'http://meipu1.video.meipai.com/b6775d2c-8ef8-40d6-aa81-ee08f807d49a.jpg'
     }
 
     init() {
       this.canvas.width = canvasW
       this.canvas.height = canvasH
-      this.context.drawImage(
-        this.img,
-        0,
-        0,
-        this.img.width,
-        this.img.height,
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height) // 裁剪
+      this.context.drawImage(this.img, 0, 0, this.img.width, this.img.height, 0, 0, this.canvas.width, this.canvas.height) // 裁剪
       // this.context.fillStyle = '#d1d1d1'
       // this.context.fillRect(0, 0, canvasW, canvasH)
       this.context.globalCompositeOperation = 'destination-out'
@@ -201,12 +195,7 @@
       this.context.beginPath() // 重置路径
       this.context.arc(this.touchX, this.touchY, 20, 0, Math.PI * 2, false)
       this.context.clip() // 从原始画布中剪切
-      this.context.drawImage(
-        this.img,
-        0, 0,
-        this.img.width, this.img.height,
-        0, 0,
-        this.img.width, this.img.height) // 裁剪
+      this.context.drawImage(this.img, 0, 0, this.img.width, this.img.height, 0, 0, this.canvas.width, this.canvas.height) // 裁剪
       this.context.restore() // 恢复到canvas.save()状态
     }
 
