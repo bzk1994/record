@@ -1,6 +1,6 @@
 // 函数节流
 
-// risize scroll
+// risize scroll(lazy-road)
 
 const throttle1 = (fn, delay = 250) => {
   let last = 0

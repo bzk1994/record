@@ -60,21 +60,128 @@
   .flex div {
     width: 70px;
     height: 70px;
-    background: red;
     margin: 10px;
   }
+
+  .lightcoral {
+    background: lightcoral;
+  }
+
+
+  /* 圣杯 双飞翼 Common */
+
+  .col {
+    height: 100px;
+  }
+
+  .middle {
+    background: lightblue;
+  }
+
+  .left {
+    background: lightcoral;
+  }
+
+  .right {
+    background: lightgray;
+  }
+
+  /* 圣杯 双飞翼 Common End */
+
+  /* 圣杯 start */
+
+  .grail {
+    line-height: 100px;
+    overflow: hidden;
+    padding: 0 100px 0 100px;
+  }
+
+  .grail .col {
+    position: relative;
+    float: left;
+  }
+
+  .grail .middle {
+    width: 100%;
+  }
+
+  .grail .left {
+    width: 100px;
+    margin-left: -100%;
+    left: -100px
+  }
+
+  .grail .right {
+    width: 100px;
+    margin-left: -100px;
+    right: -100px;
+  }
+
+  /* 圣杯 end */
+
+  /* 双飞翼 start */
+
+  .wing {
+    overflow: hidden;
+    line-height: 100px;
+  }
+
+  .wing .col {
+    float: left;
+  }
+
+  .wing .left {
+    width: 100px;
+    margin-left: -100%;
+  }
+
+  .wing .right {
+    width: 100px;
+    margin-left: -100px;
+  }
+
+  .wing .middle {
+    width: 100%;
+  }
+
+  .wing .middle .middle-content {
+    margin: 0 100px 0 100px;
+  }
+
+  .wing .middle
+  /* 双飞翼 end */
 </style>
 
 <body>
-  <h3>flex</h3>
+
+  <h3>圣杯布局</h3>
+  <div class="grail">
+    <div class="middle col">middle</div>
+    <div class="left col">left</div>
+    <div class="right col">right</div>
+  </div>
+
+  <h3>双飞翼布局</h3>
+  <div class="wing">
+    <div class="middle col">
+      <div class="middle-content">middle</div>
+    </div>
+    <div class="left col">left</div>
+    <div class="right col">right</div>
+  </div>
+
+  <h3>flex fill</h3>
   <div class="flex">
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
+    <div class="lightcoral"></div>
+    <div class="lightcoral"></div>
+    <div class="lightcoral"></div>
+    <div class="lightcoral"></div>
+    <div class="lightcoral"></div>
+    <div class="lightcoral"></div>
     <div></div>
     <div></div>
   </div>
+
   <h3>float + margin-left</h3>
   <div class="content content-float">
     <div class="left">
