@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>layout-两列布局</title>
+  <title>layout-布局</title>
 </head>
 <style>
   * {
@@ -50,14 +50,14 @@
 
   .content-absolute .right {}
 
-  .flex {
+  .flex-fill {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     flex-flow: row wrap;
   }
 
-  .flex div {
+  .flex-fill div {
     width: 70px;
     height: 70px;
     margin: 10px;
@@ -148,8 +148,25 @@
     margin: 0 100px 0 100px;
   }
 
-  .wing .middle
   /* 双飞翼 end */
+
+  /* flex start */
+
+  .flex-layout {
+    display: flex;
+    line-height: 100px;
+  }
+
+  .flex-layout .middle {
+    flex: 1;
+  }
+
+  .flex-layout .left,
+  .flex-layout .right {
+    width: 100px;
+  }
+
+  /* flex end */
 </style>
 
 <body>
@@ -170,8 +187,15 @@
     <div class="right col">right</div>
   </div>
 
+  <h3>flex</h3>
+  <div class="flex-layout">
+    <div class="left">left</div>
+    <div class="middle">middle</div>
+    <div class="right">right</div>
+  </div>
+
   <h3>flex fill</h3>
-  <div class="flex">
+  <div class="flex-fill">
     <div class="lightcoral"></div>
     <div class="lightcoral"></div>
     <div class="lightcoral"></div>
