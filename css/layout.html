@@ -8,6 +8,8 @@
   <title>layout-布局</title>
 </head>
 <style>
+  /* reset */
+
   * {
     margin: 0;
     padding: 0;
@@ -44,11 +46,20 @@
     margin-left: 200px;
   }
 
-  /* absolute */
+  /* absolute + margin-left */
 
-  .content-absolute .left {}
+  .content-absolute {
+    position: relative;
+  }
 
-  .content-absolute .right {}
+  .content-absolute .left {
+    position: absolute;
+    width: 200px;
+  }
+
+  .content-absolute .right {
+    margin-left: 200px;
+  }
 
   .flex-fill {
     display: flex;
@@ -218,7 +229,7 @@
     </div>
   </div>
 
-  <h3>absolute</h3>
+  <h3>absolute + margin-left</h3>
   <div class="content content-absolute">
     <div class="left">
       <p>Hello</p>
