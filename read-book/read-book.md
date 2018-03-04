@@ -8,11 +8,11 @@
 ```
 document 
 		
-	html ↑
+ html ↑
 		
-		body ↑
+  body ↑
 				
-			div ↑
+   div ↑
 
 ```
 			
@@ -23,19 +23,19 @@ document
 ```
 
 ul#parent
-	li
-	li
-	li
+ li
+ li
+ li
 	
 var parent = document.querySelector('#parent')
 
 parent.addEventListener('click', function (e) {
 	
-	var el = e.target
+ var el = e.target
 
-	if (el.tagName === 'LI') {
-	  console.log(el)
-	}
+ if (el.tagName === 'LI') {
+  console.log(el)
+ }
    
 })
 
@@ -59,7 +59,7 @@ this对象是在运行时基于函数的实行环境绑定的，取决于函数�
 var a = 26
 
 function foo() {
-console.log(this.a)
+ console.log(this.a)
 }
 
 foo() // 26
@@ -188,7 +188,7 @@ require.js 原理
 	
 ```
 function foo(){
-	console.log(1)
+ console.log(1)
 }()
 
 // Uncaught SyntaxError: Unexpected token )
@@ -196,7 +196,7 @@ function foo(){
 
 ```
 (function foo(){
-	console.log(1)
+ console.log(1)
 })()
 
 // 1
@@ -205,7 +205,7 @@ function foo(){
 
 ```
 (function foo(){
-	console.log(1)
+ console.log(1)
 }())
 
 // 1
@@ -252,7 +252,7 @@ console.log(a == undefined) // true 隐式转换false
 console.log(a === null)		// true
 
 function isNull(value) {
-    return !value && typeof value != "undefined" && value != 0
+ return !value && typeof value != "undefined" && value != 0
 }
 
 console.log(isNull(isNull))	// true
@@ -288,7 +288,7 @@ console.log(isNull(isNull))	// true
 var arr = [1, 2, 3, 4, 5]
 
 var res = arr.forEach(function (item,index,input) {
-     return item * 2
+ return item * 2
 })
 
 console.log(arr) //	[1, 2, 3, 4, 5]
@@ -304,7 +304,7 @@ console.log(res)	//	undefined
 var arr = [1, 2, 3, 4, 5]
 
 var res = arr.map(function (item,index,input) {
-     return item * 2
+ return item * 2
 })
 
 console.log(arr) //	[1, 2, 3, 4, 5]
@@ -319,12 +319,12 @@ console.log(res)	//	[2, 4, 6, 8, 10]
 ```
 //	回调函数
 arr.forEach(function (item,index,input) {
-     return item * 2
+ return item * 2
 })
 
 //	IIFE
 function foo(){
-	console.log(1)
+ console.log(1)
 }()
 
 ```
