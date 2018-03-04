@@ -1,6 +1,6 @@
 
 
-# 1 事件委托
+## 1 事件委托
 
 * 事件冒泡：事件由最近具体元素接收，逐级向上传播到不具体的节点
 	
@@ -47,7 +47,7 @@ parent.addEventListener('click', function (e) {
 
 	不用额外的解绑、添加事件监听
 
-# 2 解释 JavaSctpt This 
+## 2 解释 JavaSctpt This 
 
 this对象是在运行时基于函数的实行环境绑定的，取决于函数调用的方式
 	
@@ -129,7 +129,7 @@ let obj = {
 obj.foo() // 26
 ```
 
-# 3 解释原型继承
+## 3 解释原型继承
 
 * 原型链
 
@@ -152,7 +152,7 @@ JS在创建对象的时候，有一个叫做[[Prototype]]的内置属性，用�
 
 	
 
-# 4 ADM 和 Common.js  关系
+## 4 ADM 和 Common.js  关系
 	
 * CommonJS
 
@@ -178,7 +178,7 @@ require.js 原理
 
 两者的模块导入以及导出机制有何不同
 ```
-# 5 自执行函数的使用
+## 5 自执行函数的使用
 
 * 用途
 	
@@ -211,7 +211,7 @@ function foo(){
 // 1
 ```
 
-# 6 变量的概念 类型判断
+## 6 变量的概念 类型判断
 	
 * Undefined
 
@@ -261,7 +261,7 @@ console.log(isNull(isNull))	// true
 
 
 
-# 7 闭包的概念
+## 7 闭包的概念
 	
 * 概念
 		
@@ -278,7 +278,7 @@ console.log(isNull(isNull))	// true
 	
 	
 
-# 8 forEach && map
+## 8 forEach && map
 
 * forEach
 
@@ -314,7 +314,7 @@ console.log(res)	//	[2, 4, 6, 8, 10]
 ```
 
 	
-# 9 匿名函数
+## 9 匿名函数
 
 ```
 //	回调函数
@@ -329,15 +329,17 @@ function foo(){
 
 ```
 	
-# 10 如何组织你的代码
+## 10 如何组织你的代码
 
 	这个说来话长
+	
+	es6 代码模块化
 
-# 11 主机对象和本机对象有什么区别
+## 11 主机对象和本机对象有什么区别
 
 	了解即可
 
-# 12 函数声明 函数表达式 构造函数 不同
+## 12 函数声明 函数表达式 构造函数 不同
 	
 	// 函数声明提升
  	function Person(){}
@@ -347,49 +349,98 @@ function foo(){
 
 	var person = new Person()
 
-# 13 call and apply 异同 
+## 13 call and apply 异同 
 	
-	题外话 bind  && 模拟
+* call
 
-# 14 Function.prototype.bind
+```
+var obj = {}
 
-# document.write()
+function foo(a, b){
+
+	console.log(a + b)
+	
+}
+
+foo.call(obj, 1, 2)	// 3
+
+Object.prototype.toString.call([])
+
+Array.prototype.toString.slice(arguments)
+```
+
+* apply
+
+```
+var obj = {}
+
+function foo(a, b){
+
+	console.log(a + b)
+	
+}
+
+apply(obj, [1, 2])	// 3
+
+Math.max.apply(null, [1, 2, 3, 4, 5])
+
+```
+
+## 14 Function.prototype.bind
+
+* bind
+
+```
+// 返回改变this指向的函数， 不执行
+
+Function.prototype.bindMock = function (context) {
+  var self = this
+  var args = Array.prototype.slice.call(arguments, 1)
+  return function () {
+    var bindArgs = Array.prototype.slice.call(arguments)
+    self.apply(context, args.concat(bindArgs))
+  }
+}
+
+```
+
+## document.write()
 	
 	作用
 	
 	坏处
 
-# What's the difference between feature detection, feature inference, and using the UA string
+## What's the difference between feature detection, feature inference, and using the UA string
 
 	不太理解
 	
-# 解释Ajax
+## 解释Ajax
 
 	原生ajax
 
 	用处
 
-# Ajax优缺点
+## Ajax优缺点
 
-# 解释jsonp
+## 解释jsonp
 
 	自己模拟jsonp请求
 
-# JavaScript 模板引擎
+## JavaScript 模板引擎
 
 	Handlebar
 
-# hoisting
+## hoisting
 	
 	函数提升
 
 	变量提升
 
-# 解释事件冒泡
+## 解释事件冒泡
 
 	事件委托
 
-# attribute  && property
+## attribute  && property
 
 JavaScript的同源策略
 
