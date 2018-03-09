@@ -30,7 +30,8 @@
   var parent = document.querySelector('ul')
   parent.addEventListener('click', function (e) {
     var el = e.target
-    console.log(e.currentTarget, e.target)
+    console.log(el.nodeName)
+    console.log(el.tagName)
     while (el.tagName !== 'LI') {
       if (el === parent) {
         el = null
