@@ -2,6 +2,27 @@
 
 1 什么是http
 
+  HTTP（HyperText Transfer Protocol, 超文本传输协议）
+    无状态协议，不对通信状态进行保存，减少服务器的CPU及内存资源消耗
+    保持状态  Cookie
+      服务器端发送的响应报文的Set-Cookie的字段，通知客户端保存Cookie.当服务端再往该服务器发送请求时，客户端自动在请求报文中加入Cookie值后发送出去，服务端接收Cookie后，对比服务器的记录，得到之前的状态信息
+
+    keep-alive  持久连接  减少TCP重复连接断开
+
+  TCP/IP协议 
+    层次  
+    应用层  
+      FTP (File Transfer Protocol)
+      DNS (Domain Name System)
+      HTTP
+    传输层  
+      TCP (Transmission comntrol Protocol)
+        确保数据能到达目标  (三次握手)
+      UDP (User Data Protocol)
+        不能确定是否发送到   使用场景？
+    网络层  
+    数据链路层
+
 2 http用途
 
 3 http与https
