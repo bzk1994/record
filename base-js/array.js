@@ -235,9 +235,7 @@ function transTree(arr, id) {
 
   collectArr.map((item, i) => {
     let result = transTree(arr, item.id)
-    if (result) {
-      collectArr[i]['children'] = result
-    }
+    if (result) collectArr[i]['children'] = result
   })
 
   return collectArr
