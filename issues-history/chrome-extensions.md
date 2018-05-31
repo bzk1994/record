@@ -119,3 +119,11 @@ Google官方网页载入速度检测工具
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/reader-view/iibolhpkjjmoepndefdmdlmbpfhlgjpl)
 
 ![Reader View](https://lh3.googleusercontent.com/0YC9JCOIVXNiMgNm9sJ9y8UM0RvaZWsoxuQxUM583zcromYQGPLVxiPwf4i4QsqEs9fIsZ8I-Lw=w640-h400-e365)
+
+## Page Ruler
+
+测量Chrome浏览器中网页元素大小尺寸
+
+[Chrome 应用商店](https://chrome.google.com/webstore/detail/page-ruler/jlpkojjdgbllmedoapgfodplfhcbnbpn)
+
+![Page Ruler](https://lh3.googleusercontent.com/ryGefrHm0ZmiLpJXKjzJHpU6OGK6on1bcQGYYBQL-EVRhbmvb1kkwJxdOwAnHvFLERKfMUT6YA=w640-h400-e365)
