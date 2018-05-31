@@ -105,10 +105,35 @@ console.log('1', a)
 // 3 10aa10aA
 ```
 
+### Use `Generator`
+
+```
+function* g() {
+  let i = 0
+  yield i++
+  yield i++
+  yield i++
+}
+
+const gen = g()
+console.log(gen.next())
+console.log(gen.next())
+console.log(gen.next())
+console.log(gen.next())
+
+// 每一次调用 next ，generator总是保留了上次yield停留的上下文环境，导致变量 i 逐渐累加
+// { value: 0, done: false }
+// { value: 1, done: false }
+// { value: 2, done: false }
+// { value: undefined, done: true }
+```
+
 ### `async` Trans `Generator`
+
 `vasync` 的本质就是 `Generator` 函数的语法糖
 尝试用在线 `babel` 转一波, 编译成 `Generator`
-发现函数b是一个自执行函数，返回了 `function b` ，形成了一个闭包，维持了变量 `a` 的引用
+`Generator` 函数本意是 `iterator` 生成器，函数运行到` yield` 时退出，并保留上下文，在下次进入时可以继续运行
+~~发现函数b是一个自执行函数，返回了 `function b` ，形成了一个闭包，维持了变量 `a` 的引用~~
 
 [babeljs](http://babeljs.io/repl/#?babili=false&browsers=&build=&builtIns=false&code_lz=DYUwLgBAhhC8EAYBQSDGB7AdgZ0gIzmmwE9NUIAKASjgD4IBvJCaQmAamgHcoBLSAIzIWGHOlAA6YOgDmFAOQAmeQBpoVZq3hQe_CEIicom0dnEgpshQGZV6pAF8Ueakijt2aLGcnS58gTsoDSA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=false&lineWrap=true&presets=es2016%2Cstage-3&prettier=false&targets=&version=6.26.0&envVersion=)
 
@@ -163,10 +188,13 @@ console.log('1', a);
 
 ## 稍微总结
 
-重点就在这句 `a = a + await 10`
+[es6-in-depth-generators](https://hacks.mozilla.org/2015/05/es6-in-depth-generators/)
 
-这个 `a` 的值还是最初申明的 `0`
-而 `await` 后的 `a` 读取了新的值 `1`
+In technical terms, each time a generator yields, its stack frame—the local variables, arguments, temporary values, and the current position of execution within the generator body—is removed from the stack. However, the Generator object keeps a reference to (or copy of) this stack frame, so that a later .next() call can reactivate it and continue execution.
+
+### 最关键的原因: 
+ `Generator` 保留原先栈帧的引用（保留上下文）
+ 但是 `Generator` 又是如何保留原先栈帧的引用
 
 
 

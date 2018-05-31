@@ -1,24 +1,80 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js">
-<!--<![endif]-->
+<html>
 
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title></title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="" />
+  <meta name="apple-touch-fullscreen" content="YES" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="HandheldFriendly" content="true" />
+  <meta http-equiv="x-rim-auto-match" content="none" />
+  <meta name="format-detection" content="telephone=no" />
+  <!-- This is to force IE into the latest version mode, overriding 'compatibility' mode which breaks everything. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="apple-touch-icon-precomposed" sizes="57x57" href="" />
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="" />
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="" />
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="" />
+  <style>
+    .parent {
+      height: 800px;
+      width: 450px;
+    }
+  </style>
 </head>
 
 <body>
-  <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
+  <div class="parent">
+    <canvas id="canvas" style="position:absolute;top:0px;left:0px;z-index:1;"></canvas>
+  </div>
+  <script type="text/javascript">
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = canvas.parentNode.offsetWidth;
+    canvas.height = canvas.parentNode.offsetHeight;
 
+    window.requestAnimFrame = (function () {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        function (callback) {
+          window.setTimeout(callback, 1000 / 60);
+        };
+    })();
+
+    var step = 0;
+
+    var lines = ["rgba(0,222,255, 0.2)",
+      "rgba(157,192,249, 0.2)",
+      "rgba(0,168,255, 0.2)"];
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      step++;
+      //画3个不同颜色的矩形  
+      for (var j = lines.length - 1; j >= 0; j--) {
+        ctx.fillStyle = lines[j];
+        //每个矩形的角度都不同，每个之间相差45度  
+        var angle = (step + j * 45) * Math.PI / 180;
+        var deltaHeight = Math.sin(angle) * 50;
+        var deltaHeightRight = Math.cos(angle) * 50;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2 + deltaHeight);
+        ctx.bezierCurveTo(canvas.width / 2, canvas.height / 2 + deltaHeight - 50, canvas.width / 2, canvas.height / 2 + deltaHeightRight - 50, canvas.width, canvas.height / 2 + deltaHeightRight);
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(0, canvas.height);
+        ctx.lineTo(0, canvas.height / 2 + deltaHeight);
+        ctx.closePath();
+        ctx.fill();
+      }
+      requestAnimFrame(loop);
+    }
+    loop(); 
+  </script>
 </body>
 
 </html>
