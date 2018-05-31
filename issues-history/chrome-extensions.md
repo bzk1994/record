@@ -19,6 +19,22 @@
 
 ![JSON Formatter](https://lh3.googleusercontent.com/68vofGty-EmFi1WHH-y0IbwRXeJpKTg3eTZOjZQoZAhJ6vuY7cL0G6yJ0CsE5sooUtJkSbqwUbI=w640-h400-e365)
 
+## JSON-handle
+
+对JSON格式的内容进行浏览和编辑，以树形图样式展现JSON文档，并可实时编辑
+
+[Chrome 应用商店](https://chrome.google.com/webstore/detail/json-handle/iahnhfdhidomcpggpaimmmahffihkfnj)
+
+![JSON-handle](https://lh3.googleusercontent.com/GuVAM4PDNzwx4HIRNQ1jr2ZHoxTAMMaURa0qZoe66pdnxq8BtokWa9LEvgu7qGiFVscQ4OEKJw=w640-h400-e365)
+
+## WEB前端助手(FeHelper)
+
+FE助手：包括JSON格式化、二维码生成与解码、信息编解码、代码压缩、美化、页面取色、Markdown与HTML互转、网页滚动截屏、正则表达式、时间转换工具、编码规范检测、页面性能检测、Ajax接口调试
+
+[Chrome 应用商店](https://chrome.google.com/webstore/detail/web%E5%89%8D%E7%AB%AF%E5%8A%A9%E6%89%8Bfehelper/pkgccpejnmalmdinmhkkfafefagiiiad?hl=zh-CN)
+
+![WEB前端助手(FeHelper)](https://lh3.googleusercontent.com/f8nYyNdpVKpbmvYTXLC7S5dLuug_-2qnDlidkbnkHLeUKpoJPyaMWoJXwUnQgJnHgRizCll18NQ=w640-h400-e365)
+
 ## Octotree
 
 为 `Github` 页面添加侧边栏，在浏览器中显示项目的目录结构
