@@ -1,0 +1,11 @@
+{
+  "name": "record",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:zhanghao-zhoushan/record.git",
+  "author": "hao.zhang <hao.zhang@zhangmen.com>",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^1.4.0"
+  }
+}
