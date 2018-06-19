@@ -146,3 +146,10 @@
 > [Dr. Unarchiver](https://itunes.apple.com/cn/app/dr.-unarchiver-rar-zip-archive/id1127253508?l=en&mt=12)
 
 ![Dr. Unarchiver](https://is3-ssl.mzstatic.com/image/thumb/Purple117/v4/5b/59/25/5b592584-ca47-3be7-2692-b4d7a77fbbf2/pr_source.png/942x0w.png)
+
+## MindNode
+
+> 优雅简单易上手的思维导图制作编辑软件 APP 应用
+> [MindNode](https://mindnode.com/)
+
+![MindNode](https://mindnode.com/content/2-mindnode/1-mac/3-organize/organize.gif)
