@@ -143,3 +143,12 @@ Google官方网页载入速度检测工具
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/page-ruler/jlpkojjdgbllmedoapgfodplfhcbnbpn)
 
 ![Page Ruler](https://lh3.googleusercontent.com/ryGefrHm0ZmiLpJXKjzJHpU6OGK6on1bcQGYYBQL-EVRhbmvb1kkwJxdOwAnHvFLERKfMUT6YA=w640-h400-e365)
+
+## Office Online
+
+在浏览器中查看、编辑和创建 Office 文件
+
+[Chrome 应用商店]
+(https://chrome.google.com/webstore/detail/office-online/ndjpnladcallmjemlbaebfadecfhkepb?hl=zh-CN)
+
+![Office Online](https://lh3.googleusercontent.com/gNqqfjx6BZXbqTmb2yKlIGY4C7rXbN-Tgcv-GVsFM5jHrNxOxD2N1pVUCw7pjAEp6elF1hJF8dU=w640-h400-e365)

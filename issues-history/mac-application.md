@@ -63,6 +63,8 @@
 
 ![Beyond Compare](http://www.beyondcompare.cc/uploads/images/beyondcompare/chanpin/tab1-1.jpg)
 
+<img src="http://www.beyondcompare.cc/uploads/images/beyondcompare/chanpin/tab1-1.jpg" width="100%" />
+
 ## Charles
 
 > 网络封包截取工具
