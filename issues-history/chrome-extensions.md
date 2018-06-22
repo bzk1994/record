@@ -1,6 +1,6 @@
 ##  Google Translate
 
-好用的实时翻译
+> 好用的实时翻译
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/google-translate/aapbdbdomjkkjkaonfhkkikfgjllcleb)
 
@@ -21,7 +21,7 @@
 
 ## JSON-handle
 
-对JSON格式的内容进行浏览和编辑，以树形图样式展现JSON文档，并可实时编辑
+> 对JSON格式的内容进行浏览和编辑，以树形图样式展现JSON文档，并可实时编辑
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/json-handle/iahnhfdhidomcpggpaimmmahffihkfnj)
 
@@ -29,7 +29,7 @@
 
 ## WEB前端助手(FeHelper)
 
-FE助手：包括JSON格式化、二维码生成与解码、信息编解码、代码压缩、美化、页面取色、Markdown与HTML互转、网页滚动截屏、正则表达式、时间转换工具、编码规范检测、页面性能检测、Ajax接口调试
+> FE助手：包括JSON格式化、二维码生成与解码、信息编解码、代码压缩、美化、页面取色、Markdown与HTML互转、网页滚动截屏、正则表达式、时间转换工具、编码规范检测、页面性能检测、Ajax接口调试
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/web%E5%89%8D%E7%AB%AF%E5%8A%A9%E6%89%8Bfehelper/pkgccpejnmalmdinmhkkfafefagiiiad?hl=zh-CN)
 
@@ -37,7 +37,7 @@ FE助手：包括JSON格式化、二维码生成与解码、信息编解码、�
 
 ## Octotree
 
-为 `Github` 页面添加侧边栏，在浏览器中显示项目的目录结构
+> 为 `Github` 页面添加侧边栏，在浏览器中显示项目的目录结构
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/octotree/bkhaagjahfmjljalopjnoealnfndnagc)
 ![Octotree](https://lh3.googleusercontent.com/MPjmv1ve2mGZYZC2rpmM25beJRYoURC3YhU6pCtV8iCss8zpgqsEZXmYgyZKvaq1S7yzDMJQ=w640-h400-e365)
@@ -45,8 +45,8 @@ FE助手：包括JSON格式化、二维码生成与解码、信息编解码、�
 
 ## Sourcegraph
 
-更好地搜索和浏览 `GitHub` 上的代码
-需要跳转页面
+> 更好地搜索和浏览 `GitHub` 上的代码
+> 需要跳转页面
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/sourcegraph/dgjhfomjieaadpoljlnidmbgkdffpack)
 
@@ -66,7 +66,7 @@ FE助手：包括JSON格式化、二维码生成与解码、信息编解码、�
 
 ## 草料二维码
 
-二维码应用增强工具插件 自动将地址栏链接生成二维码 生成图案简单的短网址二维码
+> 二维码应用增强工具插件 自动将地址栏链接生成二维码 生成图案简单的短网址二维码
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/%E8%8D%89%E6%96%99%E4%BA%8C%E7%BB%B4%E7%A0%81/moombeodfomdpjnpocobemoiaemednkg)
 
@@ -74,7 +74,7 @@ FE助手：包括JSON格式化、二维码生成与解码、信息编解码、�
 
 ## Postman
 
-一款功能强大的网页调试与发送网页HTTP请求的Chrome插件
+> 一款功能强大的网页调试与发送网页HTTP请求的Chrome插件
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
 
@@ -82,7 +82,7 @@ FE助手：包括JSON格式化、二维码生成与解码、信息编解码、�
 
 ## Window Resizer
 
-快速调整浏览器窗口大小的chrome窗口缩放插件
+> 快速调整浏览器窗口大小的chrome窗口缩放插件
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/window-resizer/kkelicaakdanhinjdeammmilcgefonfh)
 
@@ -90,7 +90,7 @@ FE助手：包括JSON格式化、二维码生成与解码、信息编解码、�
 
 ## ExtensionAwesome Autocomplete for GitHub
 
-GitHub的搜索栏添加即时搜索功能
+> GitHub的搜索栏添加即时搜索功能
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/awesome-autocomplete-for/djkfdjpoelphhdclfjhnffmnlnoknfnd)
 
@@ -98,7 +98,7 @@ GitHub的搜索栏添加即时搜索功能
 
 ## Adblock Plus
 
-智能屏蔽chrome浏览器中广告
+> 智能屏蔽chrome浏览器中广告
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/adblock-plus/cfhdojbkjhnklbpkdaibdccddilifddb)
 
@@ -106,7 +106,7 @@ GitHub的搜索栏添加即时搜索功能
 
 ## Clear Cache
 
-一键清除浏览器缓存数据
+> 一键清除浏览器缓存数据
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/clear-cache/cppjkneekbjaeellbfkmgnhonkkjfpdn)
 
@@ -114,7 +114,7 @@ GitHub的搜索栏添加即时搜索功能
 
 ## Emmet Re:view
 
-网站分辨率兼容性测试工具
+> 网站分辨率兼容性测试工具
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/emmet-review/epejoicbhllgiimigokgjdoijnpaphdp)
 
@@ -122,7 +122,7 @@ GitHub的搜索栏添加即时搜索功能
 
 ## PageSpeed Insights (with PNaCl)
 
-Google官方网页载入速度检测工具
+> Google官方网页载入速度检测工具
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/pagespeed-insights-with-p/lanlbpjbalfkflkhegagflkgcfklnbnh)
 
@@ -130,7 +130,7 @@ Google官方网页载入速度检测工具
 
 ## Reader View
 
-提供完美的在线阅读体验
+> 提供完美的在线阅读体验
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/reader-view/iibolhpkjjmoepndefdmdlmbpfhlgjpl)
 
@@ -138,7 +138,7 @@ Google官方网页载入速度检测工具
 
 ## Page Ruler
 
-测量Chrome浏览器中网页元素大小尺寸
+> 测量Chrome浏览器中网页元素大小尺寸
 
 [Chrome 应用商店](https://chrome.google.com/webstore/detail/page-ruler/jlpkojjdgbllmedoapgfodplfhcbnbpn)
 
@@ -146,7 +146,7 @@ Google官方网页载入速度检测工具
 
 ## Office Online
 
-在浏览器中查看、编辑和创建 Office 文件
+> 在浏览器中查看、编辑和创建 Office 文件
 
 [Chrome 应用商店]
 (https://chrome.google.com/webstore/detail/office-online/ndjpnladcallmjemlbaebfadecfhkepb?hl=zh-CN)
