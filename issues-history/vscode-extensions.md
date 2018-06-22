@@ -2,7 +2,12 @@
 ## VSCode插件
 
 ### Auto Close Tag
-自动添加HTML/XML关闭标签
+
+> 自动添加HTML/XML关闭标签
+> [Auto Close Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-close-tag)
+
+<img src="https://github.com/formulahendry/vscode-auto-close-tag/raw/master/images/usage.gif" width="100%" />  
+
 
 ### Auto Rename Tag
 ### Better Comments
