@@ -12,4 +12,11 @@
 
 ![阅读源码的思维导图](https://images-cdn.shimo.im/gFfW8mk8XVoiiXvx/Vue_router.png!thumbnail)
 
-### React
+### Canvas
+
+[波浪](https://zhanghao-zhoushan.github.io/record/canvas/wave.html)
+[气泡](https://zhanghao-zhoushan.github.io/record/canvas/bubble.html)
+[刮奖](https://zhanghao-zhoushan.github.io/record/canvas/card.html)
+
+
+
