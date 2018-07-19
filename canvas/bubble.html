@@ -134,7 +134,7 @@
 
     function createCircle(circle) {
       var img = document.createElement("img");
-      var url = './' + circle.url + '.png';
+      var url = '../assets/images/' + circle.url + '.png';
       img.src = url;
       ctx.drawImage(img, circle.left, circle.top, circle.width, circle.width)
     }
@@ -151,7 +151,7 @@
 
     function moveCircles(url, circle) {
       var img = document.createElement("img");
-      var url = './' + url + '.png';
+      var url = '../assets/images/' + url + '.png';
       img.src = url;
       var directionX = circle.directionX
       var directionY = circle.directionY

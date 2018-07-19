@@ -10,13 +10,38 @@
 
 ### Vue
 
-![阅读源码的思维导图](https://images-cdn.shimo.im/gFfW8mk8XVoiiXvx/Vue_router.png!thumbnail)
+[Vue.js 技术揭秘](https://ustbhuangyi.github.io/vue-analysis/)
+
+[Vue技术内幕](http://hcysun.me/vue-design/art/)
+
+#### vue-router
+
+![阅读 vue-router 源码的思维导图](https://images-cdn.shimo.im/gFfW8mk8XVoiiXvx/Vue_router.png!thumbnail)
+
+[阅读 vue-router 源码的一些注释](https://github.com/zhanghao-zhoushan/vue-router)
+
+参考资料
+
+[vue-router源码分析-整体流程](https://github.com/DDFE/DDFE-blog/issues/9)
+
+[勾三股四](http://jiongks.name/blog/vue-code-review/)
+
+[Vue.js 技术揭秘](https://ustbhuangyi.github.io/vue-analysis/vue-router/)
+
+
+
 
 ### Canvas
 
-[波浪](https://zhanghao-zhoushan.github.io/record/canvas/wave.html)
-[气泡](https://zhanghao-zhoushan.github.io/record/canvas/bubble.html)
-[刮奖](https://zhanghao-zhoushan.github.io/record/canvas/card.html)
+[模拟多重波浪](https://zhanghao-zhoushan.github.io/record/canvas/wave.html)
+
+[气泡碰撞效果](https://zhanghao-zhoushan.github.io/record/canvas/bubble.html)
+
+[模拟刮奖](https://zhanghao-zhoushan.github.io/record/canvas/card.html)
+
+## CSS
+
+### 布局
 
 
 
