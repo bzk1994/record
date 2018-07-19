@@ -1,6 +1,6 @@
-## 三栏布局
+[查看栗子](https://zhanghao-zhoushan.github.io/record/css/layout.html)
 
-![三栏布局](../assets/images/layout-3.png)
+## 三栏布局
 
 ### 圣杯布局
 
@@ -133,7 +133,6 @@
 
 ## 两栏布局
 
-![两栏布局](file:///Users/zhanghao/Desktop/github/record/assets/images/layout-2.png)
 ### float + margin-left
 
 > html
@@ -212,8 +211,6 @@
 ```
 
 ## flex fill
-
-![flex fill](file:///Users/zhanghao/Desktop/github/record/assets/images/layout-flex.png)
 
 ```
 <div class="flex-fill">
