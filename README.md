@@ -39,9 +39,9 @@
 
 [模拟刮奖](https://zhanghao-zhoushan.github.io/record/canvas/card.html)
 
-## CSS
+### CSS
 
-### 布局
+[页面布局](https://github.com/zhanghao-zhoushan/record/blob/master/css/layout.md)
 
 
 

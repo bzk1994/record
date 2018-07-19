@@ -212,6 +212,7 @@
 
 ## flex fill
 
+> html
 ```
 <div class="flex-fill">
   <div class="lightcoral"></div>
@@ -225,9 +226,11 @@
 </div>
 ```
 
+> css
+
 ```
 /* flex fill */
-
+css
 .flex-fill {
   display: flex;
   flex-wrap: wrap;
