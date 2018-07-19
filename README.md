@@ -16,9 +16,9 @@
 
 #### vue-router
 
-![阅读 vue-router 源码的思维导图](https://images-cdn.shimo.im/gFfW8mk8XVoiiXvx/Vue_router.png!thumbnail)
-
 [阅读 vue-router 源码的一些注释](https://github.com/zhanghao-zhoushan/vue-router)
+
+![阅读 vue-router 源码的思维导图](https://images-cdn.shimo.im/gFfW8mk8XVoiiXvx/Vue_router.png!thumbnail)
 
 参考资料
 
