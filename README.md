@@ -43,5 +43,7 @@
 
 [页面布局](https://github.com/zhanghao-zhoushan/record/blob/master/css/layout.md)
 
+[页面居中](https://github.com/zhanghao-zhoushan/record/blob/master/css/page-center.md)
+
 
 
