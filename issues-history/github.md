@@ -34,11 +34,12 @@
 
 ```
 ## github
-151.101.24.133  assets-cdn.github.com
+151.101.196.133 assets-cdn.github.com
 151.101.72.133  avatars0.githubusercontent.com
 151.101.72.133  avatars1.githubusercontent.com
 151.101.196.133 avatars3.githubusercontent.com
-151.101.12.133  github.global.ssl.fastly.net
+151.101.185.194 github.global.ssl.fastly.net
+192.30.253.112  github.com
 ```
 
 ### 保存 hosts
