@@ -19,18 +19,18 @@
 
 ## 在源码中 `debugger`
 
-下载 `Vue` 源码
+> 下载 `Vue` 源码
 
 ```bash
 $ git clone https://github.com/vuejs/vue.git
 ```
 
-依赖安装
+> 依赖安装
 ```bash
 cd vue && yarn install
 ```
 
-编辑 `config.js` 增加 `sourceMap`
+> 编辑 `config.js` 增加 `sourceMap`
 
 ```base
   // vue/scripts/config.js
@@ -46,7 +46,7 @@ cd vue && yarn install
   ...
 ```
 
-新建test.html
+> 新建test.html
 
 ```base
   <!DOCTYPE html>
@@ -76,7 +76,7 @@ cd vue && yarn install
   </html>
 ```
 
-可在源代码中 `debugger` 或者在 `Chrome` 调试
+> 可在源代码中 `debugger` 或者在 `Chrome` 调试
 
 ```base
 cd vue && yarn dev

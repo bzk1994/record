@@ -54,6 +54,8 @@ export class Store {
     // init root module.
     // this also recursively registers all sub-modules
     // and collects all module getters inside this._wrappedGetters
+    // 初始化 modules
+    // vuex 提供了模块化的写法，递归处理 modules
     installModule(this, state, [], this._modules.root)
 
     // initialize the store vm, which is responsible for the reactivity
@@ -273,6 +275,8 @@ function installModule (store, rootState, path, module, hot) {
   const namespace = store._modules.getNamespace(path)
 
   // register in namespace map
+  // 如果传入 namespaced: true
+  // 处理模块的命名空间
   if (module.namespaced) {
     store._modulesNamespaceMap[namespace] = module
   }
@@ -467,6 +471,8 @@ function unifyObjectStyle (type, payload, options) {
 }
 
 export function install (_Vue) {
+  // 判断全局变量的 Vue 是否与传入 _Vue 的是一个实例
+  // 避免重复安装
   if (Vue && _Vue === Vue) {
     if (process.env.NODE_ENV !== 'production') {
       console.error(
@@ -475,6 +481,8 @@ export function install (_Vue) {
     }
     return
   }
+  // 首次安装保存实例
   Vue = _Vue
+  // vuexInit
   applyMixin(Vue)
 }
