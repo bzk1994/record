@@ -31,7 +31,7 @@ export default function (Vue) {
         ? options.store()
         : options.store
     // 如果没有就从父组件中获取 $store
-    // 保证只有一个全局的 store
+    // 保证只有一个全局的 $store
     } else if (options.parent && options.parent.$store) {
       this.$store = options.parent.$store
     }

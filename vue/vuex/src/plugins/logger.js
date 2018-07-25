@@ -9,9 +9,12 @@ export default function createLogger ({
   mutationTransformer = mut => mut,
   logger = console
 } = {}) {
+  // Currying
   return store => {
+    // 深拷贝
     let prevState = deepCopy(store.state)
-
+    // 订阅函数，每次改变 Store 上的数据触发
+    // 打印日志
     store.subscribe((mutation, state) => {
       if (typeof logger === 'undefined') {
         return

@@ -32,9 +32,11 @@ export class Store {
     this._actionSubscribers = []
     this._mutations = Object.create(null)
     this._wrappedGetters = Object.create(null)
+    // 处理 modules
     this._modules = new ModuleCollection(options)
     this._modulesNamespaceMap = Object.create(null)
     this._subscribers = []
+    // 用一个新的 Vue 实例 watch store
     this._watcherVM = new Vue()
 
     // bind commit and dispatch to self
@@ -64,6 +66,8 @@ export class Store {
     resetStoreVM(this, state)
 
     // apply plugins
+    // plugins 是在实例化 Store 时候传入的数组
+    // 每一个插件就是一个函数 createLogger
     plugins.forEach(plugin => plugin(this))
 
     if (Vue.config.devtools) {
