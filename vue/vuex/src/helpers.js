@@ -7,21 +7,33 @@
  */
 export const mapState = normalizeNamespace((namespace, states) => {
   const res = {}
-  console.log(namespace, normalizeMap(states))
   // 格式化 states
   // 将 states 转换成 [{key: products, val: fn}] 的格式
   normalizeMap(states).forEach(({ key, val }) => {
+    // 以 key: value 形式存入 res
     res[key] = function mappedState () {
+      // 取出 $store state getters
       let state = this.$store.state
       let getters = this.$store.getters
+      // 如果有命名空间
       if (namespace) {
+        // 通过 getModuleByNamespace 搜索对应模块，没有搜索到 return
         const module = getModuleByNamespace(this.$store, 'mapState', namespace)
         if (!module) {
           return
         }
+        // 保存为命名空间 state getters
         state = module.context.state
         getters = module.context.getters
       }
+      // 如果 val 是 function 将 val 指向 Vue 实例，并将得到的 state getters 传参
+      // call 改变了 this 执行并且返回
+      // 所以在 mapState 中也传入了 getters 参数
+      // products(state, getters) {
+      //   return state.products.all;
+      // }
+      // 不是的话将 val 以 key 值保存到 state
+      // return
       return typeof val === 'function'
         ? val.call(this, state, getters)
         : state[val]
@@ -41,10 +53,12 @@ export const mapState = normalizeNamespace((namespace, states) => {
 export const mapMutations = normalizeNamespace((namespace, mutations) => {
   const res = {}
   normalizeMap(mutations).forEach(({ key, val }) => {
+    // 以 key: value 形式存入 res
     res[key] = function mappedMutation (...args) {
       // Get the commit method from store
       let commit = this.$store.commit
       if (namespace) {
+        // 通过 getModuleByNamespace 搜索对应模块，没有搜索到 return
         const module = getModuleByNamespace(this.$store, 'mapMutations', namespace)
         if (!module) {
           return
@@ -76,10 +90,10 @@ export const mapGetters = normalizeNamespace((namespace, getters) => {
   normalizeMap(getters).forEach(({ key, val }) => {
     // thie namespace has been mutate by normalizeNamespace
     // 根据 字符串拼 key 的形式处理命名空间的问题
-    // 将 val 以 key: value 形式存入 res
+    // 以 key: value 形式存入 res
     val = namespace + val
     res[key] = function mappedGetter () {
-      // 如果有命名空间 但是通过 getModuleByNamespace 没有搜索到对应模块 return
+      // 通过 getModuleByNamespace 搜索对应模块，没有搜索到 return
       if (namespace && !getModuleByNamespace(this.$store, 'mapGetters', namespace)) {
         return
       }
@@ -125,7 +139,7 @@ export const mapActions = normalizeNamespace((namespace, actions) => {
       let dispatch = this.$store.dispatch
       // 如果有命名空间
       if (namespace) {
-        // 通过 getModuleByNamespace 没有搜索到对应模块 return
+        // 通过 getModuleByNamespace 搜索对应模块，没有搜索到 return
         const module = getModuleByNamespace(this.$store, 'mapActions', namespace)
         if (!module) {
           return
@@ -172,6 +186,7 @@ export const createNamespacedHelpers = (namespace) => ({
  * @param {Array|Object}
  * @return {Object}
  * 格式化 getter mutations actions states
+ * 转成数组对象的形式
  */
 function normalizeMap (map) {
   return Array.isArray(map)
@@ -216,6 +231,7 @@ function normalizeNamespace (fn) {
  * @return {Object}
  */
 function getModuleByNamespace (store, helper, namespace) {
+  // _modulesNamespaceMap 在 Store 构造函数中 保存有命名空间的模块
   const module = store._modulesNamespaceMap[namespace]
   if (process.env.NODE_ENV !== 'production' && !module) {
     console.error(`[vuex] module namespace not found in ${helper}(): ${namespace}`)
