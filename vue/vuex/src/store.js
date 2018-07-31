@@ -11,16 +11,20 @@ export class Store {
     // To allow users to avoid auto-installation in some cases,
     // this code should be placed here. See #731
     // 自动安装 #731
+    debugger
     if (!Vue && typeof window !== 'undefined' && window.Vue) {
       install(window.Vue)
     }
 
     if (process.env.NODE_ENV !== 'production') {
+      // 断言
       assert(Vue, `must call Vue.use(Vuex) before creating a store instance.`)
       assert(typeof Promise !== 'undefined', `vuex requires a Promise polyfill in this browser.`)
       assert(this instanceof Store, `store must be called with the new operator.`)
     }
 
+    // 取出 plugins 插件
+    // strict 严格模式
     const {
       plugins = [],
       strict = false
@@ -32,14 +36,15 @@ export class Store {
     this._actionSubscribers = []
     this._mutations = Object.create(null)
     this._wrappedGetters = Object.create(null)
-    // 处理 modules
+    // 处理 modules 模块收集器
     this._modules = new ModuleCollection(options)
     this._modulesNamespaceMap = Object.create(null)
     this._subscribers = []
-    // 用一个新的 Vue 实例 watch store
+    // 用一个新的 Vue 实例 实现 Store 的 watch 方法
     this._watcherVM = new Vue()
 
     // bind commit and dispatch to self
+    // 将 dispatch commit 指向当前的 Store 实例
     const store = this
     const { dispatch, commit } = this
     this.dispatch = function boundDispatch (type, payload) {
@@ -51,14 +56,15 @@ export class Store {
 
     // strict mode
     this.strict = strict
-
+    // ModuleCollection 处理后的模块，顶层 state
     const state = this._modules.root.state
 
     // init root module.
     // this also recursively registers all sub-modules
     // and collects all module getters inside this._wrappedGetters
     // 初始化 modules
-    // vuex 提供了模块化的写法，递归处理 modules
+    // vuex 提供了模块化的写法，递归处理 安装 modules
+    console.log('this._modules.root', this._modules)
     installModule(this, state, [], this._modules.root)
 
     // initialize the store vm, which is responsible for the reactivity
@@ -78,7 +84,6 @@ export class Store {
   get state () {
     return this._vm._data.$$state
   }
-
   set state (v) {
     if (process.env.NODE_ENV !== 'production') {
       assert(false, `use store.replaceState() to explicit replace store state.`)
@@ -229,6 +234,7 @@ function resetStore (store, hot) {
   resetStoreVM(store, state, hot)
 }
 
+// params this state
 function resetStoreVM (store, state, hot) {
   const oldVm = store._vm
 
@@ -248,6 +254,8 @@ function resetStoreVM (store, state, hot) {
   // use a Vue instance to store the state tree
   // suppress warnings just in case the user has added
   // some funky global mixins
+  // new 一个 vue 实例用来储存 state
+  // 并且用 store._vm 保存
   const silent = Vue.config.silent
   Vue.config.silent = true
   store._vm = new Vue({
@@ -275,18 +283,27 @@ function resetStoreVM (store, state, hot) {
   }
 }
 
+// 初始化 installModul
+// this, state, [], this._modules.root
+// this._modules 是 new ModuleCollection(options) 的实例
+// 此时传入的 path 为 []
 function installModule (store, rootState, path, module, hot) {
+  // 根据 path 判断是否是 root
   const isRoot = !path.length
+  // 根据 path 处理命名空间
   const namespace = store._modules.getNamespace(path)
 
   // register in namespace map
-  // 如果传入 namespaced: true
+  // 如果有 namespaced
   // 处理模块的命名空间
+  // 在 helper.js 用 getModuleByNamespace 获取对应命名空间模块
   if (module.namespaced) {
     store._modulesNamespaceMap[namespace] = module
   }
 
   // set state
+  // 不是 root 并且没有 hot
+  // TODO:
   if (!isRoot && !hot) {
     const parentState = getNestedState(rootState, path.slice(0, -1))
     const moduleName = path[path.length - 1]
@@ -295,8 +312,10 @@ function installModule (store, rootState, path, module, hot) {
     })
   }
 
+  // 初始化 dispatch getter commit state
   const local = module.context = makeLocalContext(store, namespace, path)
 
+  // 循环注册 mutation action getter
   module.forEachMutation((mutation, key) => {
     const namespacedType = namespace + key
     registerMutation(store, namespacedType, mutation, local)
@@ -313,6 +332,7 @@ function installModule (store, rootState, path, module, hot) {
     registerGetter(store, namespacedType, getter, local)
   })
 
+  // 递归处理嵌套模块
   module.forEachChild((child, key) => {
     installModule(store, rootState, path.concat(key), child, hot)
   })
@@ -361,8 +381,11 @@ function makeLocalContext (store, namespace, path) {
 
   // getters and state object must be gotten lazily
   // because they will be changed by vm update
+  // defineProperties 拦截 getters state
   Object.defineProperties(local, {
     getters: {
+      // 没有命名空间 返回 store.getters
+      // 有命名空间 返回 store.getters
       get: noNamespace
         ? () => store.getters
         : () => makeLocalGetters(store, namespace)
@@ -375,20 +398,25 @@ function makeLocalContext (store, namespace, path) {
   return local
 }
 
+// store namespace: 'cart/'
 function makeLocalGetters (store, namespace) {
   const gettersProxy = {}
-
   const splitPos = namespace.length
   Object.keys(store.getters).forEach(type => {
     // skip if the target getter is not match this namespace
+    // 匹配应命名空间 失败 return
+    // 成功往下执行
     if (type.slice(0, splitPos) !== namespace) return
 
     // extract local getter type
+    // 取出命名空间后的 getter type
     const localType = type.slice(splitPos)
 
     // Add a port to the getters proxy.
     // Define as getter property because
     // we do not want to evaluate the getters in this time.
+    // 使用 defineProperty 为 gettersProxy 的 localType 添加 get
+    // 劫持 gettersProxy 的 localType 的 get 返回 store 上对应的 getter
     Object.defineProperty(gettersProxy, localType, {
       get: () => store.getters[type],
       enumerable: true
@@ -456,6 +484,7 @@ function enableStrictMode (store) {
 }
 
 function getNestedState (state, path) {
+  // 根据传入的 path.length 判断 ['products']
   return path.length
     ? path.reduce((state, key) => state[key], state)
     : state
