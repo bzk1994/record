@@ -9,8 +9,9 @@ export default class Module {
     // Store the origin module object which passed by programmer
     this._rawModule = rawModule
     const rawState = rawModule.state
-
     // Store the origin module's state
+    // 默认传入 rawState = {count: 0}
+    // 如果是有 module 的情况是空对象
     this.state = (typeof rawState === 'function' ? rawState() : rawState) || {}
   }
 

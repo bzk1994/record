@@ -49,6 +49,7 @@ export function deepCopy (obj, cache = []) {
 /**
  * forEach for object
  */
+// object 转成数组 循环调用 fn
 export function forEachValue (obj, fn) {
   Object.keys(obj).forEach(key => fn(obj[key], key))
 }

@@ -1,6 +1,6 @@
 ## 带着问题去看源码
 
-1. 如何双向绑定实现 core/observer/index
+1. 如何双向绑定实现 v-modole core/observer/index
 2. 如何依赖收集 如何实现观察者？
 3. 如何实现异步更新
 4. `minxin extend extends`  core/util/mergeOptions core/global-api/extend
@@ -12,7 +12,6 @@
 10. $watch
 11. 生命周期钩子的实现
 11. VNode构建
-12. Fl
 
 ...
 99. 源码收获
@@ -222,6 +221,8 @@ export function initState(vm: Component) {
   :value="name"
   @input="name=$event.target.value">
 ```
+
+邪术 v-model 父子组件通信
 
 ### 2. `Vue.use` 实现
 

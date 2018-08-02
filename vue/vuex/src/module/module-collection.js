@@ -13,6 +13,7 @@ export default class ModuleCollection {
     }, this.root)
   }
 
+  // 根据 path 处理命名空间
   getNamespace (path) {
     let module = this.root
     return path.reduce((namespace, key) => {
@@ -30,7 +31,13 @@ export default class ModuleCollection {
       assertRawModule(path, rawModule)
     }
 
+    // 默认注册 root
+    // 包装了下传过来的 rawModule
     const newModule = new Module(rawModule, runtime)
+    // 判断 path.length
+    // 0 说明是 root 保存到 this.root 上
+    // 下次递归注册进入 else 调用 Module 类的 getChild addChild
+    // 建立 module 的父子关系
     if (path.length === 0) {
       this.root = newModule
     } else {
@@ -39,6 +46,7 @@ export default class ModuleCollection {
     }
 
     // register nested modules
+    // 有 modules 递归注册嵌套模块
     if (rawModule.modules) {
       forEachValue(rawModule.modules, (rawChildModule, key) => {
         this.register(path.concat(key), rawChildModule, runtime)

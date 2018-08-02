@@ -10,31 +10,40 @@ export class Store {
     // Auto install if it is not done yet and `window` has `Vue`.
     // To allow users to avoid auto-installation in some cases,
     // this code should be placed here. See #731
-    // 自动安装 #731
+    // 在浏览器环境下 && 没有执行过 install
+    // 上面申明的 Vue 还是 null
+    // 进行自动安装
     if (!Vue && typeof window !== 'undefined' && window.Vue) {
       install(window.Vue)
     }
 
     if (process.env.NODE_ENV !== 'production') {
       // 断言
+      // 必须在创建 store 实例之前调用 install
+      // 支持 Promise
+      // 必须是 Store 的实例
       assert(Vue, `must call Vue.use(Vuex) before creating a store instance.`)
       assert(typeof Promise !== 'undefined', `vuex requires a Promise polyfill in this browser.`)
       assert(this instanceof Store, `store must be called with the new operator.`)
     }
 
-    // plugins 插件
-    // strict 严格模式
+    // plugins  插件数组
+    // strict   严格模式
     const {
       plugins = [],
       strict = false
     } = options
 
     // store internal state
+    // 通过 mutation 修改 state 的标识
     this._committing = false
+    // 注册 action 储存到 _actions
     this._actions = Object.create(null)
+    // 储存订阅 store 的 action
     this._actionSubscribers = []
+    // 注册 mutation 储存到 _mutations
     this._mutations = Object.create(null)
-    // 保存注册的 getter
+    // 注册 getter 储存到 _wrappedGetters
     this._wrappedGetters = Object.create(null)
     // 处理 modules 模块收集器
     // {
@@ -55,10 +64,12 @@ export class Store {
     //   }
     // }
     this._modules = new ModuleCollection(options)
+    // 在 installModule 函数中 如果有命名空间就储存到 _modulesNamespaceMap 中
+    // 储存有命名空间的 module
     this._modulesNamespaceMap = Object.create(null)
     // 储存订阅者
     this._subscribers = []
-    // 用一个新的 Vue 实例 实现 Store 的 watch 方法
+    // 用 Vue 实例 实现 Store 的 watch 方法
     this._watcherVM = new Vue()
 
     // bind commit and dispatch to self
@@ -81,20 +92,22 @@ export class Store {
     // init root module.
     // this also recursively registers all sub-modules
     // and collects all module getters inside this._wrappedGetters
-    // 初始化 modules
-    // vuex 提供了模块化的写法
-    // 递归注册 modules
+    // 注册 modules
+    // vuex 提供了嵌套模块的写法 需要递归注册 modules
     installModule(this, state, [], this._modules.root)
 
     // initialize the store vm, which is responsible for the reactivity
     // (also registers _wrappedGetters as computed properties)
+    // 重置 Vue 实例 实现响应式的 state computed
     resetStoreVM(this, state)
 
     // apply plugins
     // plugins 是在实例化 Store 时候传入的数组
-    // 每一个插件就是一个函数 createLogger
+    // 循环调用插件
+    // 每一个插件就是一个函数 类似 createLogger
     plugins.forEach(plugin => plugin(this))
 
+    // vueTools 插件处理
     if (Vue.config.devtools) {
       devtoolPlugin(this)
     }
@@ -167,17 +180,19 @@ export class Store {
     this._actionSubscribers.forEach(sub => sub(action, this.state))
 
     // entry 是注册 action 时储存 wrappedActionHandler 函数的数组
-    // 如果是一个返回
+    // 如果是一个返回 直接调用
     // 多个调用 Promise.all 方法
     return entry.length > 1
       ? Promise.all(entry.map(handler => handler(payload)))
       : entry[0](payload)
   }
 
+  // 订阅 store 的 mutation
   subscribe (fn) {
     return genericSubscribe(fn, this._subscribers)
   }
 
+  // 订阅 store 的 action 常用语插件
   subscribeAction (fn) {
     return genericSubscribe(fn, this._actionSubscribers)
   }
@@ -212,6 +227,7 @@ export class Store {
 
   // 卸载模块
   unregisterModule (path) {
+    // 转换成数组
     if (typeof path === 'string') path = [path]
 
     if (process.env.NODE_ENV !== 'production') {
@@ -223,6 +239,7 @@ export class Store {
       const parentState = getNestedState(this.state, path.slice(0, -1))
       Vue.delete(parentState, path[path.length - 1])
     })
+    // 重置
     resetStore(this)
   }
 
@@ -231,6 +248,8 @@ export class Store {
     resetStore(this, true)
   }
 
+  // 在调用 fn 之前会将 _committing 置为 true
+  // 执行完成后恢复 committing
   _withCommit (fn) {
     const committing = this._committing
     this._committing = true
@@ -264,20 +283,21 @@ function resetStore (store, hot) {
 }
 
 // params this state
+// 重置 Vue 实例 实现响应式的 state computed
 function resetStoreVM (store, state, hot) {
-  // 初始是 undefind
+  // 初始值是 undefind
   const oldVm = store._vm
   // bind store public getters
   store.getters = {}
+  // 取出注册 getter 是存放的 _wrappedGetters
   const wrappedGetters = store._wrappedGetters
   const computed = {}
   forEachValue(wrappedGetters, (fn, key) => {
     // use computed to leverage its lazy-caching mechanism
     // 将对应的 key 以及 fn 包装下保存到 computed
     computed[key] = () => fn(store)
-    // 劫持 store.getters 的 key
+    // 通过 defineProperty 劫持 store.getters 的 key
     // 代理到 store._vm[key]
-    // this.$store.getters
     Object.defineProperty(store.getters, key, {
       get: () => store._vm[key],
       enumerable: true // for local getters
@@ -287,7 +307,7 @@ function resetStoreVM (store, state, hot) {
   // use a Vue instance to store the state tree
   // suppress warnings just in case the user has added
   // some funky global mixins
-  // new 一个 vue 实例用来储存 state 并把处理后的 computed 实现动态计算
+  // 用 vue 实例用来储存 state 并把处理后的 computed 实现动态计算
   // 并且用 store._vm 保存
   const silent = Vue.config.silent
   Vue.config.silent = true
@@ -305,6 +325,9 @@ function resetStoreVM (store, state, hot) {
     enableStrictMode(store)
   }
 
+  // 有3中情况调用到 resetStoreVM 方法
+  // 实例化 class Store 、resetStore 、registerModule
+  // 将 state 置为null 并且调用 $destroy 在 nextTic 回调中注销实例
   if (oldVm) {
     if (hot) {
       // dispatch changes in all subscribed watchers
@@ -321,6 +344,9 @@ function resetStoreVM (store, state, hot) {
 // this, state, [], this._modules.root
 // this._modules 是 new ModuleCollection(options) 的实例
 // 此时传入的 path 为 []
+// 注册 modules
+// vuex 提供了嵌套模块的写法 需要递归注册
+// modules mutation action getter
 function installModule (store, rootState, path, module, hot) {
   // 根据 path 判断是否是 root
   const isRoot = !path.length
@@ -332,13 +358,14 @@ function installModule (store, rootState, path, module, hot) {
   // 如果有设置 namespaced
   // 处理模块的命名空间
   // 在 helper.js 用 getModuleByNamespace 获取 _modulesNamespaceMap 下对应命名空间模块
+  // installModule 的时候 如果有命名空间就储存到 _modulesNamespaceMap 中
   if (module.namespaced) {
     store._modulesNamespaceMap[namespace] = module
   }
 
   // set state
   // 不是 root 并且没有 hot
-  // TODO: 嵌套 module
+  // 嵌套 module
   if (!isRoot && !hot) {
     // 获取父级 state
     // path.slice(0, -1) 传入除去自身的数组 就是父级
@@ -346,12 +373,15 @@ function installModule (store, rootState, path, module, hot) {
     const parentState = getNestedState(rootState, path.slice(0, -1))
     const moduleName = path[path.length - 1]
     // Vue.set
+    // 使用 Vue.set 建立响应式的 module
+    // 只能通过 _withCommit 方法
     store._withCommit(() => {
       Vue.set(parentState, moduleName, module.state)
     })
   }
 
   // 初始化 dispatch getter commit state
+  // 通过 defineProperties 劫持 getters state
   const local = module.context = makeLocalContext(store, namespace, path)
 
   // 循环注册 mutation action getter
@@ -383,6 +413,8 @@ function installModule (store, rootState, path, module, hot) {
  * make localized dispatch, commit, getters and state
  * if there is no namespace, just use root ones
  */
+// 初始化 dispatch getter commit state
+// 通过 defineProperties 劫持 getters state
 function makeLocalContext (store, namespace, path) {
   const noNamespace = namespace === ''
 
@@ -536,6 +568,7 @@ function enableStrictMode (store) {
   }, { deep: true, sync: true })
 }
 
+// 处理嵌套的 state
 function getNestedState (state, path) {
   // 有 path.length
   // 调用 reduce 以 state 为初始值 取得对应 state
