@@ -132,7 +132,7 @@ export class Store {
     } = unifyObjectStyle(_type, _payload, _options)
 
     const mutation = { type, payload }
-    // 取出注册 mutation 的 entry
+    // 根据 type 取出对应 mutation
     const entry = this._mutations[type]
     if (!entry) {
       if (process.env.NODE_ENV !== 'production') {
@@ -140,6 +140,11 @@ export class Store {
       }
       return
     }
+    // 在 _withCommit 函数回调中
+    // 循环 entry 调用里面的 handler 函数
+    // 根据 _committing 判断
+    // 会在 _withCommit 置为 true 后调用传入的 fn
+    // 只能通过 mutation 改变 state
     this._withCommit(() => {
       // entry 循环执行
       entry.forEach(function commitIterator (handler) {
@@ -169,6 +174,7 @@ export class Store {
     } = unifyObjectStyle(_type, _payload)
 
     const action = { type, payload }
+    // 根据 type 取出对应 action
     const entry = this._actions[type]
     if (!entry) {
       if (process.env.NODE_ENV !== 'production') {
@@ -180,7 +186,8 @@ export class Store {
     this._actionSubscribers.forEach(sub => sub(action, this.state))
 
     // entry 是注册 action 时储存 wrappedActionHandler 函数的数组
-    // 如果是一个返回 直接调用
+    // 在注册 action 时会将其包装成 promise 所以支持异步操作
+    // 判断 entry 长度 单个直接调用
     // 多个调用 Promise.all 方法
     return entry.length > 1
       ? Promise.all(entry.map(handler => handler(payload)))
@@ -211,6 +218,9 @@ export class Store {
   }
 
   // 注册模块
+  // 通过 register 注册 module
+  // installModule 安装 module
+  // resetStoreVM 重置 Vue 实例
   registerModule (path, rawModule, options = {}) {
     if (typeof path === 'string') path = [path]
 
@@ -325,9 +335,9 @@ function resetStoreVM (store, state, hot) {
     enableStrictMode(store)
   }
 
-  // 有3中情况调用到 resetStoreVM 方法
-  // 实例化 class Store 、resetStore 、registerModule
-  // 将 state 置为null 并且调用 $destroy 在 nextTic 回调中注销实例
+  // 有 3 种情况调用到 resetStoreVM 方法
+  // class Store constructor 、resetStore 、registerModule
+  // 将 state 置为 null 并且调用 $destroy 在 nextTic 回调中注销实例
   if (oldVm) {
     if (hot) {
       // dispatch changes in all subscribed watchers

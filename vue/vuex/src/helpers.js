@@ -5,6 +5,8 @@
  * @param {Object}
  * shopping-cart examples
  */
+// states 处理成数组后循环
+// 最后返回一个以 states type 为 key, this.$store.state[states type] 为值的对象
 export const mapState = normalizeNamespace((namespace, states) => {
   const res = {}
   // 格式化 states
@@ -50,6 +52,8 @@ export const mapState = normalizeNamespace((namespace, states) => {
  * @param {Object|Array} mutations # Object's item can be a function which accept `commit` function as the first param, it can accept anthor params. You can commit mutation and do any other things in this function. specially, You need to pass anthor params from the mapped function.
  * @return {Object}
  */
+// mutations 处理成数组后循环
+// 最后返回一个以 mutations type 为 key, this.$store.commit.apply(this, [type].concat(args)) 为值的对象
 export const mapMutations = normalizeNamespace((namespace, mutations) => {
   const res = {}
   normalizeMap(mutations).forEach(({ key, val }) => {
@@ -83,6 +87,8 @@ export const mapMutations = normalizeNamespace((namespace, mutations) => {
  * namespace: ''
  * getters: ["evenOrOdd"]
  */
+// getters 处理成数组后循环
+// 最后返回一个以 getter type 为 key, this.$store.getters[getter type] 为值的对象
 export const mapGetters = normalizeNamespace((namespace, getters) => {
   const res = {}
   // 格式化 getters
@@ -127,6 +133,9 @@ export const mapGetters = normalizeNamespace((namespace, getters) => {
  * namespace: ''
  * actions: ["increment", "decrement", "incrementIfOdd", "incrementAsync"]
  */
+// actions 处理成数组后循环
+// 最后返回一个以 actions type 为 key, this.$store.apply(this, [type].concat(args)) 为值的对象
+// 并且将 type 挂在到同名的 methods 上
 export const mapActions = normalizeNamespace((namespace, actions) => {
   const res = {}
   // 格式化 actions

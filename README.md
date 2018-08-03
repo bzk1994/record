@@ -28,8 +28,15 @@
 
 [Vue.js 技术揭秘](https://ustbhuangyi.github.io/vue-analysis/vue-router/)
 
+#### vuex
 
+[阅读 vuex 源码的一些注释](https://github.com/zhanghao-zhoushan/record/vue/vuex)
 
+![阅读 vuex 源码的思维导图](https://images-cdn.shimo.im/KdTrPikRo9wmi0yj/vuex.png!thumbnail)
+
+参考资料
+
+[Vue.js 技术揭秘](https://ustbhuangyi.github.io/vue-analysis/vuex/init.html)
 
 ### Canvas
 
