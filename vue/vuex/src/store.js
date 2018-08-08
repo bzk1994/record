@@ -299,7 +299,7 @@ function resetStoreVM (store, state, hot) {
   const oldVm = store._vm
   // bind store public getters
   store.getters = {}
-  // 取出注册 getter 是存放的 _wrappedGetters
+  // 取出注册 getter 时存放的 _wrappedGetters
   const wrappedGetters = store._wrappedGetters
   const computed = {}
   forEachValue(wrappedGetters, (fn, key) => {
@@ -395,7 +395,7 @@ function installModule (store, rootState, path, module, hot) {
   const local = module.context = makeLocalContext(store, namespace, path)
 
   // 循环注册 mutation action getter
-  // module 的一系列方法
+  // module 的 一系列方法
   // 都调用了 utils.js forEachValue
   module.forEachMutation((mutation, key) => {
     const namespacedType = namespace + key

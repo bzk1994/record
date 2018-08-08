@@ -389,13 +389,46 @@ class ModuleCollection {
 在 ModuleCollection 类的 constructor 中首先会执行 类的 register 方法，将空数组、rawRootModule(也就是实例化的时候传入的 options)、false 最为最初参数传入
 
 register 方法会递归调用，实现嵌套模块的收集
-首先会在非生产环境调用 assertRawModule 函数，对 module 进行一些断言
+首先会在非生产环境调用 assertRawModule 函数，对 module 进行一些断言判断，判断 rawModule 对象是否有 getters、mutations、mutations 为 key 值
 
+然后根据预置的类型进行断言
 
+随后就是实例化 Module 新建一个 newModule，判断 path path.length，0 说明是 root 将 newModule，判断 保存到 this.root 上
+然后判断 rawModule.modules 是否有嵌套 modules
+有就调用 forEachValue 将 modules转换成数组，并且循环调用传入的回调函数，回调函数里又调用了 this.register，不过传入的 path 合并 子模块的 key root 模块也成了子模块，第二次进入 register 会进入 else 判断，调用 Module 类的 getChild addChild, 建立 module 的父子关系，如果仍然嵌套模块继续调用 this.register
 
+forEachValue
+```
+// object 转成数组 循环调用 fn
+export function forEachValue (obj, fn) {
+  Object.keys(obj).forEach(key => fn(obj[key], key))
+}
+```
 
+this._modules
+```
+{
+  'root': {
+    'runtime': false,
+    '_children': {},
+    '_rawModule': {
+      'state': {
+        'count': 0
+      },
+      'getters': {},
+      'actions': {},
+      'mutations': {}
+    },
+    'state': {
+      'count': 0
+    }
+  }
+}
+```
 
 ### init module
+
+接下来会调用 installModule 注册 modules，这里将 this、state（this._modules.root.state）、空数组、this._modules.root（root module）作为参数传入
 
 ```
 // init root module.
@@ -404,22 +437,540 @@ register 方法会递归调用，实现嵌套模块的收集
 installModule(this, state, [], this._modules.root)
 ```
 
+installModule 用来进行模块的安装注册
+```
+function installModule (store, rootState, path, module, hot) {
+  const isRoot = !path.length
+  const namespace = store._modules.getNamespace(path)
+
+  // register in namespace map
+  if (module.namespaced) {
+    store._modulesNamespaceMap[namespace] = module
+  }
+
+  // set state
+  if (!isRoot && !hot) {
+    const parentState = getNestedState(rootState, path.slice(0, -1))
+    const moduleName = path[path.length - 1]
+    store._withCommit(() => {
+      Vue.set(parentState, moduleName, module.state)
+    })
+  }
+
+  const local = module.context = makeLocalContext(store, namespace, path)
+
+  module.forEachMutation((mutation, key) => {
+    const namespacedType = namespace + key
+    registerMutation(store, namespacedType, mutation, local)
+  })
+
+  module.forEachAction((action, key) => {
+    const type = action.root ? key : namespace + key
+    const handler = action.handler || action
+    registerAction(store, type, handler, local)
+  })
+
+  module.forEachGetter((getter, key) => {
+    const namespacedType = namespace + key
+    registerGetter(store, namespacedType, getter, local)
+  })
+
+  module.forEachChild((child, key) => {
+    installModule(store, rootState, path.concat(key), child, hot)
+  })
+}
+```
+
+先根据 path 判断是否是 root，刚开始传入的 path 为空数组， 所以是 isRoot = true
+随后调用 ModuleCollection 类的 getNamespace 方法，根据 path 处理命名空间
+
+判断 module.namespaced 是否为 true, namespaced 是在每个 module 的配置中设置的，如果为 true 就将 namespace 为 key，module 为值存到 construction 什么的 store._modulesNamespaceMap 变量上，在 helper.js 用 getModuleByNamespace 获取 _modulesNamespaceMap 下对应命名空间模块
+
+
+```
+// set state
+if (!isRoot && !hot) {
+  const parentState = getNestedState(rootState, path.slice(0, -1))
+  const moduleName = path[path.length - 1]
+  store._withCommit(() => {
+    Vue.set(parentState, moduleName, module.state)
+  })
+}
+```
+不是 root module 并且没有 hot 初始化的时候并没有进入 if 判断，注册子模块的时候才会进入
+调用 getNestedState 方法取出父 module 的 state
+path 是一个数组，按模块嵌套排列
+path.slice(0, -1) 传入除去自身的数组 就是父级
+
+```
+function getNestedState (state, path) {
+  return path.length
+    ? path.reduce((state, key) => state[key], state)
+    : state
+}
+```
+
+getNestedState 返回一个三元表达式，如果有 path.length 就调用
+ reduce 方法取出对应 嵌套的 state 没有返回直接传入的 state
+
+
+然后调用 _withCommit 方法
+
+```
+_withCommit (fn) {
+  const committing = this._committing
+  this._committing = true
+  fn()
+  this._committing = committing
+}
+```
+
+_withCommit 中执行传入的 fn 之前会将 this._committing 置为 true ，然后执行 fn 函数，最后又将 committing 回复恢复之前的状态
+这里主要是为了保证修改 state 只能通过调用 _withCommit，会调用 enableStrictMode 去检测 state 是否以预期的方式改变，我们在使用 vuex 中，就是通过 mutation 去改变 state
+
+```
+
+调用 makeLocalContext 方法
+const local = module.context = makeLocalContext(store, namespace, path)
+```
+
+makeLocalContext 主要用来初始化 dispatch getter commit state，通过 defineProperties 劫持 getters state
+
+
+下面是循环注册 mutation action getter
+
+```
+module.forEachMutation((mutation, key) => {
+  const namespacedType = namespace + key
+  registerMutation(store, namespacedType, mutation, local)
+})
+
+module.forEachAction((action, key) => {
+  const type = action.root ? key : namespace + key
+  const handler = action.handler || action
+  registerAction(store, type, handler, local)
+})
+
+module.forEachGetter((getter, key) => {
+  const namespacedType = namespace + key
+  registerGetter(store, namespacedType, getter, local)
+})
+```
+调用 module 类的 forEachMutation、forEachAction、forEachGetter，取出对应的 mutations、actions、gettger 和 回调函数作为参数调用 forEachValue
+
+来看看 registerMutation 方法
+```
+function registerMutation (store, type, handler, local) {
+  const entry = store._mutations[type] || (store._mutations[type] = [])
+  entry.push(function wrappedMutationHandler (payload) {
+    handler.call(store, local.state, payload)
+  })
+}
+```
+
+通过 type 取出对应的 mutation，没有穿透赋值为空数组，然后将 wrappedMutationHandler 函数 push 到 entry 数组中，函数的参数也就是 mutation 时候的参数，然后 handler 函数 this 指向 store, 将 local.state、payload 作为参数传入
+
+来看看 registerMutation 方法
+```
+function registerAction (store, type, handler, local) {
+  const entry = store._actions[type] || (store._actions[type] = [])
+  entry.push(function wrappedActionHandler (payload, cb) {
+    let res = handler.call(store, {
+      dispatch: local.dispatch,
+      commit: local.commit,
+      getters: local.getters,
+      state: local.state,
+      rootGetters: store.getters,
+      rootState: store.state
+    }, payload, cb)
+    if (!isPromise(res)) {
+      res = Promise.resolve(res)
+    }
+    if (store._devtoolHook) {
+      return res.catch(err => {
+        store._devtoolHook.emit('vuex:error', err)
+        throw err
+      })
+    } else {
+      return res
+    }
+  })
+}
+```
+
+通过 type 取出对应的 action，然后将 wrappedActionHandler 函数 push 到 entry 数组中，
+wrappedActionHandler 使用 call 将 handler 指向 store, call 的第二个参数是 dispatch、commit、getters等包装出的对象，我们可以再 commit 的第一个参数中结构出需要的属性，payload也就是额外参数，然后通过简易的 isPromise 方法判断 res 是否为 Promise，只是简单判断了 then 是否一个函数
+
+```
+export function isPromise (val) {
+  return val && typeof val.then === 'function'
+}
+```
+
+如果不是的话，调用 Promise.resolve(res) 将 res 包装成一个 Promise
+
+之后就是根据 _devtoolHook 判断当前浏览器是否有 devtoolHook 插件，应该是通过 Promise.catch 抛出错误，让 devtoolHook 捕获
+
+来看看 registerGetter 方法
+```
+function registerGetter (store, type, rawGetter, local) {
+  if (store._wrappedGetters[type]) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`[vuex] duplicate getter key: ${type}`)
+    }
+    return
+  }
+  store._wrappedGetters[type] = function wrappedGetter (store) {
+    return rawGetter(
+      local.state, // local state
+      local.getters, // local getters
+      store.state, // root state
+      store.getters // root getters
+    )
+  }
+}
+```
+
+开始判断如果有相同 getter 就报错
+没有的话就以 type 为 key，wrappedGetter 为 value 储存到 store._wrappedGetters 对象上，
+每一个 getter 都是一个 function
+
+
+循环注册 mutation action getter，只剩下最后一段代码：
+
+``` 
+module.forEachChild((child, key) => {
+  installModule(store, rootState, path.concat(key), child, hot)
+})
+```
+
+调用 Module 类的 forEachChild 方法，并且将回调函数传入
+
+```
+forEachChild (fn) {
+  forEachValue(this._children, fn)
+}
+```
+
+forEachChild 方法也调用了 forEachValue 遍历 _children key 循环调用传入的 fn
+_children 是在 ModuleCollection 类中通过嵌套模块的递归注册建立父子关系的
+
+最后调用 installModule 重复上述的过程，到此 installModule 方法结束
+
 ### resetStoreVM
 
+resetStoreVM 主要用来 重置 Vue 实例，实现响应式的 state computed
 ```
 // initialize the store vm, which is responsible for the reactivity
 // (also registers _wrappedGetters as computed properties)
 resetStoreVM(this, state)
 ```
 
+我们接着来看 resetStoreVM 方法
+```
+function resetStoreVM (store, state, hot) {
+  const oldVm = store._vm
+
+  // bind store public getters
+  store.getters = {}
+  const wrappedGetters = store._wrappedGetters
+  const computed = {}
+  forEachValue(wrappedGetters, (fn, key) => {
+    // use computed to leverage its lazy-caching mechanism
+    computed[key] = () => fn(store)
+    Object.defineProperty(store.getters, key, {
+      get: () => store._vm[key],
+      enumerable: true // for local getters
+    })
+  })
+
+  // use a Vue instance to store the state tree
+  // suppress warnings just in case the user has added
+  // some funky global mixins
+  const silent = Vue.config.silent
+  Vue.config.silent = true
+  store._vm = new Vue({
+    data: {
+      $$state: state
+    },
+    computed
+  })
+  Vue.config.silent = silent
+
+  // enable strict mode for new vm
+  if (store.strict) {
+    enableStrictMode(store)
+  }
+
+  if (oldVm) {
+    if (hot) {
+      // dispatch changes in all subscribed watchers
+      // to force getter re-evaluation for hot reloading.
+      store._withCommit(() => {
+        oldVm._data.$$state = null
+      })
+    }
+    Vue.nextTick(() => oldVm.$destroy())
+  }
+}
+```
+
+```
+const oldVm = store._vm
+```
+
+oldVm 每次调用 resetStoreVM 方法，取出 store._vm，初始值是 undefind，会在后面用到
+
+```
+// bind store public getters
+store.getters = {}
+const wrappedGetters = store._wrappedGetters
+const computed = {}
+forEachValue(wrappedGetters, (fn, key) => {
+  // use computed to leverage its lazy-caching mechanism
+  computed[key] = () => fn(store)
+  Object.defineProperty(store.getters, key, {
+    get: () => store._vm[key],
+    enumerable: true // for local getters
+  })
+})
+```
+
+接下来将 store 的 getters 赋值为空对象， 取出保存所以注册 getter 的 _wrappedGetters 对象，申明 computed 对象
+
+循环 wrappedGetters 对象，将对应的 key 以及 fn 包装保存到 computed
+```
+computed[key] = () => fn(store)
+```
+然后通过 defineProperty 劫持 store.getters 的 key，代理到 store._vm[key]
+
+```
+// use a Vue instance to store the state tree
+// suppress warnings just in case the user has added
+// some funky global mixins
+const silent = Vue.config.silent
+Vue.config.silent = true
+store._vm = new Vue({
+  data: {
+    $$state: state
+  },
+  computed
+})
+Vue.config.silent = silent
+```
+
+保存 Vue.config.silent 变量，设置Vue.config.silent = true，取消 Vue 所有的日志与警告
+然后生成一个新的 Vue 实例，将 state 和 computed 作为参数传入，然后恢复 Vue.config.silent，因为将 store.getters 的 key，代理到 store._vm[key]，所以我们可以通过访问 this.$store.getters.key 访问到 store._vm[key]
+
+确保在 生成一个新 Vue 实例 是严格模式
+```
+// enable strict mode for new vm
+if (store.strict) {
+  enableStrictMode(store)
+}
+```
+根据 store.strict 判断是否是严格模式，是的话调用 enableStrictMode 方法
+
+```
+function enableStrictMode (store) {
+  store._vm.$watch(function () { return this._data.$$state }, () => {
+    if (process.env.NODE_ENV !== 'production') {
+      assert(store._committing, `do not mutate vuex store state outside mutation handlers.`)
+    }
+  }, { deep: true, sync: true })
+}
+```
+
+enableStrictMode 将 store 作为参数，调用 `store._vm.$watch` 方法，也就是 Vue 实例的 `$watch` 方法，监测 `this._data.$$state` 的变化，就是生产 新的 Vue 实例的时候传入的 state，判断不是生产模式，调用断言，如果 store._committing 是 fasle, 抛出异常，我们在使用 vuex 的时候，只能通过 mutation 方式改变 store
+
+oldVm 的注销
+```
+if (oldVm) {
+  if (hot) {
+    // dispatch changes in all subscribed watchers
+    // to force getter re-evaluation for hot reloading.
+    store._withCommit(() => {
+      oldVm._data.$$state = null
+    })
+  }
+  Vue.nextTick(() => oldVm.$destroy())
+}
+```
+
+如果有 oldVm
+如果是热更新模式，将 oldVm._data.$$state 置为 null
+调用 oldVm 的 `$destroy` 方法注销 oldVm 实例
+
+
+
+
+### assertRawModule
+
+### class Module
+
+Module 类的代码
+```
+export default class Module {
+  constructor (rawModule, runtime) {
+    this.runtime = runtime
+    // Store some children item
+    this._children = Object.create(null)
+    // Store the origin module object which passed by programmer
+    this._rawModule = rawModule
+    const rawState = rawModule.state
+    // Store the origin module's state
+    // 默认传入 rawState = {count: 0}
+    // 如果是有 module 的情况是空对象
+    this.state = (typeof rawState === 'function' ? rawState() : rawState) || {}
+  }
+
+  get namespaced () {
+    return !!this._rawModule.namespaced
+  }
+
+  addChild (key, module) {
+    this._children[key] = module
+  }
+
+  removeChild (key) {
+    delete this._children[key]
+  }
+
+  getChild (key) {
+    return this._children[key]
+  }
+
+  update (rawModule) {
+    this._rawModule.namespaced = rawModule.namespaced
+    if (rawModule.actions) {
+      this._rawModule.actions = rawModule.actions
+    }
+    if (rawModule.mutations) {
+      this._rawModule.mutations = rawModule.mutations
+    }
+    if (rawModule.getters) {
+      this._rawModule.getters = rawModule.getters
+    }
+  }
+
+  forEachChild (fn) {
+    forEachValue(this._children, fn)
+  }
+
+  forEachGetter (fn) {
+    if (this._rawModule.getters) {
+      forEachValue(this._rawModule.getters, fn)
+    }
+  }
+
+  forEachAction (fn) {
+    if (this._rawModule.actions) {
+      forEachValue(this._rawModule.actions, fn)
+    }
+  }
+
+  forEachMutation (fn) {
+    if (this._rawModule.mutations) {
+      forEachValue(this._rawModule.mutations, fn)
+    }
+  }
+}
+```
+
+### getNamespace
+// 根据 path 处理命名空间
+```
+getNamespace (path) {
+  let module = this.root
+  return path.reduce((namespace, key) => {
+    module = module.getChild(key)
+    return namespace + (module.namespaced ? key + '/' : '')
+  }, '')
+}
+```
+
+### makeLocalContext
+
+```
+/**
+ * make localized dispatch, commit, getters and state
+ * if there is no namespace, just use root ones
+ */
+function makeLocalContext (store, namespace, path) {
+  const noNamespace = namespace === ''
+
+  const local = {
+    dispatch: noNamespace ? store.dispatch : (_type, _payload, _options) => {
+      const args = unifyObjectStyle(_type, _payload, _options)
+      const { payload, options } = args
+      let { type } = args
+
+      if (!options || !options.root) {
+        type = namespace + type
+        if (process.env.NODE_ENV !== 'production' && !store._actions[type]) {
+          console.error(`[vuex] unknown local action type: ${args.type}, global type: ${type}`)
+          return
+        }
+      }
+
+      return store.dispatch(type, payload)
+    },
+
+    commit: noNamespace ? store.commit : (_type, _payload, _options) => {
+      const args = unifyObjectStyle(_type, _payload, _options)
+      const { payload, options } = args
+      let { type } = args
+
+      if (!options || !options.root) {
+        type = namespace + type
+        if (process.env.NODE_ENV !== 'production' && !store._mutations[type]) {
+          console.error(`[vuex] unknown local mutation type: ${args.type}, global type: ${type}`)
+          return
+        }
+      }
+
+      store.commit(type, payload, options)
+    }
+  }
+
+  // getters and state object must be gotten lazily
+  // because they will be changed by vm update
+  Object.defineProperties(local, {
+    getters: {
+      get: noNamespace
+        ? () => store.getters
+        : () => makeLocalGetters(store, namespace)
+    },
+    state: {
+      get: () => getNestedState(store.state, path)
+    }
+  })
+
+  return local
+}
+```
+
+
+
 ## 问题总结
 ### global event bus 有何缺陷
 ### $store 如何注入到所有子组件
+
+在 vuexInit 方法中，首先判断如果有 `this.$options.store` 说明是 root 节点，store 如果是 function 就执行将函数返回值赋值给 `this.$store` ，否则 `options.store` 直接赋值赋值
+不是 `root` 节点就从父组件中获取 `$store`，保证只有一个全局的 `$store`
+
 ### mapState 实现
 ### mapGetter 如何映射
 ### Mutation 同步 && Action 异步
+
+在注册 action 的时候，会将 action 方法包装成 Promise
+mutation 只是包装了一下 ，仍然是同步代码
+
 ### dispatch 方法实现
 ### module 分割实现 && 局部状态 namespaced
+
+实例化 ModuleCollection
+
 ### 如何调用 vue-devtools
 ### 内置 logger 插件实现
 ### hotUpdate
