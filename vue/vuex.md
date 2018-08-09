@@ -3,7 +3,7 @@
 ## Vuex 是什么？
 Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。
 
-[vuex 的文档](https://vuex.vuejs.org/zh/)对辅助看源码有不小的帮助，不妨在看源码之前仔细地撸一遍文档
+[vuex 的文档](https://vuex.vuejs.org/zh/)对辅助看源码有不小的帮助，不妨在看源码之前仔细地撸一遍文档。
 
 
 ### 带着问题去看源码
@@ -66,7 +66,7 @@ import { Store, install } from 'vuex'`
 
 ### install 方法
 
-来看一下 `install` 方法，在  `src/store.js` 。
+来看一下 `install` 方法，在 `src/store.js` 。
 
 ```
 export function install (_Vue) {
@@ -84,8 +84,10 @@ export function install (_Vue) {
 }
 ```
 
-方法首先判断变量 `Vue` (store.js 上面申明的变量) 是否与传入 `_Vue` 全等，如果全等并且在非生产环境，抛出异常。
+方法首先判断变量 `Vue` (store.js 顶部申明的变量) 是否与传入 `_Vue` 全等，如果全等并且在非生产环境，抛出异常。
+
 随后将传入的 `_Vue` 赋值给 `Vue`，这里主要是为了避免重复安装。
+
 然后调用引入的 `applyMixin` 方法，并将 `Vue` 作为参数传入。
 
 `applyMixin` 在 `src/mixin.js` 作为默认方法导出：
@@ -125,7 +127,9 @@ export default function (Vue) {
 }
 ```
 取出传入 `Vue` 的 静态属性 `version` 做不同处理。
+
 2.0 采用 `mixin` 将 `vuexInit` 合并到 `beforeCreate` 生命周期钩子。
+
 1.0 重写 `_init` 方法 将 `vuexInit` 合并到   `_init` 方法中。
 
 在 `vuexInit` 方法中，首先判断如果有 `options.store` 说明是 `root` 节点，并且判断 `store` 是 `function` 就执行将函数返回值赋值给 `this.$store` ，否则 `options.store` 直接赋值。
@@ -209,7 +213,8 @@ if (!Vue && typeof window !== 'undefined' && window.Vue) {
 }
 ```
 
-判断 `store.js` 开始申明的 `Vue` 变量， window 不为 `undefined` （说明在浏览器环境下），window 上有 `Vue` 变量，如果全部符合就执行 `install` 方法进行自动安装。
+判断 `store.js` 开始申明的 `Vue` 变量、`window` 不为 `undefined` （说明在浏览器环境下）、`window` 上有 `Vue` 变量、如果全部符合就执行 `install` 方法进行自动安装。
+
 这么做主要是为了防止在某些情况下避免自动安装，具体情况请看 [issues #731](https://github.com/vuejs/vuex/issues/731)
 
 
@@ -230,9 +235,10 @@ assert(typeof Promise !== 'undefined', `vuex requires a Promise polyfill in this
 ```
 assert(this instanceof Store, `store must be called with the new operator.`)
 ```
-判断 this 必须是 Store 的实例。
+判断 `this` 必须是 `Store` 的实例。
 
 断言函数的实现非常简单。
+
 ```
 export function assert (condition, msg) {
   if (!condition) throw new Error(`[vuex] ${msg}`)
@@ -275,7 +281,7 @@ this._subscribers = []
 this._watcherVM = new Vue()
 ```
 
-使用 `call` 将 `dispatch` 和 `commit` 的 `this` 绑定到当前的 `Store` 实例上。
+使用 `call` 将 `dispatch` `commit` 的 `this` 绑定到当前的 `Store` 实例上。
 
 ```
 // bind commit and dispatch to self
@@ -297,7 +303,7 @@ this.strict = strict
 
 ### init module
 
-接下来会调用 `installModule` 安装 `modules`
+接下来会调用 `installModule` 安装 `modules`。
 
 ```
 // init root module.
@@ -367,10 +373,10 @@ if (!isRoot && !hot) {
   })
 }
 ```
-非 `root module` 并且没有 `hot` 热更新，初始化的时候并没有进入 if 判断，注册子模块的时候才会进入
-调用 `getNestedState` 方法取出父 `module` 的 `state`，
-`path` 是一个数组，按模块嵌套排列
-`path.slice(0, -1)` 传入除去自身的数组，就是父级
+非 `root module` 并且没有 `hot` 热更新，初始化的时候并没有进入 `if` 判断，注册子模块的时候才会进入
+调用 `getNestedState` 方法取出父 `module` 的 `state`。
+
+`path` 是一个数组，按模块嵌套排列，`path.slice(0, -1)` 传入除去自身的数组，就是父级。
 
 ```
 function getNestedState (state, path) {
@@ -382,7 +388,6 @@ function getNestedState (state, path) {
 
 `getNestedState` 返回一个三元表达式，如果有 `path.length` 就调用
  `reduce` 方法取出对应嵌套的 `state` ，没有返回直接传入的 `state`。
-
 
 然后调用 `store` 的 `_withCommit` 方法：
 
@@ -469,7 +474,8 @@ function makeLocalContext (store, namespace, path) {
 声明 `noNamespace` 变量判断是否有命名空间，然后创建 `local` 对象，改对象有两个属性 `dispatch` `commit`，它们的值分别是2个三元表达式，如果是没有命名空间的，`dispatch` 就赋值为 `store.dispatch`，有命名空间就拼上再返回，`commit` 也是一样的道理。
 
 然后通过 `Object.defineProperties` 劫持 `local` 对象的 `getters` `state`
- // getters and state object must be gotten lazily
+```
+// getters and state object must be gotten lazily
 // because they will be changed by vm update
 Object.defineProperties(local, {
   getters: {
@@ -481,6 +487,7 @@ Object.defineProperties(local, {
     get: () => getNestedState(store.state, path)
   }
 })
+```
 
 劫持 `getters` 的时候也是一个三元表达式，没有命名空间就将 `local` 的 `getters` 代理到 `store.getters` 上，有的话就将 `local` 的 `getters` 代理到 `makeLocalGetters` 函数的返回上。
 
@@ -514,8 +521,7 @@ function makeLocalGetters (store, namespace) {
 `makeLocalGetters` 接收 `store` 和 `namespace` 作为参数。
 首先申明 `gettersProxy` 变量，申明 `splitPos` 变量为命名空间长度，随后遍历 `store.getters` ,
 接着匹配应命名空间，失败就 `return` ，成功往下执行，然后取出命名空间后的 `getter` `type`,
-使用 `defineProperty` 为 `gettersProxy` 的 `localType` 添加 `get` 方法，劫持 `gettersProxy` 的 `localType` 的 `get` 返回 `store` 上对应的 `getter`。
-简单来说就是做了一个有命名空间情况下的代理。
+使用 `defineProperty` 为 `gettersProxy` 的 `localType` 添加 `get` 方法，劫持 `gettersProxy` 的 `localType` 的 `get` 返回 `store` 上对应的 `getter`，简单来说就是做了一个有命名空间情况下的代理。
 
 `makeLocalContext` 函数最后会将 `local` 返回。
 
@@ -646,7 +652,7 @@ module.forEachChild((child, key) => {
 })
 ```
 
-调用 `Module` 类的 `forEachChild` 方法，并且将回调函数传入
+调用 `Module` 类的 `forEachChild` 方法，并且将回调函数传入。
 
 ```
 forEachChild (fn) {
@@ -668,7 +674,7 @@ forEachChild (fn) {
 resetStoreVM(this, state)
 ```
 
-我们接着来看 resetStoreVM 方法
+我们接着来看 `resetStoreVM` 方法：
 
 ```
 function resetStoreVM (store, state, hot) {
@@ -720,7 +726,7 @@ function resetStoreVM (store, state, hot) {
 
 函数开始就取出 `store._vm`，初始值是 `undefind`，会在后面用到。
 
-开始处理所有 `getter`:
+循环 `wrappedGetters` 处理所有 `getter`。
 ```
 // bind store public getters
 store.getters = {}
@@ -741,7 +747,7 @@ forEachValue(wrappedGetters, (fn, key) => {
 ```
 computed[key] = () => fn(store)
 ```
-然后通过 `defineProperty` 劫持 `store.getters` 的 `key`，代理到 `store._vm[key]`
+然后通过 `defineProperty` 劫持 `store.getters` 的 `key`，代理到 `store._vm[key]`。
 
 ```
 // use a Vue instance to store the state tree
@@ -780,7 +786,7 @@ function enableStrictMode (store) {
 
 `enableStrictMode` 将 `store` 作为参数，调用 `store._vm.$watch` 方法，也就是 Vue 实例的 `$watch` 方法，监测 `this._data.$$state` 的变化，就是生成新的 `Vue` 实例的时候传入的 `state`，判断不是生产模式，调用断言，如果 `store._committing` 是 `false`, 抛出异常，所以我们在使用 `vuex` 的时候，只能通过 `mutation` 方式改变 `store`。
 
-oldVm 的注销：
+`oldVm` 的注销：
 ```
 if (oldVm) {
   if (hot) {
@@ -799,7 +805,7 @@ if (oldVm) {
 
 
 ### this._modules
-在上面初始参数的赋值中 this._modules 就是 ModuleCollection 类的实例
+在上面初始参数的赋值中 `this._modules` 就是 `ModuleCollection` 类的实例
 ```
 this._modules = new ModuleCollection(options)
 ```
