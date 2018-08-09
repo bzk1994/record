@@ -3,7 +3,7 @@
 ## Vuex 是什么？
 Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。
 
-[vuex 的文档](https://vuex.vuejs.org/zh/)对辅助看源码有不小的帮助，不妨在看源码之前仔细地撸一遍文档
+[vuex 的文档](https://vuex.vuejs.org/zh/)对辅助看源码有不小的帮助，不妨在看源码之前仔细地撸一遍文档
 
 
 ### 带着问题去看源码
@@ -58,9 +58,7 @@ export default {
 ```
 
 引入了 `Store` 、`install` 和一些辅助工具函数，将引入的变量组装成一个对象向外暴露。
-
-当我们在项目中引入 `import Vuex from 'vuex'` 的之后， `Vuex` 就是这个组装后默认导出的对象了。
-
+当我们在项目中引入 `import Vuex from 'vuex'` 的之后， `Vuex` 就是这个组装后默认导出的对象了。
 当然我们也可以通过解构的方式。
 ```
 import { Store, install } from 'vuex'`
@@ -68,7 +66,7 @@ import { Store, install } from 'vuex'`
 
 ### install 方法
 
-来看一下 `install` 方法，在  `src/store.js` 。
+来看一下 `install` 方法，在  `src/store.js` 。
 
 ```
 export function install (_Vue) {
@@ -131,7 +129,7 @@ export default function (Vue) {
 1.0 重写 `_init` 方法 将 `vuexInit` 合并到   `_init` 方法中。
 
 在 `vuexInit` 方法中，首先判断如果有 `options.store` 说明是 `root` 节点，并且判断 `store` 是 `function` 就执行将函数返回值赋值给 `this.$store` ，否则 `options.store` 直接赋值。
-然后判断有父节点，并且父节点有 `$store`, 就将父节点的 `$store` 赋值给 `this.$store` ，这样就保证只有一个全局的 `$store` 变量
+然后判断有父节点，并且父节点有 `$store`, 就将父节点的 `$store` 赋值给 `this.$store` ，这样就保证只有一个全局的 `$store` 变量
 
 ### class Store
 
@@ -309,8 +307,7 @@ installModule(this, state, [], this._modules.root)
 ```
 第一次调用将 `this`、`state`（this._modules.root.state）、空数组、`this._modules.root`（root module）作为参数传入。
 
-
-`installModule` 代码：
+`installModule` 代码：
 ```
 function installModule (store, rootState, path, module, hot) {
   const isRoot = !path.length
@@ -357,7 +354,7 @@ function installModule (store, rootState, path, module, hot) {
 首先先根据 `path` 判断是否是 `root`，刚开始传入的 `path` 为空数组， 所以是 `isRoot = true`,
 随后调用 `ModuleCollection` 类的 `getNamespace` 方法 根据 `path` 获取命名空间，因为 `this._modules` 是 `ModuleCollection` 类的实例。
 
-接着判断 `module.namespaced` 是否为 `true`, `namespaced` 是在每个 `module` 的配置中设置的，如果为 `true` 就将 `namespace` 为 `key`，`module` 为值存到 `construction` 的 `_modulesNamespaceMap` 变量上。
+接着判断 `module.namespaced` 是否为 `true`, `namespaced` 是在每个 `module` 的配置中设置的，如果为 `true` 就将 `namespace` 为 `key`，`module` 为值存到 `construction` 的 `_modulesNamespaceMap` 变量上。
 在 `helper.js` 我们会用 `getModuleByNamespace` 获取 `_modulesNamespaceMap` 下对应命名空间模块。
 
 ```
@@ -518,7 +515,7 @@ function makeLocalGetters (store, namespace) {
 首先申明 `gettersProxy` 变量，申明 `splitPos` 变量为命名空间长度，随后遍历 `store.getters` ,
 接着匹配应命名空间，失败就 `return` ，成功往下执行，然后取出命名空间后的 `getter` `type`,
 使用 `defineProperty` 为 `gettersProxy` 的 `localType` 添加 `get` 方法，劫持 `gettersProxy` 的 `localType` 的 `get` 返回 `store` 上对应的 `getter`。
-简单来说就是做了一个有命名空间情况下的代理。
+简单来说就是做了一个有命名空间情况下的代理。
 
 `makeLocalContext` 函数最后会将 `local` 返回。
 
@@ -591,7 +588,7 @@ function registerAction (store, type, handler, local) {
 }
 ```
 
-通过 `type` 取出 `store._actions` 上对应的 `action`，没有就穿透赋值为空数组，然后将 `wrappedActionHandler` 函数 `push` 到 `entry` 数组中，函数中使用 `call` 将 `handler` 指向 `store`, `call` 的第二个参数是 `dispatch` `commit` `getters` 等包装后的对象，所以我们可以在 `commit` 的第一个参数中解构出需要的属性
+通过 `type` 取出 `store._actions` 上对应的 `action`，没有就穿透赋值为空数组，然后将 `wrappedActionHandler` 函数 `push` 到 `entry` 数组中，函数中使用 `call` 将 `handler` 指向 `store`, `call` 的第二个参数是 `dispatch` `commit` `getters` 等包装后的对象，所以我们可以在 `commit` 的第一个参数中解构出需要的属性
 
 ```
 // actions
@@ -881,7 +878,7 @@ register 方法会递归调用，实现嵌套模块的收集
 然后根据预置的类型进行断言
 
 随后就是实例化 Module 新建一个 newModule，判断 path path.length，0 说明是 root 将 newModule，判断 保存到 this.root 上
-然后判断 rawModule.modules 是否有嵌套 modules
+然后判断 rawModule.modules 是否有嵌套 modules
 有就调用 forEachValue 将 modules转换成数组，并且循环调用传入的回调函数，回调函数里又调用了 this.register，不过传入的 path 合并 子模块的 key root 模块也成了子模块，第二次进入 register 会进入 else 判断，调用 Module 类的 getChild addChild, 建立 module 的父子关系，如果仍然嵌套模块继续调用 this.register
 
 forEachValue
