@@ -20,10 +20,10 @@ export class Store {
     if (process.env.NODE_ENV !== 'production') {
       // 断言
       // 必须在创建 store 实例之前调用 install
-      // 支持 Promise
-      // 必须是 Store 的实例
       assert(Vue, `must call Vue.use(Vuex) before creating a store instance.`)
+      // 支持 Promise
       assert(typeof Promise !== 'undefined', `vuex requires a Promise polyfill in this browser.`)
+      // 必须是 Store 的实例
       assert(this instanceof Store, `store must be called with the new operator.`)
     }
 
@@ -46,23 +46,6 @@ export class Store {
     // 注册 getter 储存到 _wrappedGetters
     this._wrappedGetters = Object.create(null)
     // 处理 modules 模块收集器
-    // {
-    //   'root': {
-    //     'runtime': false,
-    //     '_children': {},
-    //     '_rawModule': {
-    //       'state': {
-    //         'count': 0
-    //       },
-    //       'getters': {},
-    //       'actions': {},
-    //       'mutations': {}
-    //     },
-    //     'state': {
-    //       'count': 0
-    //     }
-    //   }
-    // }
     this._modules = new ModuleCollection(options)
     // 在 installModule 函数中 如果有命名空间就储存到 _modulesNamespaceMap 中
     // 储存有命名空间的 module
