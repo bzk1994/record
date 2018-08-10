@@ -804,10 +804,32 @@ if (oldVm) {
 接下来调用 `oldVm` 的 `$destroy` 方法注销 `oldVm` 实例。
 
 
-### this._modules
-在上面初始参数的赋值中 `this._modules` 就是 `ModuleCollection` 类的实例
+### new ModuleCollection
+在上面初始参数的赋值中 `this._modules` 就是 `ModuleCollection` 类的实例。
 ```
 this._modules = new ModuleCollection(options)
+```
+
+如果没有嵌套模块，`this._modules` 是这样一个结构。
+
+```
+{
+  'root': {
+    'runtime': false,
+    '_children': {},
+    '_rawModule': {
+      'state': {
+        'count': 0
+      },
+      'getters': {},
+      'actions': {},
+      'mutations': {}
+    },
+    'state': {
+      'count': 0
+    }
+  }
+}
 ```
 
 来看看 ModuleCollection：
@@ -846,8 +868,7 @@ class ModuleCollection {
     // 默认注册 root
     // 包装了下传过来的 rawModule
     const newModule = new Module(rawModule, runtime)
-    // 判断 path.length
-    // 0 说明是 root 保存到 this.root 上
+    // 判断 path.length 0 说明是 root 保存到 this.root 上
     // 下次递归注册进入 else 调用 Module 类的 getChild addChild
     // 建立 module 的父子关系
     if (path.length === 0) {
@@ -876,16 +897,14 @@ class ModuleCollection {
 }
 ```
 
-在 ModuleCollection 类的 constructor 中首先会执行 类的 register 方法，将空数组、rawRootModule(也就是实例化的时候传入的 options)、false 最为最初参数传入
+在 `ModuleCollection` 类的 `constructor` 中首先会执行类的 `register` 方法，将空数组、`rawRootModule`(也就是实例化的时候传入的 options)、false 最为最初参数传入。
 
-register 方法会递归调用，实现嵌套模块的收集
-首先会在非生产环境调用 assertRawModule 函数，对 module 进行一些断言判断，判断 rawModule 对象是否有 getters、mutations、mutations 为 key 值
+`register` 方法会递归调用，实现嵌套模块的收集
+首先会在非生产环境调用 `assertRawModule` 函数，对 `module` 进行一些断言判断，判断 `rawModule` 对象是否有 `getters` `mutations` `mutations` 为 `key` 值，然后根据预置的类型进行断言。
 
-然后根据预置的类型进行断言
-
-随后就是实例化 Module 新建一个 newModule，判断 path path.length，0 说明是 root 将 newModule，判断 保存到 this.root 上
-然后判断 rawModule.modules 是否有嵌套 modules
-有就调用 forEachValue 将 modules转换成数组，并且循环调用传入的回调函数，回调函数里又调用了 this.register，不过传入的 path 合并 子模块的 key root 模块也成了子模块，第二次进入 register 会进入 else 判断，调用 Module 类的 getChild addChild, 建立 module 的父子关系，如果仍然嵌套模块继续调用 this.register
+随后就是实例化 `Module` 新建一个 `newModule`，判断 `path.length`，0 说明是 `root`， 将 `newModule` 保存到 `this.root` 上，
+然后判断 `rawModule.modules` 是否有嵌套 `modules`，
+有就调用 `forEachValue` 将 `modules`转换成数组，并且循环调用传入的回调函数，回调函数里又递归调用了 `this.register`，将 `path` 合并子模块的 `key`, 循环的子模块、`runtime` 作为参数传入，第二次进入 `register` 会进入 `else` 判断，调用 `Module` 类的 `getChild` `addChild`, 建立 `module` 的父子关系，如果仍然嵌套模块继续递归调用 `this.register`。
 
 forEachValue
 ```
@@ -895,52 +914,67 @@ export function forEachValue (obj, fn) {
 }
 ```
 
-this._modules
-```
-{
-  'root': {
-    'runtime': false,
-    '_children': {},
-    '_rawModule': {
-      'state': {
-        'count': 0
-      },
-      'getters': {},
-      'actions': {},
-      'mutations': {}
-    },
-    'state': {
-      'count': 0
-    }
-  }
-}
-```
-
 ### assertRawModule
 
+上面说过，`assertRawModule` 负责对 `module` 进行一些断言判断，判断 `rawModule` 对象是否有 `getters` `mutations` `mutations` 为 `key` 值，然后根据预置的类型进行断言。
+
+
 ```
-{
-  'root': {
-    'runtime': false,
-    '_children': {},
-    '_rawModule': {
-      'state': {
-        'count': 0
-      },
-      'getters': {},
-      'actions': {},
-      'mutations': {}
-    },
-    'state': {
-      'count': 0
-    }
+const functionAssert = {
+  assert: value => typeof value === 'function',
+  expected: 'function'
+}
+
+const objectAssert = {
+  assert: value => typeof value === 'function' ||
+    (typeof value === 'object' && typeof value.handler === 'function'),
+  expected: 'function or object with "handler" function'
+}
+
+const assertTypes = {
+  getters: functionAssert,
+  mutations: functionAssert,
+  actions: objectAssert
+}
+
+function assertRawModule (path, rawModule) {
+  Object.keys(assertTypes).forEach(key => {
+    if (!rawModule[key]) return
+
+    const assertOptions = assertTypes[key]
+
+    forEachValue(rawModule[key], (value, type) => {
+      assert(
+        assertOptions.assert(value),
+        makeAssertionMessage(path, key, type, value, assertOptions.expected)
+      )
+    })
+  })
+}
+
+function makeAssertionMessage (path, key, type, value, expected) {
+  let buf = `${key} should be ${expected} but "${key}.${type}"`
+  if (path.length > 0) {
+    buf += ` in module "${path.join('.')}"`
   }
+  buf += ` is ${JSON.stringify(value)}.`
+  return buf
 }
 ```
+
+`assertRawModule` 循环 `assertTypes` 对象，循环的 `key` 为 `getters` `mutations` `actions`，判断传入模块是否有这些属性。
+
+```
+const assertOptions = assertTypes[key]
+```
+
+接着从 `assertTypes` 取出对应属性的 `value`
+
+循环 `rawModule[key]` 对象，如果 `key` 此时就是 `getters`,那就是遍历当前模块有所的 `getter` 函数，回调函数是一个断言函数，`assertOptions` 的 `assert` 会返回对属性类型的判断，作为 `Boolean` 传入，`makeAssertionMessage` 函数只是对断言函数判断的异常的描述。
 
 ### class Module
 
-Module 类的代码
+来看看 `Module` 类的代码:
 ```
 export default class Module {
   constructor (rawModule, runtime) {
@@ -951,8 +985,6 @@ export default class Module {
     this._rawModule = rawModule
     const rawState = rawModule.state
     // Store the origin module's state
-    // 默认传入 rawState = {count: 0}
-    // 如果是有 module 的情况是空对象
     this.state = (typeof rawState === 'function' ? rawState() : rawState) || {}
   }
 
@@ -1008,6 +1040,22 @@ export default class Module {
   }
 }
 ```
+
+Module 类的 `constructor` 中
+会将传入的 `rawModule` `runtime` 保存，
+申明 `this._children`，主要是存放该模块的子模块，
+将 `rawModule.state` 取出保存到 `this.state` 上
+
+Module 类提供了很多方法： 
+
+`namespaced` 通过双非取值返回一个 `布尔值` ，作为是否有命名空间的判断。
+`addChild` 在 `ModuleCollection` 的 `register` 方法中调用，将子模块存入到父模块的 `this._children`
+`removeChild` 删除子模块
+`getChild` 获取子模块
+`update` 在 `ModuleCollection` 的 `update` 的调用，负责整个模块的更新
+
+后面的几个方法都是调用 `forEachValue`,将对应对应的模块，以及传入的 `fn` 传入。
+
 
 ### getNamespace
 // 根据 path 处理命名空间
