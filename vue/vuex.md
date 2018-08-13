@@ -1044,15 +1044,15 @@ export default class Module {
 Module 类的 `constructor` 中
 会将传入的 `rawModule` `runtime` 保存，
 申明 `this._children`，主要是存放该模块的子模块，
-将 `rawModule.state` 取出保存到 `this.state` 上
+将 `rawModule.state` 取出保存到 `this.state` 上
 
 Module 类提供了很多方法： 
 
 `namespaced` 通过双非取值返回一个 `布尔值` ，作为是否有命名空间的判断。
-`addChild` 在 `ModuleCollection` 的 `register` 方法中调用，将子模块存入到父模块的 `this._children`
+`addChild` 在 `ModuleCollection` 的 `register` 方法中调用，将子模块存入到父模块的 `this._children`
 `removeChild` 删除子模块
 `getChild` 获取子模块
-`update` 在 `ModuleCollection` 的 `update` 的调用，负责整个模块的更新
+`update` 在 `ModuleCollection` 的 `update` 的调用，负责整个模块的更新
 
 后面的几个方法都是调用 `forEachValue`,将对应对应的模块，以及传入的 `fn` 传入。
 
