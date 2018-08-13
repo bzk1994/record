@@ -257,6 +257,7 @@ const {
 ```
 
 plugins: `vuex` 的插件，数组，会在后面循环调用。
+
 strict: 是否是严格模式，后面判断如果是严格模式的会执行 `enableStrictMode` 方法，确保只能通过 `mutation` 操作 `state`。
 
 接下来就是一些初始参数的赋值。
@@ -473,7 +474,7 @@ function makeLocalContext (store, namespace, path) {
 
 声明 `noNamespace` 变量判断是否有命名空间，然后创建 `local` 对象，改对象有两个属性 `dispatch` `commit`，它们的值分别是2个三元表达式，如果是没有命名空间的，`dispatch` 就赋值为 `store.dispatch`，有命名空间就拼上再返回，`commit` 也是一样的道理。
 
-然后通过 `Object.defineProperties` 劫持 `local` 对象的 `getters` `state`
+然后通过 `Object.defineProperties` 劫持 `local` 对象的 `getters` `state`。
 ```
 // getters and state object must be gotten lazily
 // because they will be changed by vm update
@@ -620,7 +621,7 @@ export function isPromise (val) {
 
 之后就是根据 `_devtoolHook` 判断当前浏览器是否有 `devtoolHook` 插件，应该是通过 `Promise.catch` 抛出错误，让 `devtoolHook` 捕获。
 
-来看看 `registerGetter` 方法
+来看看 `registerGetter` 方法：
 ```
 function registerGetter (store, type, rawGetter, local) {
   if (store._wrappedGetters[type]) {
@@ -970,7 +971,7 @@ const assertOptions = assertTypes[key]
 
 接着从 `assertTypes` 取出对应属性的 `value`
 
-循环 `rawModule[key]` 对象，如果 `key` 此时就是 `getters`,那就是遍历当前模块有所的 `getter` 函数，回调函数是一个断言函数，`assertOptions` 的 `assert` 会返回对属性类型的判断，作为 `Boolean` 传入，`makeAssertionMessage` 函数只是对断言函数判断的异常的描述。
+循环 `rawModule[key]` 对象，如果 `key` 此时就是 `getters`，那就是遍历当前模块有所的 `getter` 函数，回调函数是一个断言函数，`assertOptions` 的 `assert` 会返回对属性类型的判断，作为 `Boolean` 传入，`makeAssertionMessage` 函数只是对断言函数判断的异常的描述。
 
 ### class Module
 
@@ -1041,24 +1042,27 @@ export default class Module {
 }
 ```
 
-Module 类的 `constructor` 中
-会将传入的 `rawModule` `runtime` 保存，
-申明 `this._children`，主要是存放该模块的子模块，
-将 `rawModule.state` 取出保存到 `this.state` 上
+Module 类的 `constructor` 中会将传入的 `rawModule` `runtime` 保存，申明 `this._children`，主要是存放该模块的子模块，将 `rawModule.state` 取出保存到 `this.state` 上。
 
 Module 类提供了很多方法： 
 
 `namespaced` 通过双非取值返回一个 `布尔值` ，作为是否有命名空间的判断。
+
 `addChild` 在 `ModuleCollection` 的 `register` 方法中调用，将子模块存入到父模块的 `this._children`
+
 `removeChild` 删除子模块
+
 `getChild` 获取子模块
+
 `update` 在 `ModuleCollection` 的 `update` 的调用，负责整个模块的更新
 
 后面的几个方法都是调用 `forEachValue`,将对应对应的模块，以及传入的 `fn` 传入。
 
 
 ### getNamespace
-// 根据 path 处理命名空间
+
+根据 path 处理命名空间
+
 ```
 getNamespace (path) {
   let module = this.root
@@ -1093,7 +1097,7 @@ function vuexInit () {
 }
 ```
 在 vuexInit 方法中，首先判断如果有 `this.$options.store` 说明是 root 节点，判断 store 如果是 function 就将函数执行后的返回赋值给 `this.$store` ，否则将 `options.store` 直接赋值给 `this.$store`。
-不是 `root` 节点就从父组件中获取 `$store`，这样就保证只有一个全局的 `$store`
+不是 `root` 节点就从父组件中获取 `$store`，这样就保证只有一个全局的 `$store`。
 
 ### mapState 实现
 ### mapGetter 如何映射
