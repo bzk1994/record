@@ -18,8 +18,6 @@
 
 [阅读 vue-router 源码的一些注释](https://github.com/zhanghao-zhoushan/vue-router)
 
-![阅读 vue-router 源码的思维导图](https://images-cdn.shimo.im/gFfW8mk8XVoiiXvx/Vue_router.png!thumbnail)
-
 参考资料
 
 [vue-router源码分析-整体流程](https://github.com/DDFE/DDFE-blog/issues/9)
@@ -31,8 +29,6 @@
 #### vuex
 
 [阅读 vuex 源码的一些注释](https://github.com/zhanghao-zhoushan/record/vue/vuex)
-
-![阅读 vuex 源码的思维导图](https://images-cdn.shimo.im/KdTrPikRo9wmi0yj/vuex.png!thumbnail)
 
 参考资料
 

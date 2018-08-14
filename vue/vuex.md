@@ -1,12 +1,21 @@
 
 
 ## Vuex 是什么？
+
 Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。
 
-[vuex 的文档](https://vuex.vuejs.org/zh/)对辅助看源码有不小的帮助，不妨在看源码之前仔细地撸一遍文档。
+<p align="center">
+  <img width="700px" src="https://raw.githubusercontent.com/vuejs/vuex/dev/docs/.vuepress/public/vuex.png">
+</p>
+
+阅读 vuex 源码的思维导图:
+
+![阅读 vuex 源码的思维导图](https://images-cdn.shimo.im/KdTrPikRo9wmi0yj/vuex.png!thumbnail)
+
+[vuex 的文档](https://vuex.vuejs.org/zh/) 对辅助看源码有不小的帮助，不妨在看源码之前仔细地撸一遍文档。
 
 
-### 带着问题去看源码
+## 带着问题去看源码
 0. global event bus 有何缺陷
 1. $store 如何注入到所有子组件
 2. mapState 实现
@@ -19,7 +28,7 @@ Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用�
 9. hotUpdate
 10. 时空穿梭功能实现
 
-### 目录
+## 目录
 
 ```
 ├── src
@@ -37,7 +46,7 @@ Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用�
 │   └── util.js                     工具函数
 ```
 
-### 入口文件
+## 入口文件
 
 vuex 的入口文件在 `src/index.js`
 
@@ -60,11 +69,12 @@ export default {
 引入了 `Store` 、`install` 和一些辅助工具函数，将引入的变量组装成一个对象向外暴露。
 当我们在项目中引入 `import Vuex from 'vuex'` 的之后， `Vuex` 就是这个组装后默认导出的对象了。
 当然我们也可以通过解构的方式。
+
 ```
 import { Store, install } from 'vuex'`
 ```
 
-### install 方法
+## install 方法
 
 来看一下 `install` 方法，在 `src/store.js` 。
 
@@ -135,7 +145,7 @@ export default function (Vue) {
 在 `vuexInit` 方法中，首先判断如果有 `options.store` 说明是 `root` 节点，并且判断 `store` 是 `function` 就执行将函数返回值赋值给 `this.$store` ，否则 `options.store` 直接赋值。
 然后判断有父节点，并且父节点有 `$store`, 就将父节点的 `$store` 赋值给 `this.$store` ，这样就保证只有一个全局的 `$store` 变量
 
-### class Store
+## class Store
 
 我们在使用 `Vuex` 的时候，会实例化 `Store` 类，并且将一些 `options` 作为参数传入。
 
@@ -261,6 +271,7 @@ plugins: `vuex` 的插件，数组，会在后面循环调用。
 strict: 是否是严格模式，后面判断如果是严格模式的会执行 `enableStrictMode` 方法，确保只能通过 `mutation` 操作 `state`。
 
 接下来就是一些初始参数的赋值。
+
 ```
 // 通过 mutation 修改 state 的标识
 this._committing = false
@@ -296,7 +307,8 @@ this.commit = function boundCommit (type, payload, options) {
 }
 ```
 
-将结构出的 `strict` 变量赋值给 `this.strict` ，会在实例中使用。
+将解构出的 `strict` 变量赋值给 `this.strict` ，会在实例中使用。
+
 ```
 // strict mode
 this.strict = strict
@@ -315,6 +327,7 @@ installModule(this, state, [], this._modules.root)
 第一次调用将 `this`、`state`（this._modules.root.state）、空数组、`this._modules.root`（root module）作为参数传入。
 
 `installModule` 代码：
+
 ```
 function installModule (store, rootState, path, module, hot) {
   const isRoot = !path.length
@@ -805,7 +818,7 @@ if (oldVm) {
 接下来调用 `oldVm` 的 `$destroy` 方法注销 `oldVm` 实例。
 
 
-### new ModuleCollection
+## class ModuleCollection
 在上面初始参数的赋值中 `this._modules` 就是 `ModuleCollection` 类的实例。
 ```
 this._modules = new ModuleCollection(options)
@@ -907,7 +920,8 @@ class ModuleCollection {
 然后判断 `rawModule.modules` 是否有嵌套 `modules`，
 有就调用 `forEachValue` 将 `modules`转换成数组，并且循环调用传入的回调函数，回调函数里又递归调用了 `this.register`，将 `path` 合并子模块的 `key`, 循环的子模块、`runtime` 作为参数传入，第二次进入 `register` 会进入 `else` 判断，调用 `Module` 类的 `getChild` `addChild`, 建立 `module` 的父子关系，如果仍然嵌套模块继续递归调用 `this.register`。
 
-forEachValue
+forEachValue：
+
 ```
 // object 转成数组 循环调用 fn
 export function forEachValue (obj, fn) {
@@ -973,9 +987,10 @@ const assertOptions = assertTypes[key]
 
 循环 `rawModule[key]` 对象，如果 `key` 此时就是 `getters`，那就是遍历当前模块有所的 `getter` 函数，回调函数是一个断言函数，`assertOptions` 的 `assert` 会返回对属性类型的判断，作为 `Boolean` 传入，`makeAssertionMessage` 函数只是对断言函数判断的异常的描述。
 
-### class Module
+## class Module
 
 来看看 `Module` 类的代码:
+
 ```
 export default class Module {
   constructor (rawModule, runtime) {
@@ -1073,6 +1088,242 @@ getNamespace (path) {
 }
 ```
 
+## 辅助工具函数
+
+在 `vue` 的入口文件默认导出辅助工具函数。
+
+```
+import { Store, install } from './store'
+import { mapState, mapMutations, mapGetters, mapActions, createNamespacedHelpers } from './helpers'
+
+export default {
+  Store,
+  install,
+  version: '__VERSION__',
+  mapState,
+  mapMutations,
+  mapGetters,
+  mapActions,
+  createNamespacedHelpers
+}
+```
+
+我们可以通过解构调用 `vuex` 暴露出来的辅助工具函数。
+
+```
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'`
+```
+
+辅助工具函数在 `src/helpers.js`:
+
+```
+export const mapState = normalizeNamespace((namespace, states) => {
+  ...
+  return res
+})
+
+export const mapMutations = normalizeNamespace((namespace, mutations) => {
+  ...
+  return res
+})
+
+export const mapGetters = normalizeNamespace((namespace, getters) => {
+  ...
+  return res
+})
+
+export const mapActions = normalizeNamespace((namespace, actions) => {
+  ...
+  return res
+})
+
+export const createNamespacedHelpers = (namespace) => ({
+  ...
+})
+```
+
+可以看到 `helpers.js` 向外暴露了5个辅助工具函数，在 `vuex` 入口文件中包装成对象后暴露出去。
+
+### mapState
+
+`mapState` 辅助函数帮助我们生成计算属性。
+
+来看一下具体实现：
+
+```
+/**
+ * Reduce the code which written in Vue.js for getting the state.
+ * @param {String} [namespace] - Module's namespace
+ * @param {Object|Array} states # Object's item can be a function which accept state and getters for param, you can do something for state and getters in it.
+ * @param {Object}
+ */
+export const mapState = normalizeNamespace((namespace, states) => {
+  const res = {}
+  normalizeMap(states).forEach(({ key, val }) => {
+    res[key] = function mappedState () {
+      let state = this.$store.state
+      let getters = this.$store.getters
+      if (namespace) {
+        const module = getModuleByNamespace(this.$store, 'mapState', namespace)
+        if (!module) {
+          return
+        }
+        state = module.context.state
+        getters = module.context.getters
+      }
+      return typeof val === 'function'
+        ? val.call(this, state, getters)
+        : state[val]
+    }
+    // mark vuex getter for devtools
+    res[key].vuex = true
+  })
+  return res
+})
+```
+
+`mapState` 函数是经过 `normalizeNamespace` 函数处理后返回的函数。
+
+`normalizeNamespace` 函数：
+
+```
+/**
+ * Return a function expect two param contains namespace and map. it will normalize the namespace and then the param's function will handle the new namespace and the map.
+ * @param {Function} fn
+ * @return {Function}
+ */
+function normalizeNamespace (fn) {
+  return (namespace, map) => {
+    if (typeof namespace !== 'string') {
+      map = namespace
+      namespace = ''
+    } else if (namespace.charAt(namespace.length - 1) !== '/') {
+      namespace += '/'
+    }
+    return fn(namespace, map)
+  }
+}
+```
+
+
+`mapMutations` 辅助函数将组件中的 `methods` 映射为 `store.commit` 调用。
+
+来看一下具体实现：
+
+```
+/**
+ * Reduce the code which written in Vue.js for committing the mutation
+ * @param {String} [namespace] - Module's namespace
+ * @param {Object|Array} mutations # Object's item can be a function which accept `commit` function as the first param, it can accept anthor params. You can commit mutation and do any other things in this function. specially, You need to pass anthor params from the mapped function.
+ * @return {Object}
+ */
+export const mapMutations = normalizeNamespace((namespace, mutations) => {
+  const res = {}
+  normalizeMap(mutations).forEach(({ key, val }) => {
+    res[key] = function mappedMutation (...args) {
+      // Get the commit method from store
+      let commit = this.$store.commit
+      if (namespace) {
+        const module = getModuleByNamespace(this.$store, 'mapMutations', namespace)
+        if (!module) {
+          return
+        }
+        commit = module.context.commit
+      }
+      return typeof val === 'function'
+        ? val.apply(this, [commit].concat(args))
+        : commit.apply(this.$store, [val].concat(args))
+    }
+  })
+  return res
+})
+```
+
+`mapGetters` 辅助函数将 `store` 中的 `getter` 映射到局部计算属性。
+来看一下具体实现：
+```
+/**
+ * Reduce the code which written in Vue.js for getting the getters
+ * @param {String} [namespace] - Module's namespace
+ * @param {Object|Array} getters
+ * @return {Object}
+ */
+export const mapGetters = normalizeNamespace((namespace, getters) => {
+  const res = {}
+  normalizeMap(getters).forEach(({ key, val }) => {
+    // thie namespace has been mutate by normalizeNamespace
+    val = namespace + val
+    res[key] = function mappedGetter () {
+      if (namespace && !getModuleByNamespace(this.$store, 'mapGetters', namespace)) {
+        return
+      }
+      if (process.env.NODE_ENV !== 'production' && !(val in this.$store.getters)) {
+        console.error(`[vuex] unknown getter: ${val}`)
+        return
+      }
+      return this.$store.getters[val]
+    }
+    // mark vuex getter for devtools
+    res[key].vuex = true
+  })
+  return res
+})
+```
+
+`mapActions` 辅助函数将组件的 methods 映射为 store.dispatch 调用
+来看一下具体实现：
+
+```
+/**
+ * Reduce the code which written in Vue.js for dispatch the action
+ * @param {String} [namespace] - Module's namespace
+ * @param {Object|Array} actions # Object's item can be a function which accept `dispatch` function as the first param, it can accept anthor params. You can dispatch action and do any other things in this function. specially, You need to pass anthor params from the mapped function.
+ * @return {Object}
+ */
+export const mapActions = normalizeNamespace((namespace, actions) => {
+  const res = {}
+  normalizeMap(actions).forEach(({ key, val }) => {
+    res[key] = function mappedAction (...args) {
+      // get dispatch function from store
+      let dispatch = this.$store.dispatch
+      if (namespace) {
+        const module = getModuleByNamespace(this.$store, 'mapActions', namespace)
+        if (!module) {
+          return
+        }
+        dispatch = module.context.dispatch
+      }
+      return typeof val === 'function'
+        ? val.apply(this, [dispatch].concat(args))
+        : dispatch.apply(this.$store, [val].concat(args))
+    }
+  })
+  return res
+})
+```
+
+`createNamespacedHelpers` 创建基于某个命名空间辅助函数。
+
+来看一下具体实现：
+
+```
+/**
+ * Rebinding namespace param for mapXXX function in special scoped, and return them by simple object
+ * @param {String} namespace
+ * @return {Object}
+ */
+export const createNamespacedHelpers = (namespace) => ({
+  mapState: mapState.bind(null, namespace),
+  mapGetters: mapGetters.bind(null, namespace),
+  mapMutations: mapMutations.bind(null, namespace),
+  mapActions: mapActions.bind(null, namespace)
+})
+```
+
+
+
+
+
 ## 问题总结
 ### global eventBus 有何缺陷
 eventBus 比较适合简单应用，但是随着需求增加，组件之间通信增多，eventBus 就显得不够直观，不方便我们管理，而且随着组件复用的增多，多个组件通信，又相互通信，就容易导致混乱。
@@ -1080,6 +1331,7 @@ eventBus 比较适合简单应用，但是随着需求增加，组件之间通�
 ### $store 如何注入到所有子组件
 
 `$store` 是在 vuex install 初始化的时候赋值的，来看一下代码： 
+
 ```
  /**
   * Vuex init hook, injected into each instances init hooks list.
@@ -1096,6 +1348,7 @@ function vuexInit () {
   }
 }
 ```
+
 在 vuexInit 方法中，首先判断如果有 `this.$options.store` 说明是 root 节点，判断 store 如果是 function 就将函数执行后的返回赋值给 `this.$store` ，否则将 `options.store` 直接赋值给 `this.$store`。
 不是 `root` 节点就从父组件中获取 `$store`，这样就保证只有一个全局的 `$store`。
 
