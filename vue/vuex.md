@@ -741,6 +741,7 @@ function resetStoreVM (store, state, hot) {
 函数开始就取出 `store._vm`，初始值是 `undefind`，会在后面用到。
 
 循环 `wrappedGetters` 处理所有 `getter`。
+
 ```
 // bind store public getters
 store.getters = {}
@@ -1111,7 +1112,7 @@ export default {
 我们可以通过解构调用 `vuex` 暴露出来的辅助工具函数。
 
 ```
-import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'`
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 ```
 
 辅助工具函数在 `src/helpers.js`:
@@ -1184,7 +1185,9 @@ export const mapState = normalizeNamespace((namespace, states) => {
 
 `mapState` 函数是经过 `normalizeNamespace` 函数处理后返回的函数。
 
-`normalizeNamespace` 函数：
+### normalizeNamespace
+
+我们来看看 `normalizeNamespace` 函数：
 
 ```
 /**
@@ -1205,6 +1208,91 @@ function normalizeNamespace (fn) {
 }
 ```
 
+`normalizeNamespace` ，接收一个 `fn` 作为参数，最后返回一个函数。
+
+```
+(namespace, map) => {
+  if (typeof namespace !== 'string') {
+    map = namespace
+    namespace = ''
+  } else if (namespace.charAt(namespace.length - 1) !== '/') {
+    namespace += '/'
+  }
+  return fn(namespace, map)
+}
+```
+
+此时 `mapState` 就等于这个函数，它接收 `namespace` 、`map` 作为参数，`namespace` 就是命名空间，`map` 就是传过来的 `state` ，
+判断 `namespace` 不是一个字符串，因为 `mapState` 第一个参数是可选的，如果不是字符串就说明没有命名空间，第一个参数就是传入的 `state`，将 `namespace` 赋值给 `map`，然后将 `namespace` 置为空字符串。进入 `else if` 判断 `namespace` 最后一个字符串是否是 `'/'`，没有就拼上 `'/'` 。
+
+当调用 `mapState` 的时候，就会返回 `fn(namespace, map)` 函数的运行后的结果，就是一个 `res` 对象。
+
+`normalizeNamespace` 是一个高阶函数实现，高阶函数是接收一个或者多个函数作为参数，并返回一个新函数的函数。
+
+我们来看一下 `mapState` 中的 `fn` 具体实现。
+
+首先申明一个 `res` 对象，循环赋值后返回，接着调用 `normalizeMap` 函数, `normalizeMap` 接收一个对象或者数组，转化成一个数组形式，数组元素是包含 `key` 和 `value` 的对象。
+
+### normalizeMap
+```
+/**
+ * Normalize the map
+ * normalizeMap([1, 2, 3]) => [ { key: 1, val: 1 }, { key: 2, val: 2 }, { key: 3, val: 3 } ]
+ * normalizeMap({a: 1, b: 2, c: 3}) => [ { key: 'a', val: 1 }, { key: 'b', val: 2 }, { key: 'c', val: 3 } ]
+ * @param {Array|Object} map
+ * @return {Object}
+ */
+function normalizeMap (map) {
+  return Array.isArray(map)
+    ? map.map(key => ({ key, val: key }))
+    : Object.keys(map).map(key => ({ key, val: map[key] }))
+}
+```
+
+经过 `normalizeMap` 函数处理后，会转化成一个数组， `[{key: key, val: fn}]` 的格式，调用 `forEach` 循环处理，在 `forEach` 的回调函数中，
+使用解构取出 `key` 和 `value`，每一次循环就以 `key` 为键，`mappedState` 函数为 `value` 存入 `res` 对象，
+在 `mappedState` 函数中，声明 `state` 和 `getters` 变量保存 `this.$store.state` 和 `this.$store.getters`。
+
+接着判断传入的 `namespace`，如果有 `namespace` 就调用 `getModuleByNamespace` 函数搜索对应模块，如果没有搜索到就 `return`，有对应模块的话将对应模块的 `state` `getters` 赋值给声明的 `state` 和 `getters` 变量。
+`mappedState` 最后判断 `val` 是否是 `function`，是就调用 `call` 将 `val` 的 `this` 绑定到 `Vue` 实例，并将 `state` `getters` 作为参数传递，执行后返回，不是 `function` 根据 `key` 返回对应的 `state`。
+
+### getModuleByNamespace
+
+`getModuleByNamespace` 函数主要用来搜索具有命名空间的模块。
+
+```
+/**
+ * Search a special module from store by namespace. if module not exist, print error message.
+ * @param {Object} store
+ * @param {String} helper
+ * @param {String} namespace
+ * @return {Object}
+ */
+function getModuleByNamespace (store, helper, namespace) {
+  const module = store._modulesNamespaceMap[namespace]
+  if (process.env.NODE_ENV !== 'production' && !module) {
+    console.error(`[vuex] module namespace not found in ${helper}(): ${namespace}`)
+  }
+  return module
+}
+```
+
+函数开始申明 `module` 变量，然后根据 `namespace` 从 `store._modulesNamespaceMap` 取出对应模块，
+`_modulesNamespaceMap` 这个变量是在 `Store` 类中，调用 `installModule` 时候保存所以有命名空间模块的变量。
+判断非生产环境并且没有对应模块，抛出异常，最后将 `module` 变量返回。
+
+`forEach` 最后还有一段：
+
+```
+// mark vuex getter for devtools
+res[key].vuex = true
+```
+
+应该是 `devtools` 需要这个属性判断 `value` 是否属于 `vuex`。
+
+完成 `forEach` 循环后会将处理后的 `res` 对象返回。
+
+### mapMutations
 
 `mapMutations` 辅助函数将组件中的 `methods` 映射为 `store.commit` 调用。
 
@@ -1239,8 +1327,22 @@ export const mapMutations = normalizeNamespace((namespace, mutations) => {
 })
 ```
 
+`mapMutations` 处理过程与 `mapState` 相似，我看来看看传入 `normalizeNamespace` 的回调函数。
+
+首先也是申明 `res` 空对象，经过 `normalizeMap` 函数处理后的 `mutations` 调用 `forEach` 循环处理，在 `forEach` 的回调函数中， 使用解构取出 `key` 和 `value`，每一次循环就以 `key` 为键，`mappedMutation` 函数为 `value` 存入 `res` 对象， 在 `mappedMutation` 函数中，声明 `commit` 变量保存 `this.$store.commit` 。
+
+判断传入的 `namespace`，如果有 `namespace` 就调用 `getModuleByNamespace` 函数搜索对应模块，如果没有搜索到就 `return`，有对应模块的话对应模块的将 `commit` 赋值给声明的 `commit` 变量。
+
+`mappedMutation` 最后判断 `val` 是否是 `function`，是就调用 `apply` 将 `val` 的 `this` 绑定到 `Vue` 实例，并将 `commit` 和 `args` 合并成一个数组作为参数传递，，`val` 不是 `function` 就将 `commit` 调用 `apply` 改变了 `this` 指向，将 `val` 和 `args` 合并成一个数组作为参数传递，执行后返回。
+
+最后将 `res` 对象返回。
+
+### mapGetters
+
 `mapGetters` 辅助函数将 `store` 中的 `getter` 映射到局部计算属性。
+
 来看一下具体实现：
+
 ```
 /**
  * Reduce the code which written in Vue.js for getting the getters
@@ -1270,7 +1372,18 @@ export const mapGetters = normalizeNamespace((namespace, getters) => {
 })
 ```
 
-`mapActions` 辅助函数将组件的 methods 映射为 store.dispatch 调用
+我看来看看传入 `normalizeNamespace` 的回调函数。
+
+首先也是申明 `res` 空对象，经过 `normalizeMap` 函数处理后的 `getters` 调用 `forEach` 循环处理，在 `forEach` 的回调函数中， 使用解构取出 `key` 和 `value`，每一次循环就以 `key` 为键，`mappedGetter` 函数为 `value` 存入 `res` 对象，这里会将 `val` 赋值成 `namespace + val`，如果有命名空间，此时的 `val` 应该是类似这样的: `cart/cartProducts`。
+
+在 `mappedGetter` 函数中，首先判断如果有 `namespace` 并且调用 `getModuleByNamespace` 函数没有匹配到对应模块就直接 `return`。然后判断在非生产环境并且 `this.$store.getters` 没有对应的 `val` 就抛出异常并返回。接下来就是有对应模块的情况，直接返回 `this.$store.getters` 对应的 `getter`。
+
+最后将 `res` 对象返回。
+
+### mapActions
+
+`mapActions` 辅助函数将组件的 methods 映射为 store.dispatch 调用。
+
 来看一下具体实现：
 
 ```
@@ -1302,6 +1415,10 @@ export const mapActions = normalizeNamespace((namespace, actions) => {
 })
 ```
 
+`mapActions` 处理过程与 `mapMutations` 函数一模一样，就不在赘述。
+
+### createNamespacedHelpers
+
 `createNamespacedHelpers` 创建基于某个命名空间辅助函数。
 
 来看一下具体实现：
@@ -1319,10 +1436,47 @@ export const createNamespacedHelpers = (namespace) => ({
   mapActions: mapActions.bind(null, namespace)
 })
 ```
+`createNamespacedHelpers` 函数接受一个字符串作为参数，返回一个包含 `mapState` 、`mapGetters` 、`mapActions` 和 `mapMutations` 的对象。
 
+以 `mapState` 为例，调用 `mapState` 函数的 `bind` 方法，将 `null` 作为第一个参数传入，不会改变 `this` 指向，`namespace` 作为第二个参数。
 
+```
+import { createNamespacedHelpers } from 'vuex'
 
+const { mapState, mapActions } = createNamespacedHelpers('some/nested/module')
 
+export default {
+  computed: {
+    // 在 `some/nested/module` 中查找
+    ...mapState({
+      a: state => state.a,
+      b: state => state.b
+    })
+  },
+  methods: {
+    // 在 `some/nested/module` 中查找
+    ...mapActions([
+      'foo',
+      'bar'
+    ])
+  }
+}
+```
+
+此时的 `mapState` 函数就是经过 `bind` 处理过的，会将 `namespace` 作为第一个参数传入。
+
+相当于下面这样：
+
+```
+...mapState('some/nested/module', {
+  a: state => state.a,
+  b: state => state.b
+})
+```
+
+简化了重复写入命名空间。
+
+到此 `helpers.js` 结束。
 
 ## 问题总结
 ### global eventBus 有何缺陷
