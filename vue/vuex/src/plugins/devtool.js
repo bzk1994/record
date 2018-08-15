@@ -12,11 +12,11 @@ export default function devtoolPlugin (store) {
   // devtoolHook 监听到会根据 store 初始化 vuex
   devtoolHook.emit('vuex:init', store)
 
-  // TODO: 监听 replaceState ？
+  // devtoolHook 监听 vuex:travel-to-state，调用回调函数
   devtoolHook.on('vuex:travel-to-state', targetState => {
     store.replaceState(targetState)
   })
-  // TODO: 订阅函数 ？
+
   store.subscribe((mutation, state) => {
     devtoolHook.emit('vuex:mutation', mutation, state)
   })
