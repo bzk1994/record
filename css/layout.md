@@ -1,6 +1,6 @@
-[查看栗子](https://zhanghao-zhoushan.github.io/record/css/layout.html)
-
 ## 三栏布局
+
+[查看栗子](https://zhanghao-zhoushan.github.io/record/css/layout.html)
 
 ### 圣杯布局
 

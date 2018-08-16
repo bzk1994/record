@@ -34,7 +34,7 @@ export const mapState = normalizeNamespace((namespace, states) => {
       // products(state, getters) {
       //   return state.products.all;
       // }
-      // 不是的话将 val 以 key 值保存到 state
+      // 不是 function 直接根据 key 返回对应的 state
       // return
       return typeof val === 'function'
         ? val.call(this, state, getters)
@@ -195,7 +195,7 @@ export const createNamespacedHelpers = (namespace) => ({
  * @param {Array|Object}
  * @return {Object}
  * 格式化 getter mutations actions states
- * 转成数组对象的形式
+ * 接收一个对象或者数组，转化成一个数组形式，数组元素是包含 key 和 value 的对象
  */
 function normalizeMap (map) {
   return Array.isArray(map)

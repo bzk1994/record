@@ -14,11 +14,11 @@
 
 [Vue技术内幕](http://hcysun.me/vue-design/art/)
 
-#### vue-router
+### vue-router
 
 [阅读 vue-router 源码的一些注释](https://github.com/zhanghao-zhoushan/vue-router)
 
-参考资料
+> 参考资料
 
 [vue-router源码分析-整体流程](https://github.com/DDFE/DDFE-blog/issues/9)
 
@@ -26,13 +26,15 @@
 
 [Vue.js 技术揭秘](https://ustbhuangyi.github.io/vue-analysis/vue-router/)
 
-#### vuex
+### vuex
 
-[阅读 vuex 源码的一些注释](https://github.com/zhanghao-zhoushan/record/vue/vuex)
+[vuex 源码阅读笔记](https://github.com/zhanghao-zhoushan/record/blob/master/vue/vuex.md)
 
-参考资料
+> 参考资料
 
 [Vue.js 技术揭秘](https://ustbhuangyi.github.io/vue-analysis/vuex/init.html)
+
+## 基础篇
 
 ### Canvas
 

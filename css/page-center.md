@@ -1,6 +1,6 @@
-[查看栗子](https://zhanghao-zhoushan.github.io/record/css/page-center.html)
-
 ## 页面居中
+
+[查看栗子](https://zhanghao-zhoushan.github.io/record/css/page-center.html)
 
 ### common style
 
