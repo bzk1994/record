@@ -8,7 +8,7 @@ Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用�
   <img width="700px" src="https://raw.githubusercontent.com/vuejs/vuex/dev/docs/.vuepress/public/vuex.png">
 </p>
 
-阅读 vuex 源码的思维导图:
+> 阅读 vuex 源码的思维导图:
 
 ![阅读 vuex 源码的思维导图](https://images-cdn.shimo.im/KdTrPikRo9wmi0yj/vuex.png!thumbnail)
 
@@ -568,6 +568,7 @@ module.forEachGetter((getter, key) => {
 调用 `module` 类的 `forEachMutation` `forEachAction` `forEachGetter`，取出对应的 `mutations` `actions` `getters` 和回调函数作为参数。
 
 来看看 `registerMutation` 方法:
+
 ```
 function registerMutation (store, type, handler, local) {
   const entry = store._mutations[type] || (store._mutations[type] = [])
@@ -818,6 +819,342 @@ if (oldVm) {
 如果有 `oldVm`, 并且是热更新模式，将 `oldVm._data.$$state` 置为 `null`，
 接下来调用 `oldVm` 的 `$destroy` 方法注销 `oldVm` 实例。
 
+插件的调用：
+
+```
+// apply plugins
+plugins.forEach(plugin => plugin(this))
+```
+
+循环传入的 `plugin` 数组，循环调用，并将 `this` 传入。
+
+调用 `devtoolPlugin` 方法：
+
+```
+if (Vue.config.devtools) {
+  devtoolPlugin(this)
+}
+```
+
+`constructor` 的末尾会判断 `Vue.config.devtools` 是否为真，调用 `devtoolPlugin` 方法，并将 `this` 作为参数传入，`devtoolPlugin` 实现请看 `插件 devtool` 部分。
+
+至此 `Store` 类的 `constructor` 部分结束，我们往下来看看 `Store` 类中的方法。
+
+
+代理 `state`:
+```
+get state () {
+  return this._vm._data.$$state
+}
+```
+
+为 `state` 设置 `get`，访问 `Store` 实例的 `state` 的时候代理带 `this._vm._data.$$state`。
+
+```
+set state (v) {
+  if (process.env.NODE_ENV !== 'production') {
+    assert(false, `use store.replaceState() to explicit replace store state.`)
+  }
+}
+```
+
+为 `state` 设置 `set`，不能直接修改 `state`， 非生产环境抛出异常，提示你使用 `store.replaceState` 方法修改 `state`。
+
+### commit
+
+修改 `Vuex` 的 `store` 只能通过 `mutation`，我们通过 `commit` 调用 `mutation`。
+
+```
+commit (_type, _payload, _options) {
+  // check object-style commit
+  const {
+    type,
+    payload,
+    options
+  } = unifyObjectStyle(_type, _payload, _options)
+
+  const mutation = { type, payload }
+  const entry = this._mutations[type]
+  if (!entry) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`[vuex] unknown mutation type: ${type}`)
+    }
+    return
+  }
+  this._withCommit(() => {
+    entry.forEach(function commitIterator (handler) {
+      handler(payload)
+    })
+  })
+  this._subscribers.forEach(sub => sub(mutation, this.state))
+
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    options && options.silent
+  ) {
+    console.warn(
+      `[vuex] mutation type: ${type}. Silent option has been removed. ` +
+      'Use the filter functionality in the vue-devtools'
+    )
+  }
+}
+```
+
+`commit` 接收3个参数，`_type` 就是 `mutation` 的 `type`，`_payload` 就是传入的参数，`_options` 参数会在下面调用，貌似没什么用处，只是用来判断是否 `console.warn`。
+
+接下来调用 `unifyObjectStyle` 方法：
+
+```
+function unifyObjectStyle (type, payload, options) {
+  if (isObject(type) && type.type) {
+    options = payload
+    payload = type
+    type = type.type
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    assert(typeof type === 'string', `expects string as the type, but found ${typeof type}.`)
+  }
+
+  return { type, payload, options }
+}
+```
+
+接收 `commit` 的三个参数，判断 `type` 如果是一个对象，并且有 `type` 属性，将 `options` 赋值为 `payload`，`payload` 赋值为 `type`，`type` 赋值为 `type.type`。
+
+因为 `vuex` 允许对象风格的提交方式
+
+```
+store.commit({
+  type: 'increment',
+  amount: 10
+})
+```
+
+处理成这样的形式：
+
+```
+store.commit('increment', {
+  amount: 10
+})
+```
+
+然后从 `unifyObjectStyle` 结构出 `type` `payload` `options`，将包装 `type` `payload` 成一个对象赋值给 `mutation` 变量，申明 `entry` 变量从储存所有 `mutation` 的 `this._mutations` 取出对应 `type` 的 `mutation`，没有对应 `mutation` 就 `return`，如果在非生产环境，顺便抛出个异常。
+
+```
+this._withCommit(() => {
+  entry.forEach(function commitIterator (handler) {
+    handler(payload)
+  })
+})
+```
+
+接着调用 `this._withCommit` 方法，并将回调函数传入，这里会循环对应的 `mutation`，将 `payload` 参数传入并调用 `handler` 函数，需要注意的是 `mutation` 只能是是同步函数。
+
+接着循环 `_subscribers`：
+
+```
+this._subscribers.forEach(sub => sub(mutation, this.state))
+```
+`_subscribers` 是一个数组，循环调用里面的函数，并将 `mutation` `this.state` 传入。
+
+最后判断非生产环境，并且 `options.silent` 为真，就抛出异常，提示 `Silent option` 已经删除，应该是和 `vue-devtools` 有关。
+
+### dispatch
+
+通过 `store.dispatch` 方法触发 `Action`:
+
+```
+dispatch (_type, _payload) {
+  // check object-style dispatch
+  const {
+    type,
+    payload
+  } = unifyObjectStyle(_type, _payload)
+
+  const action = { type, payload }
+  const entry = this._actions[type]
+  if (!entry) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`[vuex] unknown action type: ${type}`)
+    }
+    return
+  }
+
+  this._actionSubscribers.forEach(sub => sub(action, this.state))
+
+  return entry.length > 1
+    ? Promise.all(entry.map(handler => handler(payload)))
+    : entry[0](payload)
+}
+```
+
+`dispatch` 接收2个参数，`action type` 和 `_payload` 参数，与 `commit` 一样调用 `unifyObjectStyle` 方法处理对象形式的 `dispatch`，解构出 `type` `payload`，申明 `action` 对象包装 `type` `payload`，申明 `entry` 变量从 `this._actions` 中取出对应的 `action`，没有对应 `action` 就 `return`，如果在非生产环境，顺便抛出个异常。
+
+接着循环 `_actionSubscribers`：
+
+```
+this._subscribers.forEach(sub => sub(mutation, this.state))
+```
+`_actionSubscribers` 是一个数组，循环调用里面的函数，并将 `action` `this.state` 传入。
+
+与 `commit` 不同的是，`dispatch` 最后会返回一个 `Promise`，
+`entry` 是注册 `action` 时储存 `wrappedActionHandler` 函数的数组，在注册 `action` 时会将其包装成 `promise` 所以在 `action` 中支持异步操作，这里判断 `entry` 长度，多个调用 Promise.all 方法，单个直接取第0个调用。
+
+### subscribe
+
+订阅 `store` 的 `mutation`：
+```
+subscribe (fn) {
+  return genericSubscribe(fn, this._subscribers)
+}
+```
+
+`subscribe` 中 调用了 `genericSubscribe` 方法，并将回调和 `this._subscribers` 传入，返回一个函数可以停止订阅。
+会在每个 `mutation` 完成后调用，通常用于插件，在 `plugins` 的 `devtool.js` 和 `logger.js` 都使用了。
+
+### genericSubscribe
+
+```
+function genericSubscribe (fn, subs) {
+  if (subs.indexOf(fn) < 0) {
+    subs.push(fn)
+  }
+  return () => {
+    const i = subs.indexOf(fn)
+    if (i > -1) {
+      subs.splice(i, 1)
+    }
+  }
+}
+```
+
+`genericSubscribe` 接收 `fn` 函数和一个 `subs` 数组作为参数，首先判断如果在 `subs` 没有 `fn` 函数，就往 `subs` `push` `fn` ，最后 `return` 一个 `function`，这个函数会取到当前函数在 `subs` 中的下标，然后使用 `splice` 从 `subs` 中删除，也就是说调用返回的函数可以停止订阅。
+
+
+### subscribeAction
+
+订阅 `store` 的 `action`。
+
+```
+subscribeAction (fn) {
+  return genericSubscribe(fn, this._actionSubscribers)
+}
+```
+
+`subscribeAction` 中 调用了 `genericSubscribe` 方法，并将回调和 `this._actionSubscribers` 传入，返回一个函数可以停止订阅。
+
+### watch
+
+响应式地侦听 fn 的返回值，当值改变时调用回调函数。
+
+```
+watch (getter, cb, options) {
+  if (process.env.NODE_ENV !== 'production') {
+    assert(typeof getter === 'function', `store.watch only accepts a function.`)
+  }
+  return this._watcherVM.$watch(() => getter(this.state, this.getters), cb, options)
+}
+```
+
+判断非生产环境并且 `getter` 不是一个 `function` 抛出异常，随后会 `return` 一个函数，调用返回的函数可以停止监听，`this._watcherVM` 在 `constructor` 赋值成了一个 `Vue` 实例，其实就是基于  `Vue` 实例的 `$watch` 方法。
+
+### replaceState
+
+替换 store 的根状态。
+
+```
+replaceState (state) {
+  this._withCommit(() => {
+    this._vm._data.$$state = state
+  })
+}
+```
+调用 `_withCommit` 并传入回调函数，在回调函数中会用传入的 `state` 替换当前 `_vm._data.$$state`。
+
+### registerModule
+
+使用 `store.registerModule` 方法注册模块：
+
+```
+registerModule (path, rawModule, options = {}) {
+  if (typeof path === 'string') path = [path]
+
+  if (process.env.NODE_ENV !== 'production') {
+    assert(Array.isArray(path), `module path must be a string or an Array.`)
+    assert(path.length > 0, 'cannot register the root module by using registerModule.')
+  }
+
+  this._modules.register(path, rawModule)
+  installModule(this, this.state, path, this._modules.get(path), options.preserveState)
+  // reset store to update getters...
+  resetStoreVM(this, this.state)
+}
+```
+
+`registerModule` 方法接收 `path` 路径，`rawModule` 模块，`options` 配置作为参数。
+
+首先判断 `path` 如果为字符串，就转成字符串数组，
+在非生产环境断言，`path` 必须为一个数组，`path.length` 必须大于0，
+然后调用 `this._modules.register` 进行注册模块，`installModule` 进行模块安装，`resetStoreVM` 重设 `Vue` 实例。
+
+### unregisterModule
+
+卸载一个动态模块：
+
+```
+unregisterModule (path) {
+  if (typeof path === 'string') path = [path]
+
+  if (process.env.NODE_ENV !== 'production') {
+    assert(Array.isArray(path), `module path must be a string or an Array.`)
+  }
+
+  this._modules.unregister(path)
+  this._withCommit(() => {
+    const parentState = getNestedState(this.state, path.slice(0, -1))
+    Vue.delete(parentState, path[path.length - 1])
+  })
+  resetStore(this)
+}
+```
+
+调用 `this._modules.unregister` 进行模块注销，调用 `_withCommit`，将回调函数传入，
+回调函数会调用 `getNestedState` 方法取出父 `module` 的 `state`，然后调用 `Vue.delete` 删除对应子模块，`resetStore` 进行 `store` 的重置，其他部分与 `registerModule` 一致。
+
+### resetStore
+```
+function resetStore (store, hot) {
+  store._actions = Object.create(null)
+  store._mutations = Object.create(null)
+  store._wrappedGetters = Object.create(null)
+  store._modulesNamespaceMap = Object.create(null)
+  const state = store.state
+  // init all modules
+  installModule(store, state, [], store._modules.root, true)
+  // reset vm
+  resetStoreVM(store, state, hot)
+}
+```
+
+接收 `store` 和 是否 `hot` 最为参数，
+将 `store` 的 `_actions` `_mutations` `_wrappedGetters` `_modulesNamespaceMap` 置为 `null`，
+调用 `installModule` 重新安装模块，调用 `resetStoreVM` 重设 `Vue` 实例。
+
+### hotUpdate
+
+开发过程中热重载 mutation、module、action 和 getter:
+
+```
+hotUpdate (newOptions) {
+  this._modules.update(newOptions)
+  resetStore(this, true)
+}
+```
+
+接收一个新的 `newOptions`，调用 `this._modules.update` 更新模块，然后调用 `resetStore` 重置 `store`。
+
+余下的方法基本都在上文讲述过，到此 `class Store` 结束。
 
 ## class ModuleCollection
 在上面初始参数的赋值中 `this._modules` 就是 `ModuleCollection` 类的实例。
@@ -932,7 +1269,7 @@ export function forEachValue (obj, fn) {
 
 ### assertRawModule
 
-上面说过，`assertRawModule` 负责对 `module` 进行一些断言判断，判断 `rawModule` 对象是否有 `getters` `mutations` `mutations` 为 `key` 值，然后根据预置的类型进行断言。
+上面说过，`assertRawModule` 负责对 `module` 进行一些断言判断，判断 `rawModule` 对象是否有 `getters` `mutations` `mutations` 为 `key` 值，然后根据预置的类型进行断言。
 
 
 ```
@@ -1229,9 +1566,9 @@ function normalizeNamespace (fn) {
 
 `normalizeNamespace` 是一个高阶函数实现，高阶函数是接收一个或者多个函数作为参数，并返回一个新函数的函数。
 
-我们来看一下 `mapState` 中的 `fn` 具体实现。
+我们来看一下 `mapState` 中的 `fn` 具体实现。
 
-首先申明一个 `res` 对象，循环赋值后返回，接着调用 `normalizeMap` 函数, `normalizeMap` 接收一个对象或者数组，转化成一个数组形式，数组元素是包含 `key` 和 `value` 的对象。
+首先申明一个 `res` 对象，循环赋值后返回，接着调用 `normalizeMap` 函数, `normalizeMap` 接收一个对象或者数组，转化成一个数组形式，数组元素是包含 `key` 和 `value` 的对象。
 
 ### normalizeMap
 ```
