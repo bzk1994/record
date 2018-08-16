@@ -10,6 +10,7 @@
 
 ### Vue
 
+> 参考资料
 [Vue.js 技术揭秘](https://ustbhuangyi.github.io/vue-analysis/)
 
 [Vue技术内幕](http://hcysun.me/vue-design/art/)
@@ -42,13 +43,13 @@
 
 [气泡碰撞效果](https://zhanghao-zhoushan.github.io/record/canvas/bubble.html)
 
-[模拟刮奖](https://zhanghao-zhoushan.github.io/record/canvas/card.html)
+[模拟刮奖](https://github.com/zhanghao-zhoushan/record/blob/master/docs/canvas/README.md)
 
 ### CSS
 
-[页面布局](https://github.com/zhanghao-zhoushan/record/blob/master/css/layout.md)
+[页面布局](https://github.com/zhanghao-zhoushan/record/blob/master/docs/css/layout.md)
 
-[页面居中](https://github.com/zhanghao-zhoushan/record/blob/master/css/page-center.md)
+[页面居中](https://github.com/zhanghao-zhoushan/record/blob/master/docs/css/page-center.md)
 
 
 
