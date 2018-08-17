@@ -37,9 +37,11 @@
       window.webkitRequestAnimationFrame ||
       window.mozRequestAnimationFrame ||
       function (callback) {
-        window.setTimeout(callback, 1000 / 60);
-      };
-  })();
+        window.setTimeout(callback, 1000 / 60)
+      }
+  })()
+
+  var BASE_URL = 'http://pdl69gzvn.bkt.clouddn.com/'
 
   function Circle() {
 
@@ -49,7 +51,7 @@
     var ctx = canvas.getContext('2d')
     canvas.width = CANVAS_WIDTH
     canvas.height = CANVAS_HEIGHT
-    var circlesNumber = 21;
+    var circlesNumber = 21
     var circles = []
     var redCircle = {}
 
@@ -66,17 +68,17 @@
     }
 
     function moveRedCircle(e) {
-      redCircle.left = handleXBoundary(e.offsetX, redCircle.r);
-      redCircle.top = handleYBoundary(e.offsetY, redCircle.r);
-      redCircle.centerX = redCircle.left + redCircle.r;
-      redCircle.centerY = redCircle.top + redCircle.r;
+      redCircle.left = handleXBoundary(e.offsetX, redCircle.r)
+      redCircle.top = handleYBoundary(e.offsetY, redCircle.r)
+      redCircle.centerX = redCircle.left + redCircle.r
+      redCircle.centerY = redCircle.top + redCircle.r
       createCircle(redCircle)
     }
 
     function collisionCheck() {
       for (var j = 0; j < circles.length; j++) {
-        var diffX = Math.abs(circles[j].centerX - redCircle.centerX);
-        var diffY = Math.abs(circles[j].centerY - redCircle.centerY);
+        var diffX = Math.abs(circles[j].centerX - redCircle.centerX)
+        var diffY = Math.abs(circles[j].centerY - redCircle.centerY)
         var distance = Math.sqrt(diffX * diffX + diffY * diffY)
         // 简单处理图片边
         if (distance < (circles[j].r * 600 / 670 + redCircle.r * 630 / 696)) {
@@ -114,8 +116,8 @@
     function buildCircleParams(url, i) {
       var left = url === 'red' ? CANVAS_WIDTH / 2 - 50 : creatRandom(0, CANVAS_WIDTH - 100)
       var top = url === 'red' ? CANVAS_HEIGHT / 2 - 50 : creatRandom(0, CANVAS_HEIGHT - 100)
-      var width = url === 'red' ? 100 : creatRandom(50, 100);
-      var r = width / 2;
+      var width = url === 'red' ? 100 : creatRandom(50, 100)
+      var r = width / 2
       return {
         index: i,
         url: url,
@@ -133,9 +135,9 @@
     }
 
     function createCircle(circle) {
-      var img = document.createElement("img");
-      var url = '../assets/images/' + circle.url + '.png';
-      img.src = url;
+      var img = document.createElement("img")
+      var url = BASE_URL + circle.url + '.png'
+      img.src = url
       ctx.drawImage(img, circle.left, circle.top, circle.width, circle.width)
     }
 
@@ -150,9 +152,9 @@
     }
 
     function moveCircles(url, circle) {
-      var img = document.createElement("img");
-      var url = '../../assets/' + url + '.png';
-      img.src = url;
+      var img = document.createElement("img")
+      var url = BASE_URL + url + '.png'
+      img.src = url
       var directionX = circle.directionX
       var directionY = circle.directionY
       circle.left = directionX ? circle.left - circle.speedX : circle.left + circle.speedX
@@ -171,10 +173,10 @@
         circle.left = - circle.width
       }
 
-      circle.centerX = circle.left + circle.r;
-      circle.centerY = circle.top + circle.r;
+      circle.centerX = circle.left + circle.r
+      circle.centerY = circle.top + circle.r
 
-      ctx.drawImage(img, circle.left, circle.top, circle.width, circle.width);
+      ctx.drawImage(img, circle.left, circle.top, circle.width, circle.width)
     }
 
     function creatRandom(start, end) {

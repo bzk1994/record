@@ -1,5 +1,4 @@
-canvas 刮奖 3种方案实现
------------------
+## canvas 刮奖 
 
 [Jump To Demo](https://zhanghao-zhoushan.github.io/daily-record/cancas/card.html)
 
