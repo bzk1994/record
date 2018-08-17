@@ -48,9 +48,9 @@
 
 ### Canvas
 
-[模拟多重波浪](https://zhanghao-zhoushan.github.io/record/page/wave.html)
+[模拟多重波浪](https://zhanghao-zhoushan.github.io/record/wave.html)
 
-[气泡碰撞效果](https://zhanghao-zhoushan.github.io/record/page/bubble.html)
+[气泡碰撞效果](https://zhanghao-zhoushan.github.io/record/bubble.html)
 
 [模拟刮奖](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/html5/card.md)
 
