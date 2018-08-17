@@ -22,7 +22,7 @@
 
 > vue-router 思维导图
 
-![vue-router](http://pdl69gzvn.bkt.clouddn.com/vue-router.png)
+![http://pdl69gzvn.bkt.clouddn.com/vue-router.png](http://pdl69gzvn.bkt.clouddn.com/vue-router.png)
 
 > 参考资料
 
@@ -38,7 +38,7 @@
 
 > vuex 思维导图
 
-![vuex](http://pdl69gzvn.bkt.clouddn.com/vuex.png)
+![http://pdl69gzvn.bkt.clouddn.com/vuex.pngs](http://pdl69gzvn.bkt.clouddn.com/vuex.png)
 
 > 参考资料
 

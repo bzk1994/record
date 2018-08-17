@@ -1,6 +1,6 @@
 ## canvas 刮奖 
 
-[Jump To Demo](https://zhanghao-zhoushan.github.io/daily-record/cancas/card.html)
+[Jump To Demo](https://zhanghao-zhoushan.github.io/record/card.html)
 
 ### Plan1
 
