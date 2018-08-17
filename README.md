@@ -18,9 +18,9 @@
 
 ### vue-routerv
 
-[阅读 vue-router 源码的一些注释](https://github.com/zhanghao-zhoushan/vue-router)
+> [阅读 vue-router 源码的一些注释](https://github.com/zhanghao-zhoushan/vue-router)
 
-> vue-router 思维导图
+> [vue-router 思维导图](http://pdl69gzvn.bkt.clouddn.com/vue-router.png)
 
 ![http://pdl69gzvn.bkt.clouddn.com/vue-router.png](http://pdl69gzvn.bkt.clouddn.com/vue-router.png)
 
@@ -34,11 +34,11 @@
 
 ### vuex
 
-[vuex 源码阅读笔记](https://github.com/zhanghao-zhoushan/record/blob/master/vue/vuex.md)
+> [vuex 源码阅读笔记](https://github.com/zhanghao-zhoushan/record/blob/master/vue/vuex.md)
 
-> vuex 思维导图
+> [vuex 思维导图](http://pdl69gzvn.bkt.clouddn.com/vuex.png)
 
-![http://pdl69gzvn.bkt.clouddn.com/vuex.pngs](http://pdl69gzvn.bkt.clouddn.com/vuex.png)
+![http://pdl69gzvn.bkt.clouddn.com/vuex.png](http://pdl69gzvn.bkt.clouddn.com/vuex.png)
 
 > 参考资料
 

@@ -26,7 +26,7 @@ Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用�
 7. 如何调用 vue-devtools
 8. 内置 logger 插件实现
 9. hotUpdate
-10. 时空穿梭功能实现
+10. 时间穿梭功能实现
 
 ## 目录
 
@@ -1975,7 +1975,7 @@ export default function devtoolPlugin (store) {
     devtoolHook.emit('vuex:mutation', mutation, state)
   })
 }
-````
+```
 
 根据 `window` 上的 `__VUE_DEVTOOLS_GLOBAL_HOOK_` 变量判断当前浏览器是否安装了 `vueTools`，
 接着来看 `devtoolPlugin` 函数，`devtoolPlugin` 函数使用 `export default` 默认导出，
@@ -1988,6 +1988,7 @@ export default function devtoolPlugin (store) {
 
 `devtoolHook` 调用 `on` 方法监听 `vuex:travel-to-state`，监听到就调用回调函数，回调函数里会调用 `Store` 类的 `replaceState` 方法。
 
+
 ```
 replaceState (state) {
   this._withCommit(() => {
@@ -1995,6 +1996,7 @@ replaceState (state) {
   })
 }
 ```
+
 `replaceState` 替换当前 `_vm._data.$$state`。
 
 最后调用 `Store` 类的 `subscribe` 订阅，每一次 `mutation` 改变 `state`，都会调用 `devtoolHook` 的 `emit` 方法通知 `devtool` 改变 `mutation` `state`。
@@ -2076,15 +2078,16 @@ console.group:          设置不折叠的分组信息
 console.groupEnd:       结束当前的分组
 ```
 
-接着使用 `call` 将 `startMessage` 的 `this` 绑定到 `logger` 上，并且传入 `message` 默认参数
+接着使用 `call` 将 `startMessage` 的 `this` 绑定到 `logger` 上，并且传入 `message` 默认参数。
 
-``
+```
 // render
 try {
   startMessage.call(logger, message)
 } catch (e) {
   console.log(message)
 }
+```
 
 接着就是调用 `logger.log` 打印，随后调用 `groupEnd` 结束当前的分组。
 
@@ -2134,22 +2137,125 @@ function vuexInit () {
 不是 `root` 节点就从父组件中获取 `$store`，这样就保证只有一个全局的 `$store`。
 
 ### mapState 实现
+
+`mapState` 请看 `src/helpers.js` 的 `mapState` 部分。
+
 ### mapGetter 如何映射
+
+`mapGetter` 方法最后会返回一个对象，这个对象的每一个 `key` 值是 `mappedGetter` 方法，`mappedGetter` 会返回 `this.$store.getters[key]`。
+
+```
+mapGetters({
+  // 把 `this.doneCount` 映射为 `this.$store.getters.doneTodosCount`
+  doneCount: 'doneTodosCount'
+})
+```
+
 ### Mutation 同步 && Action 异步
 
-在注册 action 的时候，会将 action 方法包装成 Promise
-mutation 只是包装了一下，仍然是同步代码
+在注册 `action` 时储会将 `action` 的回调包装成 `promise`，通过 `dispatch` 方法触发 `action` 的时候，最后 `return` 的是个 `Promise` 对象，所以 `action` 支持异步。
+
+注册 `mutation` 和通过 `commit` 方法触发 `mutation` 的时候，都只是一个同步的代码，仍然是同步代码。
 
 ### dispatch 方法实现
+
+`dispatch` 请看 `src/store.js` 的 `dispatch` 部分。
+
 ### module 分割实现 && 局部状态 namespaced
 
-实例化ModuleCollection
+实例化 ModuleCollection
+
+请看 `class ModuleCollection`。
 
 ### 如何调用 vue-devtools
+
+在 `devtoolPlugin` 方法中，取出挂在 `window` 对象的 `__VUE_DEVTOOLS_GLOBAL_HOOK__` 保存到 `devtoolHook`，通过 `emit` `vuex:init` 初始化 `store`：
+
+```
+devtoolHook.emit('vuex:init', store)
+```
+
+```
+devtoolHook.on('vuex:travel-to-state', targetState => {
+  store.replaceState(targetState)
+})
+```
+
+```
+store.subscribe((mutation, state) => {
+  devtoolHook.emit('vuex:mutation', mutation, state)
+})
+```
+
+```
+export default function devtoolPlugin (store) {
+  if (!devtoolHook) return
+
+  store._devtoolHook = devtoolHook
+
+  // 向 vueTools emit 事件 并传入当前的 store
+  // devtoolHook 监听到会根据 store 初始化 vuex
+  devtoolHook.emit('vuex:init', store)
+
+  // devtoolHook 监听 vuex:travel-to-state，调用回调函数
+  devtoolHook.on('vuex:travel-to-state', targetState => {
+    store.replaceState(targetState)
+  })
+
+  store.subscribe((mutation, state) => {
+    devtoolHook.emit('vuex:mutation', mutation, state)
+  })
+}
+```
+
 ### 内置 logger 插件实现
+
+请看插件 `devtool` 部分。
+
 ### hotUpdate
-### 时空穿梭功能实现
 
+使用 `webpack` 的 `Hot Module Replacement API` 实现热重载。
 
+```
+if (module.hot) {
+  module.hot.accept([
+    './getters',
+    './actions',
+    './mutations'
+  ], () => {
+    store.hotUpdate({
+      getters: require('./getters'),
+      actions: require('./actions'),
+      mutations: require('./mutations')
+    });
+  });
+}
+```
 
+### 时间穿梭功能实现
 
+当我们调用 `devtoolHook` 方法的时候，会调用 `devtoolHook` 的 `on` 方法监听 `vuex:travel-to-state` 事件。
+
+```
+devtoolHook.on('vuex:travel-to-state', targetState => {
+  store.replaceState(targetState)
+})
+```
+
+在回调函数中接收 `targetState` 参数，调用 `Store` 的 `replaceState` 方法去修改 `this._vm._data.$$state`，当我们点击 `devtoolHook` 的某一条 `mutation` 历史记录，就能穿梭到历史记录。
+
+但是这个历史记录又是怎么出现的呢？是通过调用 `store.subscribe` 方法：
+
+```
+store.subscribe((mutation, state) => {
+  devtoolHook.emit('vuex:mutation', mutation, state)
+})
+```
+
+每当调用 `commit` 方法的时候，都会调用
+
+```
+this._subscribers.forEach(sub => sub(mutation, this.state))
+```
+
+循环调用 `_subscribers` 中的回调函数，回调函数会调用 `devtoolHook.emit` 方法，发送 `vuex:mutation`，说明改变了 `mutation`，并把 `mutation` 和 `state` 作为参数传入，`devtoolHook` 就会储存 `mutation` 的历史记录了。
