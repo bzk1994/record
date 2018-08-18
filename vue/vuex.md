@@ -2236,6 +2236,14 @@ if (module.hot) {
 
 当我们调用 `devtoolHook` 方法的时候，会调用 `devtoolHook` 的 `on` 方法监听 `vuex:travel-to-state` 事件。
 
+在 `vue-devtools` 的源码的 `src/bridge.js` 中：
+
+```
+import { EventEmitter } from 'events'
+```
+
+我们看到事件监听是通过 `Node` 的 `EventEmitter` 监听的。
+
 ```
 devtoolHook.on('vuex:travel-to-state', targetState => {
   store.replaceState(targetState)
@@ -2259,3 +2267,32 @@ this._subscribers.forEach(sub => sub(mutation, this.state))
 ```
 
 循环调用 `_subscribers` 中的回调函数，回调函数会调用 `devtoolHook.emit` 方法，发送 `vuex:mutation`，说明改变了 `mutation`，并把 `mutation` 和 `state` 作为参数传入，`devtoolHook` 就会储存 `mutation` 的历史记录了。
+
+`vuex` 相关在 `vue-devtools/src/backend/vuex.js`:
+
+```
+// application -> devtool
+hook.on('vuex:mutation', ({ type, payload }) => {
+  if (!SharedData.recordVuex) return
+
+  const index = mutations.length
+
+  mutations.push({
+    type,
+    payload,
+    index,
+    handlers: store._mutations[type]
+  })
+
+  bridge.send('vuex:mutation', {
+    mutation: {
+      type: type,
+      payload: stringify(payload),
+      index
+    },
+    timestamp: Date.now()
+  })
+})
+```
+
+看到是通过一个 `mutations` 数组模拟这个历史记录，每次监听到 `vuex:mutation` 事件就是 `push` `mutation` 相关。
