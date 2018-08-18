@@ -1,4 +1,5 @@
 ## 一个栗子
+
 ```
 let a = 0
 const b = async () => {
@@ -11,7 +12,9 @@ b()
 a++
 console.log('1', a)
 ```
+
 ## async
+
 `async`函数返回一个`Promise`对象
 
 ## await
