@@ -64,14 +64,6 @@
 
 ![React Developer Tools](https://lh3.googleusercontent.com/GjX6Q3_FVJfc0DqE2wiPKkgOfth6otzV-D7GV-wB6sH5_t1oodMaHOBLsYOLeydb85bKWu6X=w640-h400-e365)
 
-## 草料二维码
-
-> 二维码应用增强工具插件 自动将地址栏链接生成二维码 生成图案简单的短网址二维码
-
-[Chrome 应用商店](https://chrome.google.com/webstore/detail/%E8%8D%89%E6%96%99%E4%BA%8C%E7%BB%B4%E7%A0%81/moombeodfomdpjnpocobemoiaemednkg)
-
-![草料二维码](https://lh3.googleusercontent.com/x3Nr_gd4ZtllgtVqJAtBwQK6SWQgVnE9B86SZto6P8jRu_bhPnd7z_cTpnu0tdhxZ3ENXCGzSg=w640-h400-e365)
-
 ## Postman
 
 > 一款功能强大的网页调试与发送网页HTTP请求的Chrome插件

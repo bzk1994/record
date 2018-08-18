@@ -18,11 +18,11 @@
 
 ### vue-routerv
 
-> [阅读 vue-router 源码的一些注释](https://github.com/zhanghao-zhoushan/vue-router)
+> [阅读 vue-router 源码的一些注释](https://github.com/zhanghao-zhoushan/vue-router/tree/dev/src)
 
-> [vue-router 思维导图](http://pdl69gzvn.bkt.clouddn.com/vue-router.png)
+> vue-router 思维导图
 
-![http://pdl69gzvn.bkt.clouddn.com/vue-router.png](http://pdl69gzvn.bkt.clouddn.com/vue-router.png)
+![vue-router 思维导图](http://pdl69gzvn.bkt.clouddn.com/vue-router.png)
 
 > 参考资料
 
@@ -36,7 +36,7 @@
 
 > [vuex 源码阅读笔记](https://github.com/zhanghao-zhoushan/record/blob/master/vue/vuex.md)
 
-> [vuex 思维导图](http://pdl69gzvn.bkt.clouddn.com/vuex.png)
+> vuex 思维导图
 
 ![http://pdl69gzvn.bkt.clouddn.com/vuex.png](http://pdl69gzvn.bkt.clouddn.com/vuex.png)
 
@@ -59,6 +59,5 @@
 [页面布局](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/html5/layout.md)
 
 [页面居中](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/html5/page-center.md)
-
 
 

@@ -6,34 +6,46 @@
 > 自动添加HTML/XML关闭标签
 > [Auto Close Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-close-tag)
 
+![Auto Close Tag](https://github.com/formulahendry/vscode-auto-close-tag/raw/master/images/usage.gif)
+
 ### Auto Rename Tag
 
 > 自动重命名成对的HTML/XML标签
 > [Auto Rename Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag)
+
+![Auto Rename Tag](https://github.com/formulahendry/vscode-auto-rename-tag/raw/master/images/usage.gif)
 
 ### Better Comments
 
 > 编写更加人性化的注释
 > [Better Comments](https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments)
 
+<p align="center">
 <img src="https://github.com/aaron-bond/better-comments/raw/master/images/better-comments.PNG" />
+</p>
 
 ### Bracket Pair Colorizer
 
 > 使用不同颜色来识别不同级别的括号
 > [Bracket Pair Colorizer](https://marketplace.visualstudio.com/items?itemName=CoenraadS.bracket-pair-colorizer)
 
-<img src="https://github.com/CoenraadS/BracketPair/raw/master/images/example.png" width="100%" />  
+<p align="center">
+<img src="https://github.com/CoenraadS/BracketPair/raw/master/images/example.png" />
+</p>
 
 ### Code Runner
 
 > 运行代码段或代码文件
 > [Code Runner](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner)
 
+![Code Runner](https://github.com/formulahendry/vscode-code-runner/raw/master/images/usage.gif)
+
 ### Code Spell Checker
 
 > 一个基本的拼写检查程序
 > [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
+
+![Code Spell Checker](https://raw.githubusercontent.com/Jason-Rev/vscode-spell-checker/master/client/images/example.gif)
 
 ### Color Highlight
 
@@ -43,12 +55,18 @@
 ### Color Info
 
 > 颜色光标上悬停即可出现色彩模型
-> [Color Info]()
+> [Color Info](https://marketplace.visualstudio.com/items?itemName=bierner.color-info)
+
+![Color Info](https://github.com/mattbierner/vscode-color-info/raw/master/media/starter-example.png)
 
 ### cssrem
 
 > 一个CSS值转REM的VSCode插件
 > [cssrem](https://marketplace.visualstudio.com/items?itemName=cipchk.cssrem)
+
+<p align="center">
+  <img src="https://github.com/cipchk/vscode-cssrem/raw/master/screenshots/cssrem.gif" />
+</p>
 
 ### Debugger for Chrome
 
@@ -93,6 +111,8 @@
 
 > 显示导入包的大小
 > [Import Cost](https://marketplace.visualstudio.com/items?itemName=wix.vscode-import-cost)
+
+![Import Cost](https://file-wkbcnlcvbn.now.sh/import-cost.gif)
 
 ### JS JSX Snippets
 
@@ -164,6 +184,10 @@
 > Vue语法提示
 > [VueHelper](https://marketplace.visualstudio.com/items?itemName=oysun.vuehelper)
 
+<p align="center">
+  <img src="https://github.com/OYsun/vscode-VueHelper/raw/master/src/images/description.gif" />
+</p>
+
 ## Vue主题推荐
 
 ### One Dark Pro
@@ -197,6 +221,19 @@
 <img src="https://raw.githubusercontent.com/EmmanuelBeziat/vscode-great-icons/icons-test/icons.jpg" width="100%" />
 
 ## VSCode配置
+
+### Settings Sync 同步插件配置
+
+```
+CODE SETTINGS SYNC UPLOAD SUMMARY
+Version: 2.9.2
+--------------------
+GitHub Token: 90f8690c74d920b666560b6ee6a12364ee8a9a64
+GitHub Gist: 610cfaa077b71269db9bb4b1d079f5c0
+GitHub Gist Type: Secret
+```
+
+### User Settings
 
 ```
 {
