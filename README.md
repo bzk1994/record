@@ -1,4 +1,4 @@
-## Vue 相关
+## Vue
 
 ### vue
 
@@ -11,6 +11,8 @@
 ### vue-router
 
 * [阅读 vue-router 源码的一些注释](https://github.com/zhanghao-zhoushan/vue-router/tree/dev/src)
+
+* [runQueue 理解](https://github.com/zhanghao-zhoushan/record/issues/6)
 
 * [vue-router 思维导图](http://pdl69gzvn.bkt.clouddn.com/router.png)
 
@@ -32,7 +34,11 @@
 
 * [Vue.js 技术揭秘](https://ustbhuangyi.github.io/vue-analysis/vuex/init.html)
 
-## 工具篇
+## React
+
+* 🚧
+
+## Tools
 
 * [整理自己的 Mac 应用](https://github.com/zhanghao-zhoushan/record/issues/2)
 
@@ -40,16 +46,23 @@
 
 * [整理自己的 Chrome 插件](https://github.com/zhanghao-zhoushan/record/issues/1)
 
-## Canvas
+## JavaScript
+
+* [浅谈异步编程](https://github.com/zhanghao-zhoushan/record/issues/11)
+
+* [Lodash 源码](https://www.lodashjs.com/)
+
+## HTML && CSS
+
+### Canvas
 
 * [气泡碰撞效果](https://zhanghao-zhoushan.github.io/record/bubble.html)
 
 * [模拟刮奖](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/html5/card.md)
 
-## CSS
+### CSS
 
 * [页面布局](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/html5/layout.md)
 
 * [页面居中](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/html5/page-center.md)
-
 
