@@ -105,3 +105,368 @@ function slice(array, start, end) {
 
 接着也是 `while` 循环 `index` 累加，不断往 `result` 赋值，最后将  `result` 数组返回。
 
+
+## compact
+
+返回一个过滤非 `false` 的数组。
+
+```
+/**
+ * Creates an array with all falsey values removed. The values `false`, `null`,
+ * `0`, `""`, `undefined`, and `NaN` are falsey.
+ *
+ * @since 0.1.0
+ * @category Array
+ * @param {Array} array The array to compact.
+ * @returns {Array} Returns the new array of filtered values.
+ * @example
+ *
+ * compact([0, 1, false, 2, '', 3])
+ * // => [1, 2, 3]
+ */
+function compact(array) {
+  let resIndex = 0
+  const result = []
+
+  if (array == null) {
+    return result
+  }
+
+  for (const value of array) {
+    if (value) {
+      result[resIndex++] = value
+    }
+  }
+  return result
+}
+```
+
+`compact` 接收一个数组，申明 `resIndex` `result` 初始变量，`array` 等于 `null` 直接返回空数组，采用 `for...of` 循环，如果有 `value` 循环往 `result` 累加赋值，最后返回 `result`。
+
+## concat
+
+返回一个合并后的数组。
+
+```
+var array = [1];
+var other = _.concat(array, 2, [3], [[4]]);
+ 
+console.log(other);
+// => [1, 2, 3, [4]]
+ 
+console.log(array);
+// => [1]
+```
+
+## difference
+
+```
+/**
+ * Creates an array of `array` values not included in the other given arrays
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons. The order and references of result values are
+ * determined by the first array.
+ *
+ * **Note:** Unlike `pullAll`, this method returns a new array.
+ *
+ * @since 0.1.0
+ * @category Array
+ * @param {Array} array The array to inspect.
+ * @param {...Array} [values] The values to exclude.
+ * @returns {Array} Returns the new array of filtered values.
+ * @see union, unionBy, unionWith, without, xor, xorBy, xorWith,
+ * @example
+ *
+ * difference([2, 1], [2, 3])
+ * // => [1]
+ */
+function difference(array, ...values) {
+  return isArrayLikeObject(array)
+    ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true))
+    : []
+}
+```
+
+
+
+## isArrayLikeObject
+
+```
+/**
+ * This method is like `isArrayLike` except that it also checks if `value`
+ * is an object.
+ *
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array-like object,
+ *  else `false`.
+ * @example
+ *
+ * isArrayLikeObject([1, 2, 3])
+ * // => true
+ *
+ * isArrayLikeObject(document.body.children)
+ * // => true
+ *
+ * isArrayLikeObject('abc')
+ * // => false
+ *
+ * isArrayLikeObject(Function)
+ * // => false
+ */
+function isArrayLikeObject(value) {
+  return isObjectLike(value) && isArrayLike(value)
+}
+```
+
+## isObjectLike
+
+判断是否为一个对象。
+
+```
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * isObjectLike({})
+ * // => true
+ *
+ * isObjectLike([1, 2, 3])
+ * // => true
+ *
+ * isObjectLike(Function)
+ * // => false
+ *
+ * isObjectLike(null)
+ * // => false
+ */
+function isObjectLike(value) {
+  return typeof value == 'object' && value !== null
+}
+```
+
+`isObjectLike` 接收 `value` 作为参数，通过 `typeof` 判断类型 `object` 对象并且 `value` 不等于 `null`，因为 `typeof null` 等于 `object`。
+
+
+## isArrayLike
+
+```
+/**
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * isArrayLike([1, 2, 3])
+ * // => true
+ *
+ * isArrayLike(document.body.children)
+ * // => true
+ *
+ * isArrayLike('abc')
+ * // => true
+ *
+ * isArrayLike(Function)
+ * // => false
+ */
+function isArrayLike(value) {
+  return value != null && typeof value != 'function' && isLength(value.length)
+}
+```
+
+`isArrayLike` 接收 `value` 作为参数，判断 `value` 不等于 `null` 并且类型不为 `function`，并且通过 `isLength` 判断 `value` 有长度。
+
+
+## isLength
+
+检查 `value` 是否是一个有效的数组长度。
+
+```
+/** Used as references for various `Number` constants. */
+const MAX_SAFE_INTEGER = 9007199254740991
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This method is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
+ *
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ * @example
+ *
+ * isLength(3)
+ * // => true
+ *
+ * isLength(Number.MIN_VALUE)
+ * // => false
+ *
+ * isLength(Infinity)
+ * // => false
+ *
+ * isLength('3')
+ * // => false
+ */
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER
+}
+```
+
+`isLength` 接收 `value` 作为参数，通过 `typeof` 判断 `value` 是 `number` 类型，`value` 大于 `-1` 并且 `value % 1 == 0` 是判断为整数，`value <= MAX_SAFE_INTEGER` 小于等于最大有效数字。
+
+## baseFlatten
+
+```
+/**
+ * The base implementation of `flatten` with support for restricting flattening.
+ *
+ * @private
+ * @param {Array} array The array to flatten.
+ * @param {number} depth The maximum recursion depth.
+ * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
+ * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
+ * @param {Array} [result=[]] The initial result value.
+ * @returns {Array} Returns the new flattened array.
+ */
+function baseFlatten(array, depth, predicate, isStrict, result) {
+  predicate || (predicate = isFlattenable)
+  result || (result = [])
+
+  if (array == null) {
+    return result
+  }
+
+  for (const value of array) {
+    if (depth > 0 && predicate(value)) {
+      if (depth > 1) {
+        // Recursively flatten arrays (susceptible to call stack limits).
+        baseFlatten(value, depth - 1, predicate, isStrict, result)
+      } else {
+        result.push(...value)
+      }
+    } else if (!isStrict) {
+      result[result.length] = value
+    }
+  }
+  return result
+}
+```
+
+## isFlattenable
+
+```
+import isArguments from '../isArguments.js'
+
+/** Built-in value reference. */
+const spreadableSymbol = Symbol.isConcatSpreadable
+
+/**
+ * Checks if `value` is a flattenable `arguments` object or array.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
+ */
+function isFlattenable(value) {
+  return Array.isArray(value) || isArguments(value) ||
+    !!(spreadableSymbol && value && value[spreadableSymbol])
+}
+```
+
+## isArguments
+
+```
+/**
+ * Checks if `value` is likely an `arguments` object.
+ *
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an `arguments` object, else `false`.
+ * @example
+ *
+ * isArguments(function() { return arguments }())
+ * // => true
+ *
+ * isArguments([1, 2, 3])
+ * // => false
+ */
+function isArguments(value) {
+  return isObjectLike(value) && getTag(value) == '[object Arguments]'
+}
+```
+
+## getTag
+
+```
+/** `Object#toString` result references. */
+const dataViewTag = '[object DataView]'
+const mapTag = '[object Map]'
+const objectTag = '[object Object]'
+const promiseTag = '[object Promise]'
+const setTag = '[object Set]'
+const weakMapTag = '[object WeakMap]'
+
+/** Used to detect maps, sets, and weakmaps. */
+const dataViewCtorString = `${DataView}`
+const mapCtorString = `${Map}`
+const promiseCtorString = `${Promise}`
+const setCtorString = `${Set}`
+const weakMapCtorString = `${WeakMap}`
+
+/**
+ * Gets the `toStringTag` of `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+let getTag = baseGetTag
+
+// Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
+if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
+    (getTag(new Map) != mapTag) ||
+    (getTag(Promise.resolve()) != promiseTag) ||
+    (getTag(new Set) != setTag) ||
+    (getTag(new WeakMap) != weakMapTag)) {
+  getTag = (value) => {
+    const result = baseGetTag(value)
+    const Ctor = result == objectTag ? value.constructor : undefined
+    const ctorString = Ctor ? `${Ctor}` : ''
+
+    if (ctorString) {
+      switch (ctorString) {
+        case dataViewCtorString: return dataViewTag
+        case mapCtorString: return mapTag
+        case promiseCtorString: return promiseTag
+        case setCtorString: return setTag
+        case weakMapCtorString: return weakMapTag
+      }
+    }
+    return result
+  }
+}
+```
+
+采用 `DataView` 方法
+
+
+## isArrayLikeObject
+
+
+
