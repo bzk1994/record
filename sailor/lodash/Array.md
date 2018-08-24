@@ -858,5 +858,177 @@ function dropRightWhile(array, predicate) {
 
 ## fill
 
+## findIndex
+
+## findLastIndex
+
+## head
+
+返回数组的第一个。
+
+```
+/**
+ * Gets the first element of `array`.
+ *
+ * @since 0.1.0
+ * @alias first
+ * @category Array
+ * @param {Array} array The array to query.
+ * @returns {*} Returns the first element of `array`.
+ * @see last
+ * @example
+ *
+ * head([1, 2, 3])
+ * // => 1
+ *
+ * head([])
+ * // => undefined
+ */
+function head(array) {
+  return (array != null && array.length)
+    ? array[0]
+    : undefined
+}
+```
+
+## indexOf
+
+```
+
+/**
+ * Gets the index at which the first occurrence of `value` is found in `array`
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons. If `fromIndex` is negative, it's used as the
+ * offset from the end of `array`.
+ *
+ * @since 0.1.0
+ * @category Array
+ * @param {Array} array The array to inspect.
+ * @param {*} value The value to search for.
+ * @param {number} [fromIndex=0] The index to search from.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ * @example
+ *
+ * indexOf([1, 2, 1, 2], 2)
+ * // => 1
+ *
+ * // Search from the `fromIndex`.
+ * indexOf([1, 2, 1, 2], 2, 2)
+ * // => 3
+ */
+function indexOf(array, value, fromIndex) {
+  const length = array == null ? 0 : array.length
+  if (!length) {
+    return -1
+  }
+  let index = fromIndex == null ? 0 : +fromIndex
+  if (index < 0) {
+    index = Math.max(length + index, 0)
+  }
+  return baseIndexOf(array, value, index)
+}
+```
+
+## baseIndexOf
+
+```
+/**
+ * The base implementation of `indexOf` without `fromIndex` bounds checks.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {*} value The value to search for.
+ * @param {number} fromIndex The index to search from.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function baseIndexOf(array, value, fromIndex) {
+  return value === value
+    ? strictIndexOf(array, value, fromIndex)
+    : baseFindIndex(array, baseIsNaN, fromIndex)
+}
+```
+
+## flatten
+
+数组扁平化。
+
+```
+/**
+ * Flattens `array` a single level deep.
+ *
+ * @since 0.1.0
+ * @category Array
+ * @param {Array} array The array to flatten.
+ * @returns {Array} Returns the new flattened array.
+ * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep, flattenDepth
+ * @example
+ *
+ * flatten([1, [2, [3, [4]], 5]])
+ * // => [1, 2, [3, [4]], 5]
+ */
+function flatten(array) {
+  const length = array == null ? 0 : array.length
+  return length ? baseFlatten(array, 1) : []
+}
+```
+
+## flattenDeep
+
+数组扁平化，转成一维数组。
+```
+/** Used as references for various `Number` constants. */
+const INFINITY = 1 / 0
+
+/**
+ * Recursively flattens `array`.
+ *
+ * @since 3.0.0
+ * @category Array
+ * @param {Array} array The array to flatten.
+ * @returns {Array} Returns the new flattened array.
+ * @see flatMap, flatMapDeep, flatMapDepth, flatten, flattenDepth
+ * @example
+ *
+ * flattenDeep([1, [2, [3, [4]], 5]])
+ * // => [1, 2, 3, 4, 5]
+ */
+function flattenDeep(array) {
+  const length = array == null ? 0 : array.length
+  return length ? baseFlatten(array, INFINITY) : []
+}
+```
 
 
+## flattenDepth
+
+数组扁平化，可转入深度。
+
+```
+/**
+ * Recursively flatten `array` up to `depth` times.
+ *
+ * @since 4.4.0
+ * @category Array
+ * @param {Array} array The array to flatten.
+ * @param {number} [depth=1] The maximum recursion depth.
+ * @returns {Array} Returns the new flattened array.
+ * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep
+ * @example
+ *
+ * const array = [1, [2, [3, [4]], 5]]
+ *
+ * flattenDepth(array, 1)
+ * // => [1, 2, [3, [4]], 5]
+ *
+ * flattenDepth(array, 2)
+ * // => [1, 2, 3, [4], 5]
+ */
+function flattenDepth(array, depth) {
+  const length = array == null ? 0 : array.length
+  if (!length) {
+    return []
+  }
+  depth = depth === undefined ? 1 : +depth
+  return baseFlatten(array, depth)
+}
+```
