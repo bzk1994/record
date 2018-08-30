@@ -1,4 +1,4 @@
-> ### setTimeout
+## setTimeout
 
 `setTimeout`用来指定某个函数或者代码片段，在指定的时间之后将`function|code`推入任务队列中
 
