@@ -52,6 +52,11 @@
 
 * [Lodash 源码](https://www.lodashjs.com/)
 
+## Collect
+
+* [2017 Collect](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/2017.md)
+* [2018 Collect](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/2018.md)
+
 ## HTML && CSS
 
 ### Canvas
