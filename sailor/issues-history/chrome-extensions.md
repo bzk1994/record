@@ -144,3 +144,9 @@
 (https://chrome.google.com/webstore/detail/office-online/ndjpnladcallmjemlbaebfadecfhkepb?hl=zh-CN)
 
 ![Office Online](https://lh3.googleusercontent.com/gNqqfjx6BZXbqTmb2yKlIGY4C7rXbN-Tgcv-GVsFM5jHrNxOxD2N1pVUCw7pjAEp6elF1hJF8dU=w640-h400-e365)
+
+> Full Page Screen Capture 全屏截图
+
+[Chrome 应用商店](https://chrome.google.com/webstore/detail/full-page-screen-capture/fdpohaocaechififmbbbbbknoalclacl?hl=zh-CN)
+
+![Full Page Screen Capture](https://lh3.googleusercontent.com/TudGh-0bQMi8oajxvzlz6sKPGmgkHgfC_sJ9IpuSDGrhgj95aedLxS11ym3FXvJRFmhImDV6j2A=w640-h400-e365)
