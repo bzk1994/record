@@ -46,6 +46,8 @@
 
 * [整理自己的 Chrome 插件](https://github.com/zhanghao-zhoushan/record/issues/1)
 
+* [Git-Cheat-Sheet](https://github.com/zhanghao-zhoushan/record/issues/12)
+
 ## JavaScript
 
 * [浅谈异步编程](https://github.com/zhanghao-zhoushan/record/issues/11)
@@ -58,6 +60,7 @@
 * [2018 Collect](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/2018.md)
 
 ## HTML && CSS
+
 
 ### Canvas
 
