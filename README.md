@@ -64,7 +64,7 @@
 
 * [浅谈异步编程](https://github.com/zhanghao-zhoushan/record/issues/11)
 
-* [Lodash 源码](https://www.lodashjs.com/)
+* [Lodash 源码](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/lodash/README.md)
 
 ## Collect
 

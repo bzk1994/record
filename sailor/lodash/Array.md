@@ -1,8 +1,14 @@
+# Array Methods
+
 ## chunk
 
-> 创建一个新数组，将传入的数组切割成几个子数组。
-
+```js
+_.chunk(array, [size=0])
 ```
+
+> 将数组拆分成多个 size 长度的块，并组成一个新数组。 如果数组无法被分割成全部等长的块，那么最后剩余的元素将组成一个块。
+
+```js
 /**
  * Creates an array of elements split into groups the length of `size`.
  * If `array` can't be split evenly, the final chunk will be the remaining
@@ -42,14 +48,16 @@ function chunk(array, size) {
 首先会调用 `Math.max` 取出 `size`，申明 `length` 变量保存数组长度，如果 `array == null` 长度为 0。
 判断没有长度或者 `size` 小于 1 ，`return` 空数组。
 
-接着申明 `index` `resIndex` `result` 初始变量，申 `result` 是一个新数组，数组长度 `length / size` 向上取整，保证数组不均分时将多余的放在最后数组返回，然后进入 `while` ，这里从 `slice.js` 引入了一个 `slice` 方法，
+接着申明 `index` `resIndex` `result` 初始变量，`result` 是一个新数组，数组长度采用 `length / size` 向上取整，保证数组不均分时将多余的放在最后数组返回。
+
+进入 `while` 循环 ，这里从 `slice.js` 引入了一个 `slice` 方法，
 `slice` 方法主要是将传入数组根据 `array` 和 `end` 位置切割后返回，不包括 `end`， 将 `slice` 切割后的数组保存到 `result` 的第 `resIndex` 上（`resIndex` 不断累加），最后将 `result` 数组返回。
 
 ## slice
 
 来看一看 `slice.js` ：
 
-```
+```js
 /**
  * Creates a slice of `array` from `start` up to, but not including, `end`.
  *
@@ -105,12 +113,11 @@ function slice(array, start, end) {
 
 接着也是 `while` 循环 `index` 累加，不断往 `result` 赋值，最后将  `result` 数组返回。
 
-
 ## compact
 
-返回一个过滤非 `false` 的数组。
+创建一个移除了所有假值的数组。例如：false、null、 0、""、undefined， 以及NaN 都是 “假值”。
 
-```
+```js
 /**
  * Creates an array with all falsey values removed. The values `false`, `null`,
  * `0`, `""`, `undefined`, and `NaN` are falsey.
@@ -141,47 +148,77 @@ function compact(array) {
 }
 ```
 
-`compact` 接收一个数组，申明 `resIndex` `result` 初始变量，`array` 等于 `null` 直接返回空数组，采用 `for...of` 循环，如果有 `value` 循环往 `result` 累加赋值，最后返回 `result`。
+`compact` 接收一个数组，申明 `resIndex` `result` 初始变量，`array` 如果 `array` 等于 `null` 直接返回空数组，然后采用 `for...of` 循环，有 `value` 循环就给 `result` 累加赋值，最后返回 `result`。
 
 ## concat
 
-返回一个合并后的数组。
+创建一个用任何数组 或 值连接的新数组。
 
-```
-var array = [1];
-var other = _.concat(array, 2, [3], [[4]]);
- 
-console.log(other);
-// => [1, 2, 3, [4]]
- 
-console.log(array);
-// => [1]
+```js
+/**
+  * Creates a new array concatenating `array` with any additional arrays
+  * and/or values.
+  *
+  * @static
+  * @memberOf _
+  * @since 4.0.0
+  * @category Array
+  * @param {Array} array The array to concatenate.
+  * @param {...*} [values] The values to concatenate.
+  * @returns {Array} Returns the new concatenated array.
+  * @example
+  *
+  * var array = [1];
+  * var other = _.concat(array, 2, [3], [[4]]);
+  *
+  * console.log(other);
+  * // => [1, 2, 3, [4]]
+  *
+  * console.log(array);
+  * // => [1]
+  */
+  function concat() {
+    var length = arguments.length;
+    if (!length) {
+      return [];
+    }
+    var args = Array(length - 1),
+        array = arguments[0],
+        index = length;
+
+    while (index--) {
+      args[index - 1] = arguments[index];
+    }
+    return arrayPush(isArray(array) ? copyArray(array) : [array], baseFlatten(args, 1));
+  }
 ```
 
-> TODO: 占坑 no code
+`concat` 使用 `arguments` 获取传入参数， 申明 `length` 得到 `arguments.length`，使用 `while` 循环将多余参数保存到 `args`， 最后调用了 `arrayPush` 方法，此时传入 2 个参数，`array` 处理成数组，`baseFlatten` 扁平化数组，最后返回一个合并后的数组。
 
 ## difference
 
-```
+创建一个差异化后的数组。
+
+```js
 /**
- * Creates an array of `array` values not included in the other given arrays
- * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
- * for equality comparisons. The order and references of result values are
- * determined by the first array.
- *
- * **Note:** Unlike `pullAll`, this method returns a new array.
- *
- * @since 0.1.0
- * @category Array
- * @param {Array} array The array to inspect.
- * @param {...Array} [values] The values to exclude.
- * @returns {Array} Returns the new array of filtered values.
- * @see union, unionBy, unionWith, without, xor, xorBy, xorWith,
- * @example
- *
- * difference([2, 1], [2, 3])
- * // => [1]
- */
+* Creates an array of `array` values not included in the other given arrays
+* using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+* for equality comparisons. The order and references of result values are
+* determined by the first array.
+*
+* **Note:** Unlike `pullAll`, this method returns a new array.
+*
+* @since 0.1.0
+* @category Array
+* @param {Array} array The array to inspect.
+* @param {...Array} [values] The values to exclude.
+* @returns {Array} Returns the new array of filtered values.
+* @see union, unionBy, unionWith, without, xor, xorBy, xorWith,
+* @example
+*
+* difference([2, 1], [2, 3])
+* // => [1]
+*/
 function difference(array, ...values) {
   return isArrayLikeObject(array)
     ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true))
@@ -193,7 +230,7 @@ function difference(array, ...values) {
 
 通过 `isArrayLikeObject` 判断是否是数组，如果是调用 `baseDifference` 方法，否则返回一个空数组。
 
-```
+```js
 baseFlatten(values, 1, isArrayLikeObject, true)
 ```
 
@@ -203,7 +240,21 @@ baseFlatten(values, 1, isArrayLikeObject, true)
 
 ## baseDifference
 
-```
+```js
+/** Used as the size to enable large array optimizations. */
+const LARGE_ARRAY_SIZE = 200
+
+/**
+ * The base implementation of methods like `difference` without support
+ * for excluding multiple arrays.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {Array} values The values to exclude.
+ * @param {Function} [iteratee] The iteratee invoked per element.
+ * @param {Function} [comparator] The comparator invoked per element.
+ * @returns {Array} Returns the new array of filtered values.
+ */
 function baseDifference(array, values, iteratee, comparator) {
   let includes = arrayIncludes
   let isCommon = true
@@ -247,13 +298,16 @@ function baseDifference(array, values, iteratee, comparator) {
 }
 ```
 
-通过双层循环来比较2个数组的值。
+`baseDifference` 接收 `array` `values` `iteratee` `comparator` 四个函数，但是 `difference` 只传 2 个函数，没有 `iteratee` `comparator` 不进入 `if` 循环，判断数组长度大于 200，使用 `SetCache` 类缓存 `values`。
+
+进入 `for..of` 循环，此时 `iteratee === null` ，申明 `computed` 赋值为 `value`，接着使用 `while` 循环，将满足条件的 `value` 插入数组，最后将 `result` 返回。
+
 
 ## baseFlatten
 
 返回扁平化的数组。
 
-```
+```js
 /**
  * The base implementation of `flatten` with support for restricting flattening.
  *
@@ -291,21 +345,21 @@ function baseFlatten(array, depth, predicate, isStrict, result) {
 
 在 `difference` 函数中调用：
 
-```
+```js
 baseFlatten(values, 1, isArrayLikeObject, true)
 ```
 
 `baseFlatten` 接收 `array` 数组、`depth` 深度, `predicate`, `isStrict` 严格, `result` 默认为空数组，
 判断 `array == null` 如果等于 `null` ， 返回传入的 `result`。
 
-TODO: 占坑
-调用 `for...of ` 循环，递归调用 `baseFlatten` 扁平化数组。
+进入 `for...of ` 循环，这个判断 `depth > 0` 并且调用传入 `predicate` 函数，就是 `isArrayLikeObject`， 满足条件再次判断 `depth > 1` ，就递归调用 `baseFlatten` 扁平化数组，
+不满足就将 `...value` 插入 `result` 数组，此时 `isStrict` 为 `true`，并不会进入 `else if` 判断， 最后将 `result` 数组返回。
 
 ## isArrayLikeObject
 
-判断是否为是对象并且是一个数组。
+这个方法类似 _.isArrayLike，除了它还检查值是否是个对象。
 
-```
+```js
 /**
  * This method is like `isArrayLike` except that it also checks if `value`
  * is an object.
@@ -338,9 +392,9 @@ function isArrayLikeObject(value) {
 
 ## isObjectLike
 
-判断是否为一个对象。
+检查 value 是否是 类对象。 类对象应该不是 null 以及 typeof 的结果是 "object"。
 
-```
+```js
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
  * and has a `typeof` result of "object".
@@ -373,9 +427,9 @@ function isObjectLike(value) {
 
 ## isArrayLike
 
-判断是否为一个数组。
+检查 `value` 是否是类数组。
 
-```
+```js
 /**
  * Checks if `value` is array-like. A value is considered array-like if it's
  * not a function and has a `value.length` that's an integer greater than or
@@ -404,14 +458,13 @@ function isArrayLike(value) {
 }
 ```
 
-`isArrayLike` 接收 `value` 作为参数，判断 `value` 不等于 `null` 并且类型不为 `function`，并且通过 `isLength` 判断 `value` 有长度。
-
+`isArrayLike` 接收 `value` 作为参数，判断 `value` 不等于 `null` 并且类型不为 `function`，并且通过 `isLength` 判断 `value` 是一个有效的数组长度。
 
 ## isLength
 
 检查 `value` 是否是一个有效的数组长度。
 
-```
+```js
 /** Used as references for various `Number` constants. */
 const MAX_SAFE_INTEGER = 9007199254740991
 
@@ -447,47 +500,12 @@ function isLength(value) {
 
 `isLength` 接收 `value` 作为参数，通过 `typeof` 判断 `value` 是 `number` 类型，`value` 大于 `-1` 并且 `value % 1 == 0` 是判断为整数，`value <= MAX_SAFE_INTEGER` 小于等于最大有效数字。
 
-## baseFlatten
-
-```
-/**
- * The base implementation of `flatten` with support for restricting flattening.
- *
- * @private
- * @param {Array} array The array to flatten.
- * @param {number} depth The maximum recursion depth.
- * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
- * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
- * @param {Array} [result=[]] The initial result value.
- * @returns {Array} Returns the new flattened array.
- */
-function baseFlatten(array, depth, predicate, isStrict, result) {
-  predicate || (predicate = isFlattenable)
-  result || (result = [])
-
-  if (array == null) {
-    return result
-  }
-
-  for (const value of array) {
-    if (depth > 0 && predicate(value)) {
-      if (depth > 1) {
-        // Recursively flatten arrays (susceptible to call stack limits).
-        baseFlatten(value, depth - 1, predicate, isStrict, result)
-      } else {
-        result.push(...value)
-      }
-    } else if (!isStrict) {
-      result[result.length] = value
-    }
-  }
-  return result
-}
-```
 
 ## isFlattenable
 
-```
+判断是否是一个能展开的 `value`。
+
+```js
 import isArguments from '../isArguments.js'
 
 /** Built-in value reference. */
@@ -512,7 +530,9 @@ function isFlattenable(value) {
 
 ## isArguments
 
-```
+检查 `value` 是否是 类 `arguments` 对象。
+
+```js
 /**
  * Checks if `value` is likely an `arguments` object.
  *
@@ -537,7 +557,9 @@ function isArguments(value) {
 
 ## getTag
 
-```
+进行类型的判断。
+
+```js
 /** `Object#toString` result references. */
 const dataViewTag = '[object DataView]'
 const mapTag = '[object Map]'
@@ -595,7 +617,7 @@ if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
 
 `lodash` 重写的类型判断
 
-```
+```js
 const objectProto = Object.prototype
 const hasOwnProperty = objectProto.hasOwnProperty
 const toString = objectProto.toString
@@ -637,16 +659,14 @@ function baseGetTag(value) {
 
 `baseGetTag` 接收一个 `value` 作为参数，首先会判断在等于 `null` 情况下，全等于 `undefined` 就返回 `[object Undefined]` ，否则就是 `null`，返回 `[object Null]`。
 
-`symToStringTag`: 
-
-```
+```js
 const symToStringTag = typeof Symbol != 'undefined' ? Symbol.toStringTag : undefined
 ```
 
 通过判断 `typeof` 判断 `Symbol`，如果不等于 `undefined`，就采用 `Symbol.toStringTag` 方法。
-对象的Symbol.toStringTag属性，指向一个方法。在该对象上面调用Object.prototype.toString方法时，如果这个属性存在，它的返回值会出现在toString方法返回的字符串之中，表示对象的类型。
+对象的 `Symbol.toStringTag` 属性，指向一个方法。在该对象上面调用 `Object.prototype.toString` 方法时，如果这个属性存在，它的返回值会出现在 `toString` 方法返回的字符串之中，表示对象的类型。
 
-```
+```js
 if (!(symToStringTag && symToStringTag in Object(value))) {
   return toString.call(value)
 }
@@ -654,7 +674,7 @@ if (!(symToStringTag && symToStringTag in Object(value))) {
 
 这里判断 `symToStringTag` 说明当前环境支持 `Symbol` ，并且通过 `in` 判断通过 `Object(value)` 转化后的对象是否有这个属性，没有这个属性，`if` 判断成立，返回 `toString.call(value)`，也就是`Object.prototype.toString.call(value)`，会返回 `[object String]` 这样的字符串。
 
-```
+```js
 const isOwn = hasOwnProperty.call(value, symToStringTag)
 ```
 
@@ -664,9 +684,7 @@ const isOwn = hasOwnProperty.call(value, symToStringTag)
 
 接下来就是对于 `Symbol` 类型的处理。
 
-> TODO: 占坑
-
-```
+```js
 if (unmasked) {
   if (isOwn) {
     value[symToStringTag] = tag
@@ -676,19 +694,21 @@ if (unmasked) {
 }
 ```
  
-```
+```js
 const result = toString.call(value)
 ```
 
-最后还是返回了这个 `result`，也就是 `Object.prototype.toString.call(value)`。
+最后还是返回 `result`，也就是 `Object.prototype.toString.call(value)`。
 
-## DataView
+> DataView 
 
-可使用 DataView 对象在 ArrayBuffer 中的任何位置读取和写入不同类型的二进制数据。
+可使用 `DataView` 对象在 `ArrayBuffer` 中的任何位置读取和写入不同类型的二进制数据。
 
 ## differenceBy
 
-```
+这个方法类似 `_.difference`，除了它接受一个 `iteratee` 调用每一个数组和值。`iteratee` 会传入一个参数：(value)。
+
+```js
 /**
  * This method is like `difference` except that it accepts `iteratee` which
  * is invoked for each element of `array` and `values` to generate the criterion
@@ -720,7 +740,20 @@ function differenceBy(array, ...values) {
 }
 ```
 
+`differenceBy` 接收 2 个参数，`array` 数组，`values` 剩余参数，
+首先通过 `last` 取出的最后一个数组，如果是对象并且是数组，将 `iteratee` 置为 `null`，最后判断 `array` 是否是对象并且是数组，还是通过返回 `baseDifference`  函数的结果，相比与 `difference` 函数，多传了一个，`iteratee` 处理函数。
+
+```js
+if (iteratee) {
+  values = map(values, (value) => iteratee(value))
+}
+```
+
+`values` 是的每一项都会经过 `iteratee` 函数的处理。
+
 ## differenceWith
+
+这个方法类似 `_.difference` ，除了它接受一个 `comparator` 调用每一个数组元素的值。 `comparator` 会传入 2 个参数：(arrVal, othVal)。
 
 ```
 /**
@@ -754,6 +787,8 @@ function differenceWith(array, ...values) {
     : []
 }
 ```
+
+`differenceWith` 函数与 `differenceBy` 相似，只不过
 
 ## drop
 
