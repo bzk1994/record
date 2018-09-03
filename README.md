@@ -2,6 +2,8 @@
 
 ### vue
 
+* :construction:
+
 > 参考资料
 
 * [Vue.js 技术揭秘](https://ustbhuangyi.github.io/vue-analysis/)
@@ -36,7 +38,17 @@
 
 ## React
 
-* 🚧
+* :construction:
+
+> 参考资料
+
+* [Redux 入门教程](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_one_basic_usages.html)
+
+* [Redux-saga](https://redux-saga-in-chinese.js.org/)
+
+* [DvaJS 基于 redux 和 redux-saga 的数据流方案](https://dvajs.com/guide/)
+
+* [Ant Design Pro](https://pro.ant.design/docs/router-and-nav)
 
 ## Tools
 
