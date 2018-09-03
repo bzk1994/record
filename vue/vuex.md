@@ -30,7 +30,7 @@ Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用�
 
 ## 目录
 
-```
+```js
 ├── src
 │   ├── helpers.js                  辅助函数
 │   ├── index.esm.js
@@ -50,7 +50,7 @@ Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用�
 
 vuex 的入口文件在 `src/index.js`
 
-```
+```js
 import { Store, install } from './store'
 import { mapState, mapMutations, mapGetters, mapActions, createNamespacedHelpers } from './helpers'
 
@@ -70,7 +70,7 @@ export default {
 当我们在项目中引入 `import Vuex from 'vuex'` 的之后， `Vuex` 就是这个组装后默认导出的对象了。
 当然我们也可以通过解构的方式。
 
-```
+```js
 import { Store, install } from 'vuex'`
 ```
 
@@ -78,7 +78,7 @@ import { Store, install } from 'vuex'`
 
 来看一下 `install` 方法，在 `src/store.js` 。
 
-```
+```js
 export function install (_Vue) {
   if (Vue && _Vue === Vue) {
     if (process.env.NODE_ENV !== 'production') {
@@ -102,7 +102,7 @@ export function install (_Vue) {
 
 `applyMixin` 在 `src/mixin.js` 作为默认方法导出：
 
-```
+```js
 export default function (Vue) {
   const version = Number(Vue.version.split('.')[0])
   if (version >= 2) {
@@ -149,7 +149,7 @@ export default function (Vue) {
 
 我们在使用 `Vuex` 的时候，会实例化 `Store` 类，并且将一些 `options` 作为参数传入。
 
-```
+```js
 export class Store {
   constructor (options = {}) {
     // Auto install if it is not done yet and `window` has `Vue`.
@@ -217,7 +217,7 @@ export class Store {
 
 我们来逐行看一下 `Store` 构造函数中的 `constructor` 代码。
 
-```
+```js
 if (!Vue && typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
@@ -230,26 +230,26 @@ if (!Vue && typeof window !== 'undefined' && window.Vue) {
 
 然后在非生产环境执行，运行一些断言函数。
 
-```
+```js
 assert(Vue, `must call Vue.use(Vuex) before creating a store instance.`)
 ```
 
 判断当前 `Vue` 变量， 在创建 `store` 实例之前必须调用 `Vue.use(Vuex)`。
 
-```
+```js
 assert(typeof Promise !== 'undefined', `vuex requires a Promise polyfill in this browser.`)
 ```
 
 判断支持 `Promise` 对象， 因为 `vuex` 的 `registerAction` 时会将不是 `Promise` 的方法包装成 `Promise` , `store` 实例的 `dispatch` 方法也使用了 `Promise.all`，这也是为什么 `action` 支持异步调用的原因。
 
-```
+```js
 assert(this instanceof Store, `store must be called with the new operator.`)
 ```
 判断 `this` 必须是 `Store` 的实例。
 
 断言函数的实现非常简单。
 
-```
+```js
 export function assert (condition, msg) {
   if (!condition) throw new Error(`[vuex] ${msg}`)
 }
@@ -259,7 +259,7 @@ export function assert (condition, msg) {
 
 接下来是从 `options` 解构出 `plugins` `strict`。
 
-```
+```js
 const {
   plugins = [],
   strict = false
@@ -272,7 +272,7 @@ strict: 是否是严格模式，后面判断如果是严格模式的会执行 `e
 
 接下来就是一些初始参数的赋值。
 
-```
+```js
 // 通过 mutation 修改 state 的标识
 this._committing = false
 // 注册 action 储存到 _actions
@@ -295,7 +295,7 @@ this._watcherVM = new Vue()
 
 使用 `call` 将 `dispatch` `commit` 的 `this` 绑定到当前的 `Store` 实例上。
 
-```
+```js
 // bind commit and dispatch to self
 const store = this
 const { dispatch, commit } = this
@@ -309,7 +309,7 @@ this.commit = function boundCommit (type, payload, options) {
 
 将解构出的 `strict` 变量赋值给 `this.strict` ，会在实例中使用。
 
-```
+```js
 // strict mode
 this.strict = strict
 ```
@@ -318,7 +318,7 @@ this.strict = strict
 
 接下来会调用 `installModule` 安装 `modules`。
 
-```
+```js
 // init root module.
 // this also recursively registers all sub-modules
 // and collects all module getters inside this._wrappedGetters
@@ -328,7 +328,7 @@ installModule(this, state, [], this._modules.root)
 
 `installModule` 代码：
 
-```
+```js
 function installModule (store, rootState, path, module, hot) {
   const isRoot = !path.length
   const namespace = store._modules.getNamespace(path)
@@ -377,7 +377,7 @@ function installModule (store, rootState, path, module, hot) {
 接着判断 `module.namespaced` 是否为 `true`, `namespaced` 是在每个 `module` 的配置中设置的，如果为 `true` 就将 `namespace` 为 `key`，`module` 为值存到 `construction` 的 `_modulesNamespaceMap` 变量上。
 在 `helper.js` 我们会用 `getModuleByNamespace` 获取 `_modulesNamespaceMap` 下对应命名空间模块。
 
-```
+```js
 // set state
 if (!isRoot && !hot) {
   const parentState = getNestedState(rootState, path.slice(0, -1))
@@ -392,7 +392,7 @@ if (!isRoot && !hot) {
 
 `path` 是一个数组，按模块嵌套排列，`path.slice(0, -1)` 传入除去自身的数组，就是父级。
 
-```
+```js
 function getNestedState (state, path) {
   return path.length
     ? path.reduce((state, key) => state[key], state)
@@ -405,7 +405,7 @@ function getNestedState (state, path) {
 
 然后调用 `store` 的 `_withCommit` 方法：
 
-```
+```js
 _withCommit (fn) {
   const committing = this._committing
   this._committing = true
@@ -420,13 +420,13 @@ _withCommit (fn) {
 
 调用 makeLocalContext 方法：
 
-```
+js
 const local = module.context = makeLocalContext(store, namespace, path)
 ```
 
 `makeLocalContext` 主要用来初始化 `dispatch` `getter` `commit` `state`，通过 `defineProperties` 劫持 `getters` `state`。
 
-```
+```js
 /**
  * make localized dispatch, commit, getters and state
  * if there is no namespace, just use root ones
@@ -488,7 +488,8 @@ function makeLocalContext (store, namespace, path) {
 声明 `noNamespace` 变量判断是否有命名空间，然后创建 `local` 对象，改对象有两个属性 `dispatch` `commit`，它们的值分别是2个三元表达式，如果是没有命名空间的，`dispatch` 就赋值为 `store.dispatch`，有命名空间就拼上再返回，`commit` 也是一样的道理。
 
 然后通过 `Object.defineProperties` 劫持 `local` 对象的 `getters` `state`。
-```
+
+```js
 // getters and state object must be gotten lazily
 // because they will be changed by vm update
 Object.defineProperties(local, {
@@ -507,7 +508,7 @@ Object.defineProperties(local, {
 
 我们来看一下 `makeLocalGetters` 方法：
 
-```
+```js
 function makeLocalGetters (store, namespace) {
   const gettersProxy = {}
 
@@ -539,7 +540,7 @@ function makeLocalGetters (store, namespace) {
 
 `makeLocalContext` 函数最后会将 `local` 返回。
 
-```
+```js
 const local = module.context = makeLocalContext(store, namespace, path)
 ```
 
@@ -547,7 +548,7 @@ const local = module.context = makeLocalContext(store, namespace, path)
 
 下面就是循环注册 `mutation` `action` `getter`。
 
-```
+```js
 module.forEachMutation((mutation, key) => {
   const namespacedType = namespace + key
   registerMutation(store, namespacedType, mutation, local)
@@ -569,7 +570,7 @@ module.forEachGetter((getter, key) => {
 
 来看看 `registerMutation` 方法:
 
-```
+```js
 function registerMutation (store, type, handler, local) {
   const entry = store._mutations[type] || (store._mutations[type] = [])
   entry.push(function wrappedMutationHandler (payload) {
@@ -582,7 +583,8 @@ function registerMutation (store, type, handler, local) {
 这样 `_mutations[types]` 储存了所有的 `mutation`。
 
 来看看 `registerMutation` 方法:
-```
+
+```js
 function registerAction (store, type, handler, local) {
   const entry = store._actions[type] || (store._actions[type] = [])
   entry.push(function wrappedActionHandler (payload, cb) {
@@ -611,7 +613,7 @@ function registerAction (store, type, handler, local) {
 
 通过 `type` 取出 `store._actions` 上对应的 `action`，没有就穿透赋值为空数组，然后将 `wrappedActionHandler` 函数 `push` 到 `entry` 数组中，函数中使用 `call` 将 `handler` 指向 `store`, `call` 的第二个参数是 `dispatch` `commit` `getters` 等包装后的对象，所以我们可以在 `commit` 的第一个参数中解构出需要的属性
 
-```
+```js
 // actions
 const actions = {
   getAllProducts ({ commit }) {
@@ -625,7 +627,7 @@ const actions = {
 `payload` 也就是额外参数，`cb` 回调函数倒是不怎么用到。
 然后通过简易的 `isPromise` 方法判断 `res` 是否为 `Promise`，只是简单判断了 `then` 是是否为一个函数。
 
-```
+```js
 export function isPromise (val) {
   return val && typeof val.then === 'function'
 }
@@ -636,7 +638,8 @@ export function isPromise (val) {
 之后就是根据 `_devtoolHook` 判断当前浏览器是否有 `devtoolHook` 插件，应该是通过 `Promise.catch` 抛出错误，让 `devtoolHook` 捕获。
 
 来看看 `registerGetter` 方法：
-```
+
+```js
 function registerGetter (store, type, rawGetter, local) {
   if (store._wrappedGetters[type]) {
     if (process.env.NODE_ENV !== 'production') {
@@ -661,7 +664,7 @@ function registerGetter (store, type, rawGetter, local) {
 
 循环注册 `mutation action getter` 后，只剩下最后一段代码：
 
-``` 
+``` js
 module.forEachChild((child, key) => {
   installModule(store, rootState, path.concat(key), child, hot)
 })
@@ -669,7 +672,7 @@ module.forEachChild((child, key) => {
 
 调用 `Module` 类的 `forEachChild` 方法，并且将回调函数传入。
 
-```
+```js
 forEachChild (fn) {
   forEachValue(this._children, fn)
 }
@@ -683,7 +686,8 @@ forEachChild (fn) {
 ### resetStoreVM
 
 `resetStoreVM` 主要用来重置 `Vue` 实例，实现响应式的 `state` `computed`。
-```
+
+```js
 // initialize the store vm, which is responsible for the reactivity
 // (also registers _wrappedGetters as computed properties)
 resetStoreVM(this, state)
@@ -691,7 +695,7 @@ resetStoreVM(this, state)
 
 我们接着来看 `resetStoreVM` 方法：
 
-```
+```js
 function resetStoreVM (store, state, hot) {
   const oldVm = store._vm
 
@@ -743,7 +747,7 @@ function resetStoreVM (store, state, hot) {
 
 循环 `wrappedGetters` 处理所有 `getter`。
 
-```
+```js
 // bind store public getters
 store.getters = {}
 const wrappedGetters = store._wrappedGetters
@@ -760,12 +764,14 @@ forEachValue(wrappedGetters, (fn, key) => {
 
 将 `store` 的 `getters` 赋值为空对象， 取出保存所有注册 `getter` 的 `_wrappedGetters` 对象，申明 `computed` 对象。
 接着循环 `wrappedGetters` 对象，将对应的 `key` 以及 `fn` 保存到 `computed`，这里的 `fn` 就是注册 `getter` 的 `wrappedGetter` 函数。
-```
+
+```js
 computed[key] = () => fn(store)
 ```
+
 然后通过 `defineProperty` 劫持 `store.getters` 的 `key`，代理到 `store._vm[key]`。
 
-```
+```js
 // use a Vue instance to store the state tree
 // suppress warnings just in case the user has added
 // some funky global mixins
@@ -782,15 +788,16 @@ Vue.config.silent = silent
 
 保存 `Vue.config.silent` 变量，设置`Vue.config.silent = true`，取消 `Vue` 所有的日志与警告。然后生成一个新的 `Vue` 实例，将 `state` 和 `computed` 作为参数传入，然后恢复 `Vue.config.silent`，因为将 `store.getters` 的 `key`，代理到 `store._vm[key]`，所以我们可以通过访问 `this.$store.getters.key` 访问到 `store._vm[key]`。
 
-```
+```js
 // enable strict mode for new vm
 if (store.strict) {
   enableStrictMode(store)
 }
 ```
+
 根据 `store.strict` 判断是否是严格模式，是的话调用 `enableStrictMode` 方法。
 
-```
+```js
 function enableStrictMode (store) {
   store._vm.$watch(function () { return this._data.$$state }, () => {
     if (process.env.NODE_ENV !== 'production') {
@@ -803,7 +810,8 @@ function enableStrictMode (store) {
 `enableStrictMode` 将 `store` 作为参数，调用 `store._vm.$watch` 方法，也就是 Vue 实例的 `$watch` 方法，监测 `this._data.$$state` 的变化，就是生成新的 `Vue` 实例的时候传入的 `state`，判断不是生产模式，调用断言，如果 `store._committing` 是 `false`, 抛出异常，所以我们在使用 `vuex` 的时候，只能通过 `mutation` 方式改变 `store`。
 
 `oldVm` 的注销：
-```
+
+```js
 if (oldVm) {
   if (hot) {
     // dispatch changes in all subscribed watchers
@@ -821,7 +829,7 @@ if (oldVm) {
 
 插件的调用：
 
-```
+```js
 // apply plugins
 plugins.forEach(plugin => plugin(this))
 ```
@@ -830,7 +838,7 @@ plugins.forEach(plugin => plugin(this))
 
 调用 `devtoolPlugin` 方法：
 
-```
+```js
 if (Vue.config.devtools) {
   devtoolPlugin(this)
 }
@@ -842,7 +850,8 @@ if (Vue.config.devtools) {
 
 
 代理 `state`:
-```
+
+```js
 get state () {
   return this._vm._data.$$state
 }
@@ -850,7 +859,7 @@ get state () {
 
 为 `state` 设置 `get`，访问 `Store` 实例的 `state` 的时候代理带 `this._vm._data.$$state`。
 
-```
+```js
 set state (v) {
   if (process.env.NODE_ENV !== 'production') {
     assert(false, `use store.replaceState() to explicit replace store state.`)
@@ -864,7 +873,7 @@ set state (v) {
 
 修改 `Vuex` 的 `store` 只能通过 `mutation`，我们通过 `commit` 调用 `mutation`。
 
-```
+```js
 commit (_type, _payload, _options) {
   // check object-style commit
   const {
@@ -904,7 +913,7 @@ commit (_type, _payload, _options) {
 
 接下来调用 `unifyObjectStyle` 方法：
 
-```
+```js
 function unifyObjectStyle (type, payload, options) {
   if (isObject(type) && type.type) {
     options = payload
@@ -924,7 +933,7 @@ function unifyObjectStyle (type, payload, options) {
 
 因为 `vuex` 允许对象风格的提交方式
 
-```
+```js
 store.commit({
   type: 'increment',
   amount: 10
@@ -933,7 +942,7 @@ store.commit({
 
 处理成这样的形式：
 
-```
+```js
 store.commit('increment', {
   amount: 10
 })
@@ -941,7 +950,7 @@ store.commit('increment', {
 
 然后从 `unifyObjectStyle` 结构出 `type` `payload` `options`，将包装 `type` `payload` 成一个对象赋值给 `mutation` 变量，申明 `entry` 变量从储存所有 `mutation` 的 `this._mutations` 取出对应 `type` 的 `mutation`，没有对应 `mutation` 就 `return`，如果在非生产环境，顺便抛出个异常。
 
-```
+```js
 this._withCommit(() => {
   entry.forEach(function commitIterator (handler) {
     handler(payload)
@@ -953,7 +962,7 @@ this._withCommit(() => {
 
 接着循环 `_subscribers`：
 
-```
+```js
 this._subscribers.forEach(sub => sub(mutation, this.state))
 ```
 `_subscribers` 是一个数组，循环调用里面的函数，并将 `mutation` `this.state` 传入。
@@ -964,7 +973,7 @@ this._subscribers.forEach(sub => sub(mutation, this.state))
 
 通过 `store.dispatch` 方法触发 `Action`:
 
-```
+```js
 dispatch (_type, _payload) {
   // check object-style dispatch
   const {
@@ -993,7 +1002,7 @@ dispatch (_type, _payload) {
 
 接着循环 `_actionSubscribers`：
 
-```
+```js
 this._subscribers.forEach(sub => sub(mutation, this.state))
 ```
 `_actionSubscribers` 是一个数组，循环调用里面的函数，并将 `action` `this.state` 传入。
@@ -1004,7 +1013,8 @@ this._subscribers.forEach(sub => sub(mutation, this.state))
 ### subscribe
 
 订阅 `store` 的 `mutation`：
-```
+
+```js
 subscribe (fn) {
   return genericSubscribe(fn, this._subscribers)
 }
@@ -1015,7 +1025,7 @@ subscribe (fn) {
 
 ### genericSubscribe
 
-```
+```js
 function genericSubscribe (fn, subs) {
   if (subs.indexOf(fn) < 0) {
     subs.push(fn)
@@ -1036,7 +1046,7 @@ function genericSubscribe (fn, subs) {
 
 订阅 `store` 的 `action`。
 
-```
+```js
 subscribeAction (fn) {
   return genericSubscribe(fn, this._actionSubscribers)
 }
@@ -1048,7 +1058,7 @@ subscribeAction (fn) {
 
 响应式地侦听 fn 的返回值，当值改变时调用回调函数。
 
-```
+```js
 watch (getter, cb, options) {
   if (process.env.NODE_ENV !== 'production') {
     assert(typeof getter === 'function', `store.watch only accepts a function.`)
@@ -1063,7 +1073,7 @@ watch (getter, cb, options) {
 
 替换 store 的根状态。
 
-```
+```js
 replaceState (state) {
   this._withCommit(() => {
     this._vm._data.$$state = state
@@ -1076,7 +1086,7 @@ replaceState (state) {
 
 使用 `store.registerModule` 方法注册模块：
 
-```
+```js
 registerModule (path, rawModule, options = {}) {
   if (typeof path === 'string') path = [path]
 
@@ -1102,7 +1112,7 @@ registerModule (path, rawModule, options = {}) {
 
 卸载一个动态模块：
 
-```
+```js
 unregisterModule (path) {
   if (typeof path === 'string') path = [path]
 
@@ -1123,7 +1133,8 @@ unregisterModule (path) {
 回调函数会调用 `getNestedState` 方法取出父 `module` 的 `state`，然后调用 `Vue.delete` 删除对应子模块，`resetStore` 进行 `store` 的重置，其他部分与 `registerModule` 一致。
 
 ### resetStore
-```
+
+```js
 function resetStore (store, hot) {
   store._actions = Object.create(null)
   store._mutations = Object.create(null)
@@ -1145,7 +1156,7 @@ function resetStore (store, hot) {
 
 开发过程中热重载 mutation、module、action 和 getter:
 
-```
+```js
 hotUpdate (newOptions) {
   this._modules.update(newOptions)
   resetStore(this, true)
@@ -1158,13 +1169,14 @@ hotUpdate (newOptions) {
 
 ## class ModuleCollection
 在上面初始参数的赋值中 `this._modules` 就是 `ModuleCollection` 类的实例。
-```
+
+```js
 this._modules = new ModuleCollection(options)
 ```
 
 如果没有嵌套模块，`this._modules` 是这样一个结构。
 
-```
+```js
 {
   'root': {
     'runtime': false,
@@ -1186,7 +1198,7 @@ this._modules = new ModuleCollection(options)
 
 来看看 ModuleCollection：
 
-```
+```js
 class ModuleCollection {
   constructor (rawRootModule) {
     // register root module (Vuex.Store options)
@@ -1260,7 +1272,7 @@ class ModuleCollection {
 
 forEachValue：
 
-```
+```js
 // object 转成数组 循环调用 fn
 export function forEachValue (obj, fn) {
   Object.keys(obj).forEach(key => fn(obj[key], key))
@@ -1272,7 +1284,7 @@ export function forEachValue (obj, fn) {
 上面说过，`assertRawModule` 负责对 `module` 进行一些断言判断，判断 `rawModule` 对象是否有 `getters` `mutations` `mutations` 为 `key` 值，然后根据预置的类型进行断言。
 
 
-```
+```js
 const functionAssert = {
   assert: value => typeof value === 'function',
   expected: 'function'
@@ -1317,7 +1329,7 @@ function makeAssertionMessage (path, key, type, value, expected) {
 
 `assertRawModule` 循环 `assertTypes` 对象，循环的 `key` 为 `getters` `mutations` `actions`，判断传入模块是否有这些属性。
 
-```
+```js
 const assertOptions = assertTypes[key]
 ```
 
@@ -1329,7 +1341,7 @@ const assertOptions = assertTypes[key]
 
 来看看 `Module` 类的代码:
 
-```
+```js
 export default class Module {
   constructor (rawModule, runtime) {
     this.runtime = runtime
@@ -1416,7 +1428,7 @@ Module 类提供了很多方法：
 
 根据 path 处理命名空间
 
-```
+```js
 getNamespace (path) {
   let module = this.root
   return path.reduce((namespace, key) => {
@@ -1430,7 +1442,7 @@ getNamespace (path) {
 
 在 `vue` 的入口文件默认导出辅助工具函数。
 
-```
+```js
 import { Store, install } from './store'
 import { mapState, mapMutations, mapGetters, mapActions, createNamespacedHelpers } from './helpers'
 
@@ -1448,13 +1460,13 @@ export default {
 
 我们可以通过解构调用 `vuex` 暴露出来的辅助工具函数。
 
-```
+```js
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 ```
 
 辅助工具函数在 `src/helpers.js`:
 
-```
+```js
 export const mapState = normalizeNamespace((namespace, states) => {
   ...
   return res
@@ -1488,7 +1500,7 @@ export const createNamespacedHelpers = (namespace) => ({
 
 来看一下具体实现：
 
-```
+```js
 /**
  * Reduce the code which written in Vue.js for getting the state.
  * @param {String} [namespace] - Module's namespace
@@ -1526,7 +1538,7 @@ export const mapState = normalizeNamespace((namespace, states) => {
 
 我们来看看 `normalizeNamespace` 函数：
 
-```
+```js
 /**
  * Return a function expect two param contains namespace and map. it will normalize the namespace and then the param's function will handle the new namespace and the map.
  * @param {Function} fn
@@ -1547,7 +1559,7 @@ function normalizeNamespace (fn) {
 
 `normalizeNamespace` ，接收一个 `fn` 作为参数，最后返回一个函数。
 
-```
+```js
 (namespace, map) => {
   if (typeof namespace !== 'string') {
     map = namespace
@@ -1571,7 +1583,8 @@ function normalizeNamespace (fn) {
 首先申明一个 `res` 对象，循环赋值后返回，接着调用 `normalizeMap` 函数, `normalizeMap` 接收一个对象或者数组，转化成一个数组形式，数组元素是包含 `key` 和 `value` 的对象。
 
 ### normalizeMap
-```
+
+```js
 /**
  * Normalize the map
  * normalizeMap([1, 2, 3]) => [ { key: 1, val: 1 }, { key: 2, val: 2 }, { key: 3, val: 3 } ]
@@ -1597,7 +1610,7 @@ function normalizeMap (map) {
 
 `getModuleByNamespace` 函数主要用来搜索具有命名空间的模块。
 
-```
+```js
 /**
  * Search a special module from store by namespace. if module not exist, print error message.
  * @param {Object} store
@@ -1620,7 +1633,7 @@ function getModuleByNamespace (store, helper, namespace) {
 
 `forEach` 最后还有一段：
 
-```
+```js
 // mark vuex getter for devtools
 res[key].vuex = true
 ```
@@ -1635,7 +1648,7 @@ res[key].vuex = true
 
 来看一下具体实现：
 
-```
+```js
 /**
  * Reduce the code which written in Vue.js for committing the mutation
  * @param {String} [namespace] - Module's namespace
@@ -1680,7 +1693,7 @@ export const mapMutations = normalizeNamespace((namespace, mutations) => {
 
 来看一下具体实现：
 
-```
+```js
 /**
  * Reduce the code which written in Vue.js for getting the getters
  * @param {String} [namespace] - Module's namespace
@@ -1723,7 +1736,7 @@ export const mapGetters = normalizeNamespace((namespace, getters) => {
 
 来看一下具体实现：
 
-```
+```js
 /**
  * Reduce the code which written in Vue.js for dispatch the action
  * @param {String} [namespace] - Module's namespace
@@ -1760,7 +1773,7 @@ export const mapActions = normalizeNamespace((namespace, actions) => {
 
 来看一下具体实现：
 
-```
+```js
 /**
  * Rebinding namespace param for mapXXX function in special scoped, and return them by simple object
  * @param {String} namespace
@@ -1773,11 +1786,12 @@ export const createNamespacedHelpers = (namespace) => ({
   mapActions: mapActions.bind(null, namespace)
 })
 ```
+
 `createNamespacedHelpers` 函数接受一个字符串作为参数，返回一个包含 `mapState` 、`mapGetters` 、`mapActions` 和 `mapMutations` 的对象。
 
 以 `mapState` 为例，调用 `mapState` 函数的 `bind` 方法，将 `null` 作为第一个参数传入，不会改变 `this` 指向，`namespace` 作为第二个参数。
 
-```
+```js
 import { createNamespacedHelpers } from 'vuex'
 
 const { mapState, mapActions } = createNamespacedHelpers('some/nested/module')
@@ -1804,7 +1818,7 @@ export default {
 
 相当于下面这样：
 
-```
+```js
 ...mapState('some/nested/module', {
   a: state => state.a,
   b: state => state.b
@@ -1821,7 +1835,7 @@ export default {
 
 ### find
 
-```
+```js
 /**
  * Get the first item that pass the test
  * by second argument function
@@ -1841,7 +1855,7 @@ export function find (list, f) {
 
 `deepCopy` 函数：
 
-```
+```js
 /**
  * Deep copy the given object considering circular structure.
  * This function caches all nested objects and its copies.
@@ -1884,7 +1898,7 @@ export function deepCopy (obj, cache = []) {
 
 如果有 `hit` 就说明是环形结构，直接返回 `hit.copy`。
 
-```
+```js
 const obj = {
   a: 1
 }
@@ -1897,7 +1911,7 @@ obj.b = obj
 
 保存 `cache`:
 
-```
+```js
 cache.push({
   original: obj,
   copy
@@ -1912,7 +1926,7 @@ cache.push({
 
 ### forEachValue
 
-```
+```js
 /**
  * forEach for object
  */
@@ -1927,7 +1941,7 @@ export function forEachValue (obj, fn) {
 
 ### isObject
 
-```
+```js
 export function isObject (obj) {
   return obj !== null && typeof obj === 'object'
 }
@@ -1955,7 +1969,7 @@ export function assert (condition, msg) {
 
 ### devtool
 
-```
+```js
 const devtoolHook =
   typeof window !== 'undefined' &&
   window.__VUE_DEVTOOLS_GLOBAL_HOOK__
@@ -1989,7 +2003,7 @@ export default function devtoolPlugin (store) {
 `devtoolHook` 调用 `on` 方法监听 `vuex:travel-to-state`，监听到就调用回调函数，回调函数里会调用 `Store` 类的 `replaceState` 方法。
 
 
-```
+```js
 replaceState (state) {
   this._withCommit(() => {
     this._vm._data.$$state = state
@@ -2008,7 +2022,7 @@ replaceState (state) {
 
 `vuex` 有个内置的插件 `createLogger`，位于 `src/plugins/logger.js`:
 
-```
+```js
 export default function createLogger ({
   collapsed = true,
   filter = (mutation, stateBefore, stateAfter) => true,
@@ -2060,19 +2074,18 @@ export default function createLogger ({
 
 `createLogger` 接收一个 `options` 对象，默认为 `{}` :
 
-```
-collapsed: 默认为 true, 自动展开记录的 mutation
-filter: 默认为 true，过滤 mutation 记录
-transformer: 在开始记录之前转换状态
-mutationTransformer: 格式化 mutation 记录
-logger: 默认为 console，自定义 console 
-```
+* collapsed: 默认为 true, 自动展开记录的 mutation
+* filter: 默认为 true，过滤 mutation 记录
+* transformer: 在开始记录之前转换状态
+* mutationTransformer: 格式化 mutation 记录
+* logger: 默认为 console，自定义 console 
+
 `createLogger` 返回了一个函数，首先申明 `prevState` 变量，赋值为深拷贝后的 `store.state` 对象，
 调用 `store` 的 `subscribe` 方法添加事件订阅，传入一个回调函数，在回调函数中接收 `mutation` `state` 两个参数，判断 `logger` 的类型为 `undefined` 就 `return`。
 申明 `nextState` 变量，赋值为深拷贝后的回调函数中传入的 `state` 对象，
 接着判断 `filter` 函数，这个默认为 `true`，进入 `if` 循环后会申明 `time` 变量保存当前事件戳，申明 `formattedTime` 变量保存格式化后的时间， 申明 `formattedMutation` 保存处理后的经过 `mutationTransformer`处理后的 `mutation`，申明 `message` 保存默认信息，申明 `startMessage` 变量，根据传入的 `collapsed` 赋值为不同的打印方法，
 
-```
+```js
 console.groupCollapsed: 设置折叠的分组信息
 console.group:          设置不折叠的分组信息
 console.groupEnd:       结束当前的分组
@@ -2080,7 +2093,7 @@ console.groupEnd:       结束当前的分组
 
 接着使用 `call` 将 `startMessage` 的 `this` 绑定到 `logger` 上，并且传入 `message` 默认参数。
 
-```
+```js
 // render
 try {
   startMessage.call(logger, message)
@@ -2096,7 +2109,7 @@ try {
 
 两个处理时间的函数：
 
-```
+```js
 // 调用数组的 join，返回指定数量的字符串
 function repeat (str, times) {
   return (new Array(times + 1)).join(str)
@@ -2116,7 +2129,7 @@ eventBus 比较适合简单应用，但是随着需求增加，组件之间通�
 
 `$store` 是在 vuex install 初始化的时候赋值的，来看一下代码： 
 
-```
+```js
  /**
   * Vuex init hook, injected into each instances init hooks list.
   */
@@ -2144,7 +2157,7 @@ function vuexInit () {
 
 `mapGetter` 方法最后会返回一个对象，这个对象的每一个 `key` 值是 `mappedGetter` 方法，`mappedGetter` 会返回 `this.$store.getters[key]`。
 
-```
+```js
 mapGetters({
   // 把 `this.doneCount` 映射为 `this.$store.getters.doneTodosCount`
   doneCount: 'doneTodosCount'
@@ -2171,23 +2184,23 @@ mapGetters({
 
 在 `devtoolPlugin` 方法中，取出挂在 `window` 对象的 `__VUE_DEVTOOLS_GLOBAL_HOOK__` 保存到 `devtoolHook`，通过 `emit` `vuex:init` 初始化 `store`：
 
-```
+```js
 devtoolHook.emit('vuex:init', store)
 ```
 
-```
+```js
 devtoolHook.on('vuex:travel-to-state', targetState => {
   store.replaceState(targetState)
 })
 ```
 
-```
+```js
 store.subscribe((mutation, state) => {
   devtoolHook.emit('vuex:mutation', mutation, state)
 })
 ```
 
-```
+```js
 export default function devtoolPlugin (store) {
   if (!devtoolHook) return
 
@@ -2216,7 +2229,7 @@ export default function devtoolPlugin (store) {
 
 使用 `webpack` 的 `Hot Module Replacement API` 实现热重载。
 
-```
+```js
 if (module.hot) {
   module.hot.accept([
     './getters',
@@ -2238,13 +2251,13 @@ if (module.hot) {
 
 在 `vue-devtools` 的源码的 `src/bridge.js` 中：
 
-```
+```js
 import { EventEmitter } from 'events'
 ```
 
 我们看到事件监听是通过 `Node` 的 `EventEmitter` 监听的。
 
-```
+```js
 devtoolHook.on('vuex:travel-to-state', targetState => {
   store.replaceState(targetState)
 })
@@ -2254,7 +2267,7 @@ devtoolHook.on('vuex:travel-to-state', targetState => {
 
 但是这个历史记录又是怎么出现的呢？是通过调用 `store.subscribe` 方法：
 
-```
+```js
 store.subscribe((mutation, state) => {
   devtoolHook.emit('vuex:mutation', mutation, state)
 })
@@ -2262,7 +2275,7 @@ store.subscribe((mutation, state) => {
 
 每当调用 `commit` 方法的时候，都会调用
 
-```
+```js
 this._subscribers.forEach(sub => sub(mutation, this.state))
 ```
 
@@ -2270,7 +2283,7 @@ this._subscribers.forEach(sub => sub(mutation, this.state))
 
 `vuex` 相关在 `vue-devtools/src/backend/vuex.js`:
 
-```
+```js
 // application -> devtool
 hook.on('vuex:mutation', ({ type, payload }) => {
   if (!SharedData.recordVuex) return
