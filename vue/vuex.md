@@ -8,9 +8,9 @@ Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用�
   <img width="700px" src="https://raw.githubusercontent.com/vuejs/vuex/dev/docs/.vuepress/public/vuex.png">
 </p>
 
-> 阅读 vuex 源码的思维导图:
+> [阅读 vuex 源码的思维导图:](http://pdl69gzvn.bkt.clouddn.com/vuex.png)
 
-![阅读 vuex 源码的思维导图](https://images-cdn.shimo.im/KdTrPikRo9wmi0yj/vuex.png!thumbnail)
+![阅读 vuex 源码的思维导图](http://pdl69gzvn.bkt.clouddn.com/vuex.png)
 
 [vuex 的文档](https://vuex.vuejs.org/zh/) 对辅助看源码有不小的帮助，不妨在看源码之前仔细地撸一遍文档。
 
