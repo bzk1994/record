@@ -55,7 +55,7 @@ function chunk(array, size) {
 
 ## slice
 
-来看一看 `slice.js` ：
+> 创建一个裁剪后的数组，从 start 到 end 的位置，但不包括 end 本身的位置。 
 
 ```js
 /**
@@ -115,7 +115,7 @@ function slice(array, start, end) {
 
 ## compact
 
-创建一个移除了所有假值的数组。例如：false、null、 0、""、undefined， 以及NaN 都是 “假值”。
+> 创建一个移除了所有假值的数组。例如：false、null、 0、""、undefined， 以及NaN 都是 “假值”。
 
 ```js
 /**
@@ -152,7 +152,7 @@ function compact(array) {
 
 ## concat
 
-创建一个用任何数组 或 值连接的新数组。
+> 创建一个用任何数组 或 值连接的新数组。
 
 ```js
 /**
@@ -197,7 +197,7 @@ function compact(array) {
 
 ## difference
 
-创建一个差异化后的数组。
+> 创建一个差异化后的数组。
 
 ```js
 /**
@@ -305,7 +305,7 @@ function baseDifference(array, values, iteratee, comparator) {
 
 ## baseFlatten
 
-返回扁平化的数组。
+> 返回扁平化的数组。
 
 ```js
 /**
@@ -357,7 +357,7 @@ baseFlatten(values, 1, isArrayLikeObject, true)
 
 ## isArrayLikeObject
 
-这个方法类似 _.isArrayLike，除了它还检查值是否是个对象。
+> 这个方法类似 _.isArrayLike，除了它还检查值是否是个对象。
 
 ```js
 /**
@@ -392,7 +392,7 @@ function isArrayLikeObject(value) {
 
 ## isObjectLike
 
-检查 value 是否是 类对象。 类对象应该不是 null 以及 typeof 的结果是 "object"。
+> 检查 value 是否是 类对象。 类对象应该不是 null 以及 typeof 的结果是 "object"。
 
 ```js
 /**
@@ -427,7 +427,7 @@ function isObjectLike(value) {
 
 ## isArrayLike
 
-检查 `value` 是否是类数组。
+> 检查 `value` 是否是类数组。
 
 ```js
 /**
@@ -462,7 +462,7 @@ function isArrayLike(value) {
 
 ## isLength
 
-检查 `value` 是否是一个有效的数组长度。
+> 检查 `value` 是否是一个有效的数组长度。
 
 ```js
 /** Used as references for various `Number` constants. */
@@ -503,7 +503,7 @@ function isLength(value) {
 
 ## isFlattenable
 
-判断是否是一个能展开的 `value`。
+> 判断是否是一个能展开的 `value`。
 
 ```js
 import isArguments from '../isArguments.js'
@@ -530,7 +530,7 @@ function isFlattenable(value) {
 
 ## isArguments
 
-检查 `value` 是否是 类 `arguments` 对象。
+> 检查 `value` 是否是 类 `arguments` 对象。
 
 ```js
 /**
@@ -557,7 +557,7 @@ function isArguments(value) {
 
 ## getTag
 
-进行类型的判断。
+> 进行类型的判断。
 
 ```js
 /** `Object#toString` result references. */
@@ -615,7 +615,7 @@ if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
 
 ## baseGetTag
 
-`lodash` 重写的类型判断
+> `lodash` 重写的类型判断
 
 ```js
 const objectProto = Object.prototype
@@ -706,7 +706,7 @@ const result = toString.call(value)
 
 ## differenceBy
 
-这个方法类似 `_.difference`，除了它接受一个 `iteratee` 调用每一个数组和值。`iteratee` 会传入一个参数：(value)。
+> 这个方法类似 `_.difference`，除了它接受一个 `iteratee` 调用每一个数组和值。`iteratee` 会传入一个参数：(value)。
 
 ```js
 /**
@@ -753,7 +753,7 @@ if (iteratee) {
 
 ## differenceWith
 
-这个方法类似 `_.difference` ，除了它接受一个 `comparator` 调用每一个数组元素的值。 `comparator` 会传入 2 个参数：(arrVal, othVal)。
+> 这个方法类似 `_.difference` ，除了它接受一个 `comparator` 调用每一个数组元素的值。 `comparator` 会传入 2 个参数：(arrVal, othVal)。
 
 ```
 /**
@@ -788,13 +788,40 @@ function differenceWith(array, ...values) {
 }
 ```
 
-`differenceWith` 函数与 `differenceBy` 相似，只不过
+`differenceWith` 函数与 `differenceBy` 相似，只不过调用 `baseDifference` 函数的时候第三个参数为 `undefined`，多了第四个参数 `comparator`。
+
+
+```js
+if (comparator) {
+  includes = arrayIncludesWith
+  isCommon = false
+}
+```
+
+如果有 `comparator` 会将引入的 `arrayIncludesWith` 的赋值给 `includes`，并且将 `isCommon` 赋值为 `false`，在 `for...of` 循环时不会进入第一个 `if` 判断，根据 `includes` 返回的布尔值将 `value` 插入 `result`，最后将 `result` 返回。
+
+```js
+function arrayIncludesWith(array, target, comparator) {
+  if (array == null) {
+    return false
+  }
+
+  for (const value of array) {
+    if (comparator(target, value)) {
+      return true
+    }
+  }
+  return false
+}
+```
+
+`arrayIncludesWith` 函数会循环传入的数组，并且用 `comparator` 函数进行比较后返回。
 
 ## drop
 
-切割数组，默认切除第一个。
+> 裁剪数组中的前 N 个数组，返回剩余的部分。
 
-```
+```js
 /**
  * Creates a slice of `array` with `n` elements dropped from the beginning.
  *
@@ -825,13 +852,13 @@ function drop(array, n=1) {
 }
 ```
 
-`drop` 接收 `array` 数组、`n` 开始切割的下标，首先申明 `length` 数组长度，默认为 0，最后调用 `slice` 返回切割后的数组。
+`drop` 函数接收 2 个数组， `array` 数组，`n` 裁剪的个数，默认为 1 ，首先申明 `length` 数组长度，默认为 0，有 `length` 就调用 `slice` 返回切割后的数组,否则返回空数组。
 
 ## dropRight
 
-向右切割数组，默认切除最后一个。
+> 从右边开始裁剪数组中的 N 个数组，返回剩余的部分。
 
-```
+```js
 /**
  * Creates a slice of `array` with `n` elements dropped from the end.
  *
@@ -860,9 +887,13 @@ function dropRight(array, n=1) {
 }
 ```
 
+`dropRight` 函数和 `drop` 函数类似，调用 `slice` 函数的参数有所不同，`n < 0` 就为 0，否则就为 `-n`，为负数时，`slice` 会从后面开始切割。
+
 ## dropRightWhile
 
-```
+> 从右边开始裁剪数组，起点从 predicate 返回假值开始。predicate 会传入3个参数：(value, index, array)。
+
+```js
 /**
  * Creates a slice of `array` excluding elements dropped from the end.
  * Elements are dropped until `predicate` returns falsey. The predicate is
@@ -891,17 +922,320 @@ function dropRightWhile(array, predicate) {
 }
 ```
 
+`dropRightWhile` 函数接收 2 个参数，`array` 数组， `array` 不为 `null` 并且有长度，调用 `baseWhile` 函数。
+
+## baseWhile
+
+> 根据传入的条件处理后返回数组。
+
+```js
+/**
+ * The base implementation of methods like `dropWhile` and `takeWhile`.
+ *
+ * @private
+ * @param {Array} array The array to query.
+ * @param {Function} predicate The function invoked per iteration.
+ * @param {boolean} [isDrop] Specify dropping elements instead of taking them.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Array} Returns the slice of `array`.
+ */
+function baseWhile(array, predicate, isDrop, fromRight) {
+  const { length } = array
+  let index = fromRight ? length : -1
+
+  while ((fromRight ? index-- : ++index < length) &&
+    predicate(array[index], index, array)) {}
+
+  return isDrop
+    ? slice(array, (fromRight ? 0 : index), (fromRight ? index + 1 : length))
+    : slice(array, (fromRight ? index + 1 : 0), (fromRight ? length : index))
+}
+```
+
+`baseWhile` 接收四个参数，`array` 数组、`predicate` 迭代调用函数、`isDrop` 是否舍弃 、`fromRight` 是否从右到左。
+
+首先申明 `length` 取出 `array` 的长度，接着是一个 `while`，这里是一个 `&&` 连接符号，全部满足进行循环， 第一个条件是三元表达式，是否从右到左 `index` 累减去，否则累加小于数组长度，第二个条件是 `predicate` 函数的运行结果，最后根据 `isDrop` 返回不同的 `slice` 函数，`slice` 传入的下标位置不同，截取不同位置，最后将 `slice` 后得到的数组返回。
+
+## dropWhile
+
+> 裁剪数组，起点从 predicate 返回假值开始。predicate 会传入3个参数：(value, index, array)。
+
+```js
+/**
+ * Creates a slice of `array` excluding elements dropped from the beginning.
+ * Elements are dropped until `predicate` returns falsey. The predicate is
+ * invoked with three arguments: (value, index, array).
+ *
+ * @since 3.0.0
+ * @category Array
+ * @param {Array} array The array to query.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the slice of `array`.
+ * @example
+ *
+ * const users = [
+ *   { 'user': 'barney',  'active': true },
+ *   { 'user': 'fred',    'active': true },
+ *   { 'user': 'pebbles', 'active': false }
+ * ]
+ *
+ * dropWhile(users, ({ active }) => active)
+ * // => objects for ['pebbles']
+ */
+function dropWhile(array, predicate) {
+  return (array != null && array.length)
+    ? baseWhile(array, predicate, true)
+    : []
+}
+```
+
+`dropWhile` 处理逻辑与 `dropRightWhile` 一样，调用 `baseWhile` 没有传第四个参数，默认从左往右开始截取。
+
 ## fill
+
+> 指定 value 填充数组，从 start 到 end 的位置，但不包括 end 本身的位置。 
+
+```js
+/**
+ * Fills elements of `array` with `value` from `start` up to, but not
+ * including, `end`.
+ *
+ * **Note:** This method mutates `array`.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.2.0
+ * @category Array
+ * @param {Array} array The array to fill.
+ * @param {*} value The value to fill `array` with.
+ * @param {number} [start=0] The start position.
+ * @param {number} [end=array.length] The end position.
+ * @returns {Array} Returns `array`.
+ * @example
+ *
+ * var array = [1, 2, 3];
+ *
+ * _.fill(array, 'a');
+ * console.log(array);
+ * // => ['a', 'a', 'a']
+ *
+ * _.fill(Array(3), 2);
+ * // => [2, 2, 2]
+ *
+ * _.fill([4, 6, 8, 10], '*', 1, 3);
+ * // => [4, '*', '*', 10]
+ */
+function fill(array, value, start, end) {
+  var length = array == null ? 0 : array.length;
+  if (!length) {
+    return [];
+  }
+  if (start && typeof start != 'number' && isIterateeCall(array, value, start)) {
+    start = 0;
+    end = length;
+  }
+  return baseFill(array, value, start, end);
+}
+```
+
+`fill` 函数接收 4 个参数，`array` 数组、`value` 填充的值、`start` 开始位置，`end` 结束位置。
+
+首先取出 `length`，没有 `length` 返回一个空数组，这里判断开始位置默认为 0，end 默认为数组长度，
+然后调用 `baseFill` 函数，返回填充后的数组。
+
+
+## baseFill
+
+> 指定 value 填充数组，从 start 到 end 的位置，但不包括 end 本身的位置。
+
+```js
+/**
+ * The base implementation of `_.fill` without an iteratee call guard.
+ *
+ * @private
+ * @param {Array} array The array to fill.
+ * @param {*} value The value to fill `array` with.
+ * @param {number} [start=0] The start position.
+ * @param {number} [end=array.length] The end position.
+ * @returns {Array} Returns `array`.
+ */
+function baseFill(array, value, start, end) {
+  var length = array.length;
+
+  start = toInteger(start);
+  if (start < 0) {
+    start = -start > length ? 0 : (length + start);
+  }
+  end = (end === undefined || end > length) ? length : toInteger(end);
+  if (end < 0) {
+    end += length;
+  }
+  end = start > end ? 0 : toLength(end);
+  while (start < end) {
+    array[start++] = value;
+  }
+  return array;
+}
+```
+
+`fill` 函数接收 4 个参数，`array` 数组、`value` 填充的值、`start` 开始位置，`end` 结束位置。
+
+首先保存数组长度，处理 `start` 、 `end` 边界条件，通过 `toInteger` 转成整数，`while` 循环，`start` 累加，往 `array` 赋值，最后将 `array` 返回。
 
 ## findIndex
 
+> 这个方法类似 _.find。除了它返回最先通过 predicate 判断为真值的元素的 index ，而不是元素本身。
+
+```js
+/**
+ * This method is like `_.find` except that it returns the index of the first
+ * element `predicate` returns truthy for instead of the element itself.
+ *
+ * @static
+ * @memberOf _
+ * @since 1.1.0
+ * @category Array
+ * @param {Array} array The array to inspect.
+ * @param {Function} [predicate=_.identity] The function invoked per iteration.
+ * @param {number} [fromIndex=0] The index to search from.
+ * @returns {number} Returns the index of the found element, else `-1`.
+ * @example
+ *
+ * var users = [
+ *   { 'user': 'barney',  'active': false },
+ *   { 'user': 'fred',    'active': false },
+ *   { 'user': 'pebbles', 'active': true }
+ * ];
+ *
+ * _.findIndex(users, function(o) { return o.user == 'barney'; });
+ * // => 0
+ *
+ * // The `_.matches` iteratee shorthand.
+ * _.findIndex(users, { 'user': 'fred', 'active': false });
+ * // => 1
+ *
+ * // The `_.matchesProperty` iteratee shorthand.
+ * _.findIndex(users, ['active', false]);
+ * // => 0
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.findIndex(users, 'active');
+ * // => 2
+ */
+function findIndex(array, predicate, fromIndex) {
+  var length = array == null ? 0 : array.length;
+  if (!length) {
+    return -1;
+  }
+  var index = fromIndex == null ? 0 : toInteger(fromIndex);
+  if (index < 0) {
+    index = nativeMax(length + index, 0);
+  }
+  return baseFindIndex(array, getIteratee(predicate, 3), index);
+}
+```
+
+`findIndex` 函数接收 3 个参数，`array` 数组、`predicate` 迭代函数，`fromIndex` 搜索开始下标。
+
+首先获取数组长度，没有长度返回 `-1`，`index` 起始下标处理，如果 `index` 小于 0 ，取 `length + index` 和 0 的最大值，最后调用 `baseFindIndex` 返回处理后的数组。
+
+
+## baseFindIndex
+
+> 返回数组中符合迭代函数的下标。
+
+```js
+/**
+ * The base implementation of `findIndex` and `findLastIndex`.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {Function} predicate The function invoked per iteration.
+ * @param {number} fromIndex The index to search from.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function baseFindIndex(array, predicate, fromIndex, fromRight) {
+  const { length } = array
+  let index = fromIndex + (fromRight ? 1 : -1)
+
+  while ((fromRight ? index-- : ++index < length)) {
+    if (predicate(array[index], index, array)) {
+      return index
+    }
+  }
+  return -1
+}
+```
+
+`findIndex` 函数接收 4 个参数，`array` 数组、`predicate` 迭代函数，`fromIndex` 搜索开始下标，`fromRight` 是否从右到左。
+
+开始取出 `array` 长度，初始下标，通过 `while` 循环不断迭代， `fromRight` 为真 说明从右到左，`index` 累减，否则 `index` 累加小于数组长度，这个判断判断 `predicate` 函数的返回值判断是否符合条件，满足的话返回对象下标，否则返回 -1。
+
 ## findLastIndex
+
+> 这个方式类似 _.findIndex ， 不过它是从右到左的。
+
+```js
+/**
+  * This method is like `_.findIndex` except that it iterates over elements
+  * of `collection` from right to left.
+  *
+  * @static
+  * @memberOf _
+  * @since 2.0.0
+  * @category Array
+  * @param {Array} array The array to inspect.
+  * @param {Function} [predicate=_.identity] The function invoked per iteration.
+  * @param {number} [fromIndex=array.length-1] The index to search from.
+  * @returns {number} Returns the index of the found element, else `-1`.
+  * @example
+  *
+  * var users = [
+  *   { 'user': 'barney',  'active': true },
+  *   { 'user': 'fred',    'active': false },
+  *   { 'user': 'pebbles', 'active': false }
+  * ];
+  *
+  * _.findLastIndex(users, function(o) { return o.user == 'pebbles'; });
+  * // => 2
+  *
+  * // The `_.matches` iteratee shorthand.
+  * _.findLastIndex(users, { 'user': 'barney', 'active': true });
+  * // => 0
+  *
+  * // The `_.matchesProperty` iteratee shorthand.
+  * _.findLastIndex(users, ['active', false]);
+  * // => 2
+  *
+  * // The `_.property` iteratee shorthand.
+  * _.findLastIndex(users, 'active');
+  * // => 0
+  */
+function findLastIndex(array, predicate, fromIndex) {
+  var length = array == null ? 0 : array.length;
+  if (!length) {
+    return -1;
+  }
+  var index = length - 1;
+  if (fromIndex !== undefined) {
+    index = toInteger(fromIndex);
+    index = fromIndex < 0
+      ? nativeMax(length + index, 0)
+      : nativeMin(index, length - 1);
+  }
+  return baseFindIndex(array, getIteratee(predicate, 3), index, true);
+}
+```
+
+`findLastIndex` 函数和 `findIndex` 相似，只是调用 `baseFindIndex` 函数传了第四个参数为 `true`，
+在 `baseFindIndex` 中 `fromRight` 为真就从右往左开始循环。
 
 ## head
 
-返回数组的第一个。
+> 获得数组的首个元素。
 
-```
+```js
 /**
  * Gets the first element of `array`.
  *
@@ -926,10 +1260,245 @@ function head(array) {
 }
 ```
 
-## indexOf
+如果 `array` 不为 `null` 并且有长度返回 `array` 的第一个。
 
+## flatten
+
+> 向上一级展平数组嵌套
+
+```js
+/**
+ * Flattens `array` a single level deep.
+ *
+ * @since 0.1.0
+ * @category Array
+ * @param {Array} array The array to flatten.
+ * @returns {Array} Returns the new flattened array.
+ * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep, flattenDepth
+ * @example
+ *
+ * flatten([1, [2, [3, [4]], 5]])
+ * // => [1, 2, [3, [4]], 5]
+ */
+function flatten(array) {
+  const length = array == null ? 0 : array.length
+  return length ? baseFlatten(array, 1) : []
+}
 ```
 
+`flatten` 函数接收一个数组参数，取出数组长度，如过不是 0 就调用 `baseFlatten` 函数传参 `array, 1` 返回扁平化一层后的数组，否则返回空数组。
+
+## flattenDeep
+
+> 递归展平数组。
+
+```js
+/** Used as references for various `Number` constants. */
+const INFINITY = 1 / 0
+
+/**
+ * Recursively flattens `array`.
+ *
+ * @since 3.0.0
+ * @category Array
+ * @param {Array} array The array to flatten.
+ * @returns {Array} Returns the new flattened array.
+ * @see flatMap, flatMapDeep, flatMapDepth, flatten, flattenDepth
+ * @example
+ *
+ * flattenDeep([1, [2, [3, [4]], 5]])
+ * // => [1, 2, 3, 4, 5]
+ */
+function flattenDeep(array) {
+  const length = array == null ? 0 : array.length
+  return length ? baseFlatten(array, INFINITY) : []
+}
+```
+
+`flattenDeep` 接收 `array` 函数，取到 `length` 数组长度，如果 `length` 不为 0 就调用 `baseFlatten` 函数，并且传入参数 `array` 数组、`INFINITY` 无穷大，返回递归展平的数组，否则返回空数组。
+
+## flattenDepth
+
+> 根据 depth 递归展平数组的层级。
+
+```js
+/**
+ * Recursively flatten `array` up to `depth` times.
+ *
+ * @since 4.4.0
+ * @category Array
+ * @param {Array} array The array to flatten.
+ * @param {number} [depth=1] The maximum recursion depth.
+ * @returns {Array} Returns the new flattened array.
+ * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep
+ * @example
+ *
+ * const array = [1, [2, [3, [4]], 5]]
+ *
+ * flattenDepth(array, 1)
+ * // => [1, 2, [3, [4]], 5]
+ *
+ * flattenDepth(array, 2)
+ * // => [1, 2, 3, [4], 5]
+ */
+function flattenDepth(array, depth) {
+  const length = array == null ? 0 : array.length
+  if (!length) {
+    return []
+  }
+  depth = depth === undefined ? 1 : +depth
+  return baseFlatten(array, depth)
+}
+```
+
+`flattenDepth` 函数接收 2 个参数，`array` 数组、`depth` 展平深度。
+
+首先取出 `length` 长度，`depth` 长度默认为 1 ，最后调用 `baseFlatten` 函数，并且传入数组和展平深度，最后返回递归展平后的数组。
+
+## baseIndexOf
+
+```js
+/**
+ * The base implementation of `indexOf` without `fromIndex` bounds checks.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {*} value The value to search for.
+ * @param {number} fromIndex The index to search from.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function baseIndexOf(array, value, fromIndex) {
+  return value === value
+    ? strictIndexOf(array, value, fromIndex)
+    : baseFindIndex(array, baseIsNaN, fromIndex)
+}
+```
+
+## flatten
+
+数组扁平化。
+
+```js
+/**
+ * Flattens `array` a single level deep.
+ *
+ * @since 0.1.0
+ * @category Array
+ * @param {Array} array The array to flatten.
+ * @returns {Array} Returns the new flattened array.
+ * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep, flattenDepth
+ * @example
+ *
+ * flatten([1, [2, [3, [4]], 5]])
+ * // => [1, 2, [3, [4]], 5]
+ */
+function flatten(array) {
+  const length = array == null ? 0 : array.length
+  return length ? baseFlatten(array, 1) : []
+}
+```
+
+## flattenDeep
+
+> 数组扁平化，转成一维数组。
+
+```js
+/** Used as references for various `Number` constants. */
+const INFINITY = 1 / 0
+
+/**
+ * Recursively flattens `array`.
+ *
+ * @since 3.0.0
+ * @category Array
+ * @param {Array} array The array to flatten.
+ * @returns {Array} Returns the new flattened array.
+ * @see flatMap, flatMapDeep, flatMapDepth, flatten, flattenDepth
+ * @example
+ *
+ * flattenDeep([1, [2, [3, [4]], 5]])
+ * // => [1, 2, 3, 4, 5]
+ */
+function flattenDeep(array) {
+  const length = array == null ? 0 : array.length
+  return length ? baseFlatten(array, INFINITY) : []
+}
+```
+
+## flattenDepth
+
+> 数组扁平化，可传入深度。
+
+```js
+/**
+ * Recursively flatten `array` up to `depth` times.
+ *
+ * @since 4.4.0
+ * @category Array
+ * @param {Array} array The array to flatten.
+ * @param {number} [depth=1] The maximum recursion depth.
+ * @returns {Array} Returns the new flattened array.
+ * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep
+ * @example
+ *
+ * const array = [1, [2, [3, [4]], 5]]
+ *
+ * flattenDepth(array, 1)
+ * // => [1, 2, [3, [4]], 5]
+ *
+ * flattenDepth(array, 2)
+ * // => [1, 2, 3, [4], 5]
+ */
+function flattenDepth(array, depth) {
+  const length = array == null ? 0 : array.length
+  if (!length) {
+    return []
+  }
+  depth = depth === undefined ? 1 : +depth
+  return baseFlatten(array, depth)
+}
+```
+
+## fromPairs
+
+> 反向版 _.toPairs，这个方法返回一个由键值对构成的对象。
+
+```js
+/**
+ * The inverse of `_.toPairs`; this method returns an object composed
+ * from key-value `pairs`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} pairs The key-value pairs.
+ * @returns {Object} Returns the new object.
+ * @example
+ *
+ * _.fromPairs([['a', 1], ['b', 2]]);
+ * // => { 'a': 1, 'b': 2 }
+ */
+function fromPairs(pairs) {
+  var index = -1,
+    length = pairs == null ? 0 : pairs.length,
+    result = {};
+
+  while (++index < length) {
+    var pair = pairs[index];
+    result[pair[0]] = pair[1];
+  }
+  return result;
+}
+```
+
+`fromPairs` 接收 `pairs` 参数，通过 `while` 循环，以 `pair[0]` 为 `key` 、`pair[1]` 为 `value` 向 `result` 对象赋值，最近将 `result` 返回。
+
+## indexOf
+
+> 根据 value 使用 SameValueZero 等值比较返回数组中首次匹配的 index， 如果 fromIndex 为负值，将从数组尾端索引进行匹配，如果将 fromIndex 设置为 true，将使用更快的二进制检索机制。
+
+```js
 /**
  * Gets the index at which the first occurrence of `value` is found in `array`
  * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
@@ -966,104 +1535,55 @@ function indexOf(array, value, fromIndex) {
 
 ## baseIndexOf
 
-```
+## initial
+
+> 获取数组中除了最后一个元素之外的所有元素。
+
+```js
 /**
- * The base implementation of `indexOf` without `fromIndex` bounds checks.
- *
- * @private
- * @param {Array} array The array to inspect.
- * @param {*} value The value to search for.
- * @param {number} fromIndex The index to search from.
- * @returns {number} Returns the index of the matched value, else `-1`.
- */
-function baseIndexOf(array, value, fromIndex) {
-  return value === value
-    ? strictIndexOf(array, value, fromIndex)
-    : baseFindIndex(array, baseIsNaN, fromIndex)
-}
-```
-
-## flatten
-
-数组扁平化。
-
-```
-/**
- * Flattens `array` a single level deep.
+ * Gets all but the last element of `array`.
  *
  * @since 0.1.0
  * @category Array
- * @param {Array} array The array to flatten.
- * @returns {Array} Returns the new flattened array.
- * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep, flattenDepth
+ * @param {Array} array The array to query.
+ * @returns {Array} Returns the slice of `array`.
  * @example
  *
- * flatten([1, [2, [3, [4]], 5]])
- * // => [1, 2, [3, [4]], 5]
+ * initial([1, 2, 3])
+ * // => [1, 2]
  */
-function flatten(array) {
+function initial(array) {
   const length = array == null ? 0 : array.length
-  return length ? baseFlatten(array, 1) : []
+  return length ? slice(array, 0, -1) : []
 }
 ```
 
-## flattenDeep
+`initial` 函数接收一个数组参数，首先会取出数组长度，最后调用 `slice` 函数处理后的数组，此时传参为 `0 -1`，会从第零个开始截取到最后第二个。
 
-数组扁平化，转成一维数组。
-```
-/** Used as references for various `Number` constants. */
-const INFINITY = 1 / 0
+## intersection
 
+> 创建一个包含所有使用 SameValueZero 进行等值比较后筛选的唯一值数组。
+
+```js
 /**
- * Recursively flattens `array`.
+ * Creates an array of unique values that are included in all given arrays
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons. The order and references of result values are
+ * determined by the first array.
  *
- * @since 3.0.0
+ * @since 0.1.0
  * @category Array
- * @param {Array} array The array to flatten.
- * @returns {Array} Returns the new flattened array.
- * @see flatMap, flatMapDeep, flatMapDepth, flatten, flattenDepth
+ * @param {...Array} [arrays] The arrays to inspect.
+ * @returns {Array} Returns the new array of intersecting values.
  * @example
  *
- * flattenDeep([1, [2, [3, [4]], 5]])
- * // => [1, 2, 3, 4, 5]
+ * intersection([2, 1], [2, 3])
+ * // => [2]
  */
-function flattenDeep(array) {
-  const length = array == null ? 0 : array.length
-  return length ? baseFlatten(array, INFINITY) : []
-}
-```
-
-
-## flattenDepth
-
-数组扁平化，可转入深度。
-
-```
-/**
- * Recursively flatten `array` up to `depth` times.
- *
- * @since 4.4.0
- * @category Array
- * @param {Array} array The array to flatten.
- * @param {number} [depth=1] The maximum recursion depth.
- * @returns {Array} Returns the new flattened array.
- * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep
- * @example
- *
- * const array = [1, [2, [3, [4]], 5]]
- *
- * flattenDepth(array, 1)
- * // => [1, 2, [3, [4]], 5]
- *
- * flattenDepth(array, 2)
- * // => [1, 2, 3, [4], 5]
- */
-function flattenDepth(array, depth) {
-  const length = array == null ? 0 : array.length
-  if (!length) {
-    return []
-  }
-  depth = depth === undefined ? 1 : +depth
-  return baseFlatten(array, depth)
+function intersection(...arrays) {
+  const mapped = map(arrays, castArrayLikeObject)
+  return (mapped.length && mapped[0] === arrays[0])
+    ? baseIntersection(mapped)
+    : []
 }
 ```
