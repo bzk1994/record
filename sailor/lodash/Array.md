@@ -1960,6 +1960,38 @@ function nth(array, n) {
 }
 ```
 
+`nth` 函数接收 2 个参数，`array` 数组、`n` 下标，简单的数组长度判断，接着是 `n` 为负数时的处理，最后调用 `isIndex` 方法，检查是否是一个有效的索引，最后将 `array[n]` 返回，否则返回 `undefined` 。
+
+## isIndex
+
+> 检查是否是一个有效的索引
+
+```js
+/** Used as references for various `Number` constants. */
+const MAX_SAFE_INTEGER = 9007199254740991
+
+/** Used to detect unsigned integer values. */
+const reIsUint = /^(?:0|[1-9]\d*)$/
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  const type = typeof value
+  length = length == null ? MAX_SAFE_INTEGER : length
+
+  return !!length &&
+    (type == 'number' ||
+      (type != 'symbol' && reIsUint.test(value))) &&
+        (value > -1 && value % 1 == 0 && value < length)
+}
+```
+
 ## pull
 
 > 移除所有经过 SameValueZero 等值比较为 true 的元素。
@@ -1992,6 +2024,7 @@ function pull(array, ...values) {
 }
 ```
 
+`pull` 函数式 `pullAll` 函数的简单封装，接收多个参数，转成数组传给 `pullAll` 。
 
 ## pullAll
 
@@ -2023,3 +2056,90 @@ function pullAll(array, values) {
     : array
 }
 ```
+
+`pullAll` 函数接收 `array` 函数，`values` ，简单判断 `array` 和 `values` 是数组类数组，调用 `basePullAll` 返回处理后的数组，不满足条件直接返回 `array` 。
+
+## basePullAll
+
+> pullAllBy 的基本实现。
+
+```js
+/**
+ * The base implementation of `pullAllBy`.
+ *
+ * @private
+ * @param {Array} array The array to modify.
+ * @param {Array} values The values to remove.
+ * @param {Function} [iteratee] The iteratee invoked per element.
+ * @param {Function} [comparator] The comparator invoked per element.
+ * @returns {Array} Returns `array`.
+ */
+function basePullAll(array, values, iteratee, comparator) {
+  const indexOf = comparator ? baseIndexOfWith : baseIndexOf
+  const length = values.length
+
+  let index = -1
+  let seen = array
+
+  if (array === values) {
+    values = copyArray(values)
+  }
+  if (iteratee) {
+    seen = map(array, (value) => iteratee(value))
+  }
+  while (++index < length) {
+    let fromIndex = 0
+    const value = values[index]
+    const computed = iteratee ? iteratee(value) : value
+
+    while ((fromIndex = indexOf(seen, computed, fromIndex, comparator)) > -1) {
+      if (seen !== array) {
+        seen.splice(fromIndex, 1)
+      }
+      array.splice(fromIndex, 1)
+    }
+  }
+  return array
+}
+```
+
+`basePullAll` 函数接收 4 个参数，`array` 数组、`values` 要删除的值、`iteratee` 迭代器函数、`comparator` 比较函数。
+
+申明 `indexOf` 方法，保存 `values` 长度，如果 `array` 与 `values` 全等，此时都是一个数组，为复杂对象、指针相同，调用 `copyArray` 函数 赋值给 `values`，如果有 `iteratee` 迭代器函数循环 `array` 调用 `iteratee` 。
+
+下载来是双重 `while` 循环，第一层中 `index` 累加，申明 `fromIndex` 变量为 0 ，`value` 循环的值，`computed` 迭代器处理后的 `value`，在里面再，第二层中会调用 `indexOf` 方法，传入 `seen` 迭代器函数处理后的数组、`computed` 处理后的 `value`、`fromIndex` 循环 `index`，`comparator` 比较函数，取出对应下标，并且赋值给 `fromIndex`，如果当前数组中有这个 `computed`，通过 `while` 会调用 `splice` 方法删除数组其中一个，最后将 `array` 返回。
+
+## pullAllBy
+
+> 这个方法类似 _.pullAll，除了它接受一个 comparator 调用每一个数组元素的值。 comparator 会传入一个参数：(value)。 
+
+```js
+/**
+ * This method is like `pullAll` except that it accepts `iteratee` which is
+ * invoked for each element of `array` and `values` to generate the criterion
+ * by which they're compared. The iteratee is invoked with one argument: (value).
+ *
+ * **Note:** Unlike `differenceBy`, this method mutates `array`.
+ *
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} array The array to modify.
+ * @param {Array} values The values to remove.
+ * @param {Function} iteratee The iteratee invoked per element.
+ * @returns {Array} Returns `array`.
+ * @see pull, pullAll, pullAllWith, pullAt, remove, reject
+ * @example
+ *
+ * const array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }]
+ *
+ * pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x')
+ * console.log(array)
+ * // => [{ 'x': 2 }]
+ */
+function pullAllBy(array, values, iteratee) {
+  return (array != null && array.length && values != null && values.length)
+    ? basePullAll(array, values, iteratee)
+    : array
+}
+```
+
