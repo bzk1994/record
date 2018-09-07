@@ -2111,7 +2111,7 @@ function basePullAll(array, values, iteratee, comparator) {
 
 ## pullAllBy
 
-> 这个方法类似 _.pullAll，除了它接受一个 comparator 调用每一个数组元素的值。 comparator 会传入一个参数：(value)。 
+> 这个方法类似 _.pullAll，除了它接受一个 iteratee 调用每一个数组元素的值。 iteratee 会传入一个参数：(value)。 
 
 ```js
 /**
@@ -2143,3 +2143,451 @@ function pullAllBy(array, values, iteratee) {
 }
 ```
 
+`pullAllBy` 接收三个参数，`array` 数组、`values` 要删除的值、`iteratee` 迭代器函数。
+
+首先是 `array` 、 `values` 的非空和长度判断，都满足的情况调用 `basePullAll` 函数返回处理后的数组，否则返回空数组。
+
+## pullAllWith
+
+> > 这个方法类似 _.pullAll，除了它接受一个 comparator 调用每一个数组元素的值。 comparator 会传入一个参数：(value)。 
+
+```js
+/**
+ * This method is like `pullAll` except that it accepts `comparator` which
+ * is invoked to compare elements of `array` to `values`. The comparator is
+ * invoked with two arguments: (arrVal, othVal).
+ *
+ * **Note:** Unlike `differenceWith`, this method mutates `array`.
+ *
+ * @since 4.6.0
+ * @category Array
+ * @param {Array} array The array to modify.
+ * @param {Array} values The values to remove.
+ * @param {Function} [comparator] The comparator invoked per element.
+ * @returns {Array} Returns `array`.
+ * @see pull, pullAll, pullAllBy, pullAt, remove, reject
+ * @example
+ *
+ * const array = [{ 'x': 1, 'y': 2 }, { 'x': 3, 'y': 4 }, { 'x': 5, 'y': 6 }]
+ *
+ * pullAllWith(array, [{ 'x': 3, 'y': 4 }], isEqual)
+ * console.log(array)
+ * // => [{ 'x': 1, 'y': 2 }, { 'x': 5, 'y': 6 }]
+ */
+function pullAllWith(array, values, comparator) {
+  return (array != null && array.length && values != null && values.length)
+    ? basePullAll(array, values, undefined, comparator)
+    : array
+}
+```
+
+`pullAllBy` 接收三个参数，`array` 数组、`values` 要删除的值、`iteratee` 迭代器函数。
+
+首先是 `array` 、 `values` 的非空和长度判断，都满足的情况调用 `basePullAll` 函数返回处理后的数组，否则返回空数组。
+
+## pullAt
+
+> 从与索引对应的数组中删除元素，并返回已删除元素的数组。
+
+```js
+/**
+ * Removes elements from `array` corresponding to `indexes` and returns an
+ * array of removed elements.
+ *
+ * **Note:** Unlike `at`, this method mutates `array`.
+ *
+ * @since 3.0.0
+ * @category Array
+ * @param {Array} array The array to modify.
+ * @param {...(number|number[])} [indexes] The indexes of elements to remove.
+ * @returns {Array} Returns the new array of removed elements.
+ * @see pull, pullAll, pullAllBy, pullAllWith, remove, reject
+ * @example
+ *
+ * const array = ['a', 'b', 'c', 'd']
+ * const pulled = pullAt(array, [1, 3])
+ *
+ * console.log(array)
+ * // => ['a', 'c']
+ *
+ * console.log(pulled)
+ * // => ['b', 'd']
+ */
+function pullAt(array, ...indexes) {
+  const length = array == null ? 0 : array.length
+  const result = baseAt(array, indexes)
+
+  basePullAt(array, map(indexes, (index) => isIndex(index, length) ? +index : index).sort(compareAscending))
+  return result
+}
+```
+
+`pullAt` 函数接收 2 个参数， `array` 数组、`indexes` 下标数组。
+
+首先会处理 `length` ，调用 `baseAt` 返回处理后的数组保存到 `result`，调用 `basePullAt` 方法，将 `array` 原数组、调用 `map` 方法，传入 `indexes` 下标数组和迭代器函数的数组作为参数传入，最后将 `result` 返回。
+
+## remove
+
+> 移除经过 predicate 处理为真值的元素，并返回被移除的元素。predicate 会传入3个参数：(value, index, array) 
+
+```js
+/**
+ * Removes all elements from `array` that `predicate` returns truthy for
+ * and returns an array of the removed elements. The predicate is invoked
+ * with three arguments: (value, index, array).
+ *
+ * **Note:** Unlike `filter`, this method mutates `array`. Use `pull`
+ * to pull elements from an array by value.
+ *
+ * @since 2.0.0
+ * @category Array
+ * @param {Array} array The array to modify.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the new array of removed elements.
+ * @see pull, pullAll, pullAllBy, pullAllWith, pullAt, reject, filter
+ * @example
+ *
+ * const array = [1, 2, 3, 4]
+ * const evens = remove(array, n => n % 2 == 0)
+ *
+ * console.log(array)
+ * // => [1, 3]
+ *
+ * console.log(evens)
+ * // => [2, 4]
+ */
+function remove(array, predicate) {
+  const result = []
+  if (!(array != null && array.length)) {
+    return result
+  }
+  let index = -1
+  const indexes = []
+  const { length } = array
+
+  while (++index < length) {
+    const value = array[index]
+    if (predicate(value, index, array)) {
+      result.push(value)
+      indexes.push(index)
+    }
+  }
+  basePullAt(array, indexes)
+  return result
+}
+```
+
+`remove` 函数接收 2 个参数，`remove` 数组、 `predicate` 迭代器函数。
+
+什么 `result` 空数组，`result` 的非空、长度处理，保存一些初始变量，接着进入 `while` 循环，`index` 累加，如果如何 `predicate` 函数，就将 `result` 插入 `result` 数组，下标插入 `indexes` 数组，`while` 循环结束后，会调用 `basePullAt` 删除 `array` 符合的元素，最后将符合条件的 `result` 返回。
+
+## reverse
+
+> 反转数组，使第一个元素成为最后一个元素，第二个元素成为倒数第二个元素，依此类推。
+
+```js
+ /**
+  * Reverses `array` so that the first element becomes the last, the second
+  * element becomes the second to last, and so on.
+  *
+  * **Note:** This method mutates `array` and is based on
+  * [`Array#reverse`](https://mdn.io/Array/reverse).
+  *
+  * @static
+  * @memberOf _
+  * @since 4.0.0
+  * @category Array
+  * @param {Array} array The array to modify.
+  * @returns {Array} Returns `array`.
+  * @example
+  *
+  * var array = [1, 2, 3];
+  *
+  * _.reverse(array);
+  * // => [3, 2, 1]
+  *
+  * console.log(array);
+  * // => [3, 2, 1]
+  */
+function reverse(array) {
+  return array == null ? array : nativeReverse.call(array);
+}
+```
+
+var arrayProto = Array.prototype
+var nativeReverse = arrayProto.reverse
+
+`reverse` 函数只是简单包装了一个原生数组的 `reverse` 方法 `Array.prototype.reverse` ，做了一个非空判断。
+
+## sortedIndex
+
+> 使用二进制的方式检索来决定 value 应该插入在数组中位置。它的 index 应该尽可能的小以保证数组的排序。
+
+```js
+/**
+ * Uses a binary search to determine the lowest index at which `value`
+ * should be inserted into `array` in order to maintain its sort order.
+ *
+ * @since 0.1.0
+ * @category Array
+ * @param {Array} array The sorted array to inspect.
+ * @param {*} value The value to evaluate.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
+ * @example
+ *
+ * sortedIndex([30, 50], 40)
+ * // => 1
+ */
+function sortedIndex(array, value) {
+  return baseSortedIndex(array, value)
+}
+```
+
+`sortedIndex` 函数只是调用了 `baseSortedIndex`。
+
+## baseSortedIndex
+
+> 执行“数组”的二进制搜索以确定“值”的索引, 插入数组中。
+
+```js
+/** Used as references for the maximum length and index of an array. */
+const MAX_ARRAY_LENGTH = 4294967295
+const HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1
+
+/**
+ * The base implementation of `sortedIndex` and `sortedLastIndex` which
+ * performs a binary search of `array` to determine the index at which `value`
+ * should be inserted into `array` in order to maintain its sort order.
+ *
+ * @private
+ * @param {Array} array The sorted array to inspect.
+ * @param {*} value The value to evaluate.
+ * @param {boolean} [retHighest] Specify returning the highest qualified index.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
+ */
+function baseSortedIndex(array, value, retHighest) {
+  let low = 0
+  let high = array == null ? low : array.length
+
+  if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
+    while (low < high) {
+      const mid = (low + high) >>> 1
+      const computed = array[mid]
+      if (computed !== null && !isSymbol(computed) &&
+          (retHighest ? (computed <= value) : (computed < value))) {
+        low = mid + 1
+      } else {
+        high = mid
+      }
+    }
+    return high
+  }
+  return baseSortedIndexBy(array, value, (value) => value, retHighest)
+}
+```
+
+TODO: 占坑
+
+## sortedIndexBy
+
+> 这个方法类似 _.sortedIndex，除了它接受一个 iteratee 调用每一个数组和值来计算排序。iteratee 会传入一个参数：(value)。
+
+```js
+/**
+ * This method is like `sortedIndex` except that it accepts `iteratee`
+ * which is invoked for `value` and each element of `array` to compute their
+ * sort ranking. The iteratee is invoked with one argument: (value).
+ *
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} array The sorted array to inspect.
+ * @param {*} value The value to evaluate.
+ * @param {Function} iteratee The iteratee invoked per element.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
+ * @example
+ *
+ * const objects = [{ 'n': 4 }, { 'n': 5 }]
+ *
+ * sortedIndexBy(objects, { 'n': 4 }, ({ n }) => n)
+ * // => 0
+ */
+function sortedIndexBy(array, value, iteratee) {
+  return baseSortedIndexBy(array, value, iteratee)
+}
+```
+
+`sortedIndexBy` 函数只是调用了 `baseSortedIndexBy`。
+
+## baseSortedIndexBy
+
+```js
+/** Used as references for the maximum length and index of an array. */
+const MAX_ARRAY_LENGTH = 4294967295
+const MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1
+
+/**
+ * The base implementation of `sortedIndexBy` and `sortedLastIndexBy`
+ * which invokes `iteratee` for `value` and each element of `array` to compute
+ * their sort ranking. The iteratee is invoked with one argument (value).
+ *
+ * @private
+ * @param {Array} array The sorted array to inspect.
+ * @param {*} value The value to evaluate.
+ * @param {Function} iteratee The iteratee invoked per element.
+ * @param {boolean} [retHighest] Specify returning the highest qualified index.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
+ */
+function baseSortedIndexBy(array, value, iteratee, retHighest) {
+  value = iteratee(value)
+
+  let low = 0
+  let high = array == null ? 0 : array.length
+  const valIsNaN = value !== value
+  const valIsNull = value === null
+  const valIsSymbol = isSymbol(value)
+  const valIsUndefined = value === undefined
+
+  while (low < high) {
+    let setLow
+    const mid = Math.floor((low + high) / 2)
+    const computed = iteratee(array[mid])
+    const othIsDefined = computed !== undefined
+    const othIsNull = computed === null
+    const othIsReflexive = computed === computed
+    const othIsSymbol = isSymbol(computed)
+
+    if (valIsNaN) {
+      setLow = retHighest || othIsReflexive
+    } else if (valIsUndefined) {
+      setLow = othIsReflexive && (retHighest || othIsDefined)
+    } else if (valIsNull) {
+      setLow = othIsReflexive && othIsDefined && (retHighest || !othIsNull)
+    } else if (valIsSymbol) {
+      setLow = othIsReflexive && othIsDefined && !othIsNull && (retHighest || !othIsSymbol)
+    } else if (othIsNull || othIsSymbol) {
+      setLow = false
+    } else {
+      setLow = retHighest ? (computed <= value) : (computed < value)
+    }
+    if (setLow) {
+      low = mid + 1
+    } else {
+      high = mid
+    }
+  }
+  return Math.min(high, MAX_ARRAY_INDEX)
+}
+```
+
+TODO: 占坑
+
+## sortedIndexOf
+
+> 这个方法类似 _.indexOf，除了它是执行二进制来检索已经排序的数组的。
+
+```js
+/**
+ * This method is like `indexOf` except that it performs a binary
+ * search on a sorted `array`.
+ *
+ * @since 4.0.0
+ * @category Array
+ * @param {Array} array The array to inspect.
+ * @param {*} value The value to search for.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ * @example
+ *
+ * sortedIndexOf([4, 5, 5, 5, 6], 5)
+ * // => 1
+ */
+function sortedIndexOf(array, value) {
+  const length = array == null ? 0 : array.length
+  if (length) {
+    const index = baseSortedIndex(array, value)
+    if (index < length && eq(array[index], value)) {
+      return index
+    }
+  }
+  return -1
+}
+```
+
+`sortedIndexOf` 函数接收 2 个参数，`array` 数组、`value` 匹配的值。
+
+`length` 的处理，如果有 `length` 调用 `baseSortedIndex` 获取 `value` 位于 `array` 的下标，如果下标小于数组长度并且调用 `eq` 比较 `array[index]` 和 `value` 是否相等，相等返回会下标，否则返回 -1 。
+
+## sortedLastIndex
+
+> 此方法类似于_.sortedIndex，除了它返回应将值插入数组的最高索引，以便维护其排序顺序。
+
+```js
+/**
+ * This method is like `sortedIndex` except that it returns the highest
+ * index at which `value` should be inserted into `array` in order to
+ * maintain its sort order.
+ *
+ * @since 3.0.0
+ * @category Array
+ * @param {Array} array The sorted array to inspect.
+ * @param {*} value The value to evaluate.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
+ * @example
+ *
+ * sortedLastIndex([4, 5, 5, 5, 6], 5)
+ * // => 4
+ */
+function sortedLastIndex(array, value) {
+  return baseSortedIndex(array, value, true)
+}
+```
+
+`sortedLastIndex` 函数只是简单封装了 `baseSortedIndex` 函数，第三个参数传入 `true` 。
+
+## baseSortedIndex
+
+> 执行 `array` 的二进制搜索，以确定 `value` 的索引。
+```js
+
+/** Used as references for the maximum length and index of an array. */
+const MAX_ARRAY_LENGTH = 4294967295
+const HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1
+
+/**
+ * The base implementation of `sortedIndex` and `sortedLastIndex` which
+ * performs a binary search of `array` to determine the index at which `value`
+ * should be inserted into `array` in order to maintain its sort order.
+ *
+ * @private
+ * @param {Array} array The sorted array to inspect.
+ * @param {*} value The value to evaluate.
+ * @param {boolean} [retHighest] Specify returning the highest qualified index.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
+ */
+function baseSortedIndex(array, value, retHighest) {
+  let low = 0
+  let high = array == null ? low : array.length
+
+  if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
+    while (low < high) {
+      const mid = (low + high) >>> 1
+      const computed = array[mid]
+      if (computed !== null && !isSymbol(computed) &&
+          (retHighest ? (computed <= value) : (computed < value))) {
+        low = mid + 1
+      } else {
+        high = mid
+      }
+    }
+    return high
+  }
+  return baseSortedIndexBy(array, value, (value) => value, retHighest)
+}
+```
+
+TODO: 占坑
