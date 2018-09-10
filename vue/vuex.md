@@ -2,7 +2,7 @@
 
 ## Vuex 是什么？
 
-Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。
+`Vuex` 是一个专为 `Vue.js` 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。
 
 <p align="center">
   <img width="700px" src="https://raw.githubusercontent.com/vuejs/vuex/dev/docs/.vuepress/public/vuex.png">
@@ -14,19 +14,19 @@ Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用�
 
 [vuex 的文档](https://vuex.vuejs.org/zh/) 对辅助看源码有不小的帮助，不妨在看源码之前仔细地撸一遍文档。
 
-
 ## 带着问题去看源码
-0. global event bus 有何缺陷
-1. $store 如何注入到所有子组件
-2. mapState 实现
-3. mapGetter 如何映射
-4. Mutation 同步 && Action 异步
-5. dispatch 方法实现
-6. module 分割实现 && 局部状态 namespaced
-7. 如何调用 vue-devtools
-8. 内置 logger 插件实现
-9. hotUpdate
-10. 时间穿梭功能实现
+
+* 0. global event bus 有何缺陷
+* 1. $store 如何注入到所有子组件
+* 2. mapState 实现
+* 3. mapGetter 如何映射
+* 4. Mutation 同步 && Action 异步
+* 5. dispatch 方法实现
+* 6. module 分割实现 && 局部状态 namespaced
+* 7. 如何调用 vue-devtools
+* 8. 内置 logger 插件实现
+* 9. hotUpdate
+* 10. 时间穿梭功能实现
 
 ## 目录
 
