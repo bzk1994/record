@@ -1,9 +1,9 @@
 ## keyBy
 
-> _.keyBy(collection, [iteratee=_.identity])
+> 创建一个对象组成。key 是经 iteratee 处理的结果，value 是产生key的元素。 iteratee 会传入1个参数：(value)。
 
 ```js
-创建一个对象组成。key 是经 iteratee 处理的结果，value 是产生key的元素。 iteratee 会传入1个参数：(value)。
+_.keyBy(collection, [iteratee=_.identity])
 ```
 
 ```js
@@ -35,3 +35,8 @@ function keyBy(collection, iteratee) {
   ), {})
 }
 ```
+
+`keyBy` 函数接收 2 个参数，`collection` 集合、`iteratee` 迭代器函数。
+
+`keyBy` 内部直接 `return` 了一个 `reduce` 函数，`reduce` 函数中传入 3 个参数，`collection` 集合、回调函数、以及初始值 `{}`，在 `reduce` 的回调中，会调用 `baseAssignValue` 函数，传入 `result` 初始值、`iteratee(value)` 迭代器处理后的 `value` 、`value` ，进行简单的属性拷贝，最后 `reduce` 会返回处理后的对象。
+
