@@ -160,7 +160,7 @@ if (iteratee) {
 
 > 这个方法类似 `_.difference` ，除了它接受一个 `comparator` 调用每一个数组元素的值。 `comparator` 会传入 2 个参数：(arrVal, othVal)。
 
-```
+```js
 /**
  * This method is like `difference` except that it accepts `comparator`
  * which is invoked to compare elements of `array` to `values`. The order and
