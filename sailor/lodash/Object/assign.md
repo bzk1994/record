@@ -278,7 +278,215 @@ var HOT_COUNT = 800,
   HOT_SPAN = 16;
 ```
 
-调用 `shortOut` 函数时会在函数内部维持一个闭包，保持对 `count` 、`lastCalled` 变量的引用，`lastCalled` 变量记录了上次调用的毫秒数，在第二次调用时会判断 `remaining` 调用时间差，如果大于 `HOT_COUNT` 800，返回 `arguments[0]`，否则将 `count` 重铸，最后返回调用 `apply` 后的 `func` 函数。
+调用 `shortOut` 函数时会在函数内部维持一个闭包，保持对 `count` 、`lastCalled` 变量的引用，`lastCalled` 变量记录了上次调用的毫秒数，在第二次调用时会判断 `remaining` 调用时间差，如果大于 `HOT_COUNT` 800，返回 `arguments[0]`，否则将 `count` 重置，最后返回调用 `apply` 后的 `func` 函数。
 
+## assignIn
+
+> 这个方法类似 _.assign。 除了它会遍历并继承来源对象的属性。
+
+```js
+_.assignIn(object, [sources])
+```
+
+```js
+/**
+  * This method is like `_.assign` except that it iterates over own and
+  * inherited source properties.
+  *
+  * **Note:** This method mutates `object`.
+  *
+  * @static
+  * @memberOf _
+  * @since 4.0.0
+  * @alias extend
+  * @category Object
+  * @param {Object} object The destination object.
+  * @param {...Object} [sources] The source objects.
+  * @returns {Object} Returns `object`.
+  * @see _.assign
+  * @example
+  *
+  * function Foo() {
+  *   this.a = 1;
+  * }
+  *
+  * function Bar() {
+  *   this.c = 3;
+  * }
+  *
+  * Foo.prototype.b = 2;
+  * Bar.prototype.d = 4;
+  *
+  * _.assignIn({ 'a': 0 }, new Foo, new Bar);
+  * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
+  */
+var assignIn = createAssigner(function (object, source) {
+  copyObject(source, keysIn(source), object);
+});
+```
+
+`assignIn` 函数与 `assign` 大致相似，只是调用 `createAssigner` 函数时传入的回调函数有所把不同，回调函数接收 2 个参数，`object` 、`source`，调用 `copyObject` 方法，将 `source` 、`keysIn(source)`、 `object` 作为参数传入，`keysIn` 函数返回对象 `key` 数组：
+
+```js
+function keysIn(object) {
+  return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);
+}
+```
+
+`keysIn` 会判断是否是数组并返回 `key` 数组集合。
+
+
+## copyObject
+
+```js
+/**
+  * Copies properties of `source` to `object`.
+  *
+  * @private
+  * @param {Object} source The object to copy properties from.
+  * @param {Array} props The property identifiers to copy.
+  * @param {Object} [object={}] The object to copy properties to.
+  * @param {Function} [customizer] The function to customize copied values.
+  * @returns {Object} Returns `object`.
+  */
+function copyObject(source, props, object, customizer) {
+  var isNew = !object;
+  object || (object = {});
+
+  var index = -1,
+    length = props.length;
+
+  while (++index < length) {
+    var key = props[index];
+
+    var newValue = customizer
+      ? customizer(object[key], source[key], key, object, source)
+      : undefined;
+
+    if (newValue === undefined) {
+      newValue = source[key];
+    }
+    if (isNew) {
+      baseAssignValue(object, key, newValue);
+    } else {
+      assignValue(object, key, newValue);
+    }
+  }
+  return object;
+}
+```
+
+`copyObject` 接收 4 个参数，`source` 原生对象、`props` `key` 数组、`object` 需要拷贝对象、`customizer` 自定义函数。
+
+## assignInWith
+
+> 这个方法类似 _.assignIn。 除了它接受一个 customizer决定如何分配值。 如果customizer返回undefined将会由分配处理方法代替。customizer` 会传入5个参数：(objValue, srcValue, key, object, source)。 
+
+```js
+_.assignInWith(object, sources, [customizer])
+```
+
+```js
+/**
+  * This method is like `_.assignIn` except that it accepts `customizer`
+  * which is invoked to produce the assigned values. If `customizer` returns
+  * `undefined`, assignment is handled by the method instead. The `customizer`
+  * is invoked with five arguments: (objValue, srcValue, key, object, source).
+  *
+  * **Note:** This method mutates `object`.
+  *
+  * @static
+  * @memberOf _
+  * @since 4.0.0
+  * @alias extendWith
+  * @category Object
+  * @param {Object} object The destination object.
+  * @param {...Object} sources The source objects.
+  * @param {Function} [customizer] The function to customize assigned values.
+  * @returns {Object} Returns `object`.
+  * @see _.assignWith
+  * @example
+  *
+  * function customizer(objValue, srcValue) {
+  *   return _.isUndefined(objValue) ? srcValue : objValue;
+  * }
+  *
+  * var defaults = _.partialRight(_.assignInWith, customizer);
+  *
+  * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+  * // => { 'a': 1, 'b': 2 }
+  */
+var assignInWith = createAssigner(function(object, source, srcIndex, customizer) {
+  copyObject(source, keysIn(source), object, customizer);
+});
+```
+
+`assignInWith` 与 `assignIn` 函数基本相似，多了一个参数 `customizer` 自定义函数，
+在调用 `createAssigner` 函数中内部处理传入的 `customizer` 函数。
+
+## assignWith
+
+> 这个方法类似 _.assign。 除了它接受一个 customizer决定如何分配值。 如果customizer返回undefined将会由分配处理方法代替。customizer` 会传入5个参数：(objValue, srcValue, key, object, source)。
+
+```js
+_.assignWith(object, sources, [customizer])
+```
+
+```js
+/**
+  * This method is like `_.assign` except that it accepts `customizer`
+  * which is invoked to produce the assigned values. If `customizer` returns
+  * `undefined`, assignment is handled by the method instead. The `customizer`
+  * is invoked with five arguments: (objValue, srcValue, key, object, source).
+  *
+  * **Note:** This method mutates `object`.
+  *
+  * @static
+  * @memberOf _
+  * @since 4.0.0
+  * @category Object
+  * @param {Object} object The destination object.
+  * @param {...Object} sources The source objects.
+  * @param {Function} [customizer] The function to customize assigned values.
+  * @returns {Object} Returns `object`.
+  * @see _.assignInWith
+  * @example
+  *
+  * function customizer(objValue, srcValue) {
+  *   return _.isUndefined(objValue) ? srcValue : objValue;
+  * }
+  *
+  * var defaults = _.partialRight(_.assignWith, customizer);
+  *
+  * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+  * // => { 'a': 1, 'b': 2 }
+  */
+var assignWith = createAssigner(function(object, source, srcIndex, customizer) {
+  copyObject(source, keys(source), object, customizer);
+});
+```
+
+`assignWith` 比 `assign` 函数少了一层判断，回调中只有 `copyObject` 函数，只不过在其中多加了 `customizer` 自定义函数，在 `copyObject` 中：
+
+```js
+while (++index < length) {
+  var key = props[index];
+
+  var newValue = customizer
+    ? customizer(object[key], source[key], key, object, source)
+    : undefined;
+
+  if (newValue === undefined) {
+    newValue = source[key];
+  }
+  if (isNew) {
+    baseAssignValue(object, key, newValue);
+  } else {
+    assignValue(object, key, newValue);
+  }
+}
+```
+
+如果有 `customizer` 会调用 `customizer` 生成 `newValue` 并且赋值，然后进行属性拷贝。
 
 
