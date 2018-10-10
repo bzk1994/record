@@ -303,8 +303,8 @@ function strictLastIndexOf(array, value, fromIndex) {
 
 
 > 执行 `array` 的二进制搜索，以确定 `value` 的索引。
-```js
 
+```js
 /** Used as references for the maximum length and index of an array. */
 const MAX_ARRAY_LENGTH = 4294967295
 const HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1
