@@ -53,3 +53,64 @@ function defaults(object, ...sources) {
 `defaults` 函数接收 2 个参数，`object` 目标对象、`sources` 其他对象。
 
 首先调用 `Object` 转化 `object` 对象，然后遍历 `sources` 数组，使用 `for...in` 循环遍历 `source` 的属性，申明 `value` 遍历保存对象 `key` 的 `value`，如果不为 `undefined` 或者 `value` 与原型上的对象 `key` 相等并且 `object` 上的没有这个属性就将 `source` 对应的 `key` 赋值给 `object` ，最近将 `object` 返回，总的来说就是循环调用 `sources` 参数数组，并且遍历参数的 `key` ，没有重复 `key` 就往原对象加 `key: value`，最后返回 `object`。
+
+
+## defaultsDeep
+
+> 这个方法类似 _.defaults，除了它会递归分配默认属性。 
+
+```js
+_.defaultsDeep(object, [sources])
+```
+
+```js
+/**
+ * This method is like `defaults` except that it recursively assigns
+ * default properties.
+ *
+ * **Note:** This method mutates `object`.
+ *
+ * @since 3.10.0
+ * @category Object
+ * @param {Object} object The destination object.
+ * @param {...Object} [sources] The source objects.
+ * @returns {Object} Returns `object`.
+ * @see defaults
+ * @example
+ *
+ * defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } })
+ * // => { 'a': { 'b': 2, 'c': 3 } }
+ */
+function defaultsDeep(...args) {
+  args.push(undefined, customDefaultsMerge)
+  return mergeWith.apply(undefined, args)
+}
+```
+
+## customDefaultsMerge
+
+```js
+/**
+ * Used by `defaultsDeep` to customize its `merge` use to merge source
+ * objects into destination objects that are passed thru.
+ *
+ * @private
+ * @param {*} objValue The destination value.
+ * @param {*} srcValue The source value.
+ * @param {string} key The key of the property to merge.
+ * @param {Object} object The parent object of `objValue`.
+ * @param {Object} source The parent object of `srcValue`.
+ * @param {Object} [stack] Tracks traversed source values and their merged
+ *  counterparts.
+ * @returns {*} Returns the value to assign.
+ */
+function customDefaultsMerge(objValue, srcValue, key, object, source, stack) {
+  if (isObject(objValue) && isObject(srcValue)) {
+    // Recursively merge objects and arrays (susceptible to call stack limits).
+    stack.set(srcValue, objValue)
+    baseMerge(objValue, srcValue, undefined, customDefaultsMerge, stack)
+    stack['delete'](srcValue)
+  }
+  return objValue
+}
+```
