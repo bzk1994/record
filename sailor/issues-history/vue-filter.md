@@ -1,4 +1,4 @@
-## vue 的 filter 中为什么不能访问 this ?
+## Vue filter 源码解析
 
 ### filter 注册 && 使用
 
@@ -66,7 +66,7 @@ renderMixin(Vue)
 `eventsMixin` 为 `Vue` 添加了 `$on`、`$once`、`$off`、`$emit` 方法。 </br>
 `lifecycleMixin` 为 `Vue` 添加了 `_update`、`$forceUpdate`、`$destroy` 方法。 </br>
 
-关于 `filter` 的在 `renderMixin` 函数：
+关于 `filter` 的代码在 `renderMixin` 函数内部：
 
 ```js
 export function renderMixin (Vue: Class<Component>) {
@@ -83,7 +83,7 @@ export function renderMixin (Vue: Class<Component>) {
 }
 ```
 
-`renderMixin` 函数首先会调用 `installRenderHelpers` 并且传入 `Vue.prototype`，然后给 `Vue` 添加 `$nextTick`、`_render` 方法，而在 `installRenderHelpers` 函数中会给 `Vue.prototype` 很多辅助函数。
+`renderMixin` 函数首先会调用 `installRenderHelpers` 并且传入 `Vue.prototype`，然后给 `Vue` 添加 `$nextTick`、`_render` 方法，而在 `installRenderHelpers` 函数中会给 `Vue.prototype` 增加很多辅助函数。
 
 ```js
 export function installRenderHelpers (target: any) {
@@ -163,12 +163,12 @@ export function resolveAsset (
 }
 ```
 
-`resolveAsset` 首先会以 `type` 此时也就是 `filter` 为 `key` 从 `options` 取出 `filter` 对象，首先会检 `id` 是否已经注册，这里会尝试以驼峰、中划线形式取出对象 `filter`，最后将 `res` 返回。
+`resolveAsset` 首先会以 `type` 此时也就是 `filter` 为 `key` 从 `options` 取出 `filter` 对象，首先会检 `id` 是否已经注册，这里会尝试以驼峰、中划线形式取出 `filter`，最后将 `res` 返回。
 
 
 ## filter 调用
 
-接下来我们来看看这个 `filter` 函数时如何在 `Vue` 实例中调用的，在上面我们知道在 `installRenderHelpers` 函数中，我们将 `resolveFilter` 函数赋值给了 `Vue.prototype` 的 `_f`:
+接下来我们来看看这个 `filter` 函数时如何在 `Vue` 实例中调用的，我们知道在 `installRenderHelpers` 函数中，我们将 `resolveFilter` 函数赋值给了 `Vue.prototype` 的 `_f`:
 
 ```js
 export function installRenderHelpers (target: any) {
@@ -178,7 +178,7 @@ export function installRenderHelpers (target: any) {
 }
 ```
 
-我们来看一下这个 `_f` 是在何时被调用的。
+我们来看一下这个 `_f` 是在何时被调用的，全局搜索一下，是在 `wrapFilter` 函数内部：
 
 ```js
 function wrapFilter (exp: string, filter: string): string {
@@ -237,25 +237,72 @@ export function getBindingAttr (
 }
 ```
 
-`getBindingAttr` 函数会从 `el` 也就是抽象语法树 `AST` 中取出 `attrs` 然后返回调用 `parseFilters` 也就是 `filter` 处理后的值。
+`getBindingAttr` 函数会从 `el` 也就是抽象语法树 `AST` 中取出 `attrs` ，如果有 `:` 、`v-bind` 绑定指令， 返回调用 `parseFilters` 也就是 `filter` 处理后的值，如果没有绑定指令返回静态的值。
 
-`processAttrs` 函数
-
-
-
+`processAttrs` 函数用来处理 `attr` 的属性:
 
 ```js
-<!-- 在 `v-bind` 中 -->
-<div v-bind:id="message | format"></div>
+function processAttrs (el) {
+  const list = el.attrsList
+  let i, l, name, rawName, value, modifiers, isProp
+  for (i = 0, l = list.length; i < l; i++) {
+    ...
+      if (bindRE.test(name)) { // v-bind
+        name = name.replace(bindRE, '')
+        value = parseFilters(value)
+    }
+    ...
+  }
+}
 ```
 
+`processAttrs` 会循环处理 `attrsList`，返回经过 `parseFilters` 处理的 `value`。
+
+
+`parseText` 函数则是用来处理标签内的表达式了：
 
 ```js
-<!-- 在双花括号中 -->
-{{ message | format }}
+export function parseText (
+  text: string,
+  delimiters?: [string, string]
+): TextParseResult | void {
+  const tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE
+  if (!tagRE.test(text)) {
+    return
+  }
+  const tokens = []
+  const rawTokens = []
+  let lastIndex = tagRE.lastIndex = 0
+  let match, index, tokenValue
+  while ((match = tagRE.exec(text))) {
+    index = match.index
+    // push text token
+    if (index > lastIndex) {
+      rawTokens.push(tokenValue = text.slice(lastIndex, index))
+      tokens.push(JSON.stringify(tokenValue))
+    }
+    // tag token
+    const exp = parseFilters(match[1].trim())
+    tokens.push(`_s(${exp})`)
+    rawTokens.push({ '@binding': exp })
+    lastIndex = index + match[0].length
+  }
+  if (lastIndex < text.length) {
+    rawTokens.push(tokenValue = text.slice(lastIndex))
+    tokens.push(JSON.stringify(tokenValue))
+  }
+  return {
+    expression: tokens.join('+'),
+    tokens: rawTokens
+  }
+}
 ```
 
-`Vue` 实例化后，会调用内置 `_init` 方法初始化生命周期、 `data`、`props`、`computed`、`watcher` 等，在 `initGlobalAPI` 给 `Vue` 添加静态方法:
+`parseText` 函数内部会采用正则匹配出 `match`，然后调用 `parseFilters` 得到 `exp`，然后将处理后作为对象返回。
+
+## filter 初始化
+
+`Vue` 初始化后，会调用 `initGlobalAPI` 为 `Vue` 添加静态方法:
 
 ```js
 function initGlobalAPI (Vue) {
@@ -361,7 +408,7 @@ function initAssetRegisters (Vue) {
 
 我们接下看只看 `filter`  部分，在 `initAssetRegisters` 函数中会给 `Vue` 添加 `filter` 函数，函数接收 `id` 过滤器名 、`definition` 过滤器处理函数 2 个参数，如果没有 `definition` 会返回 `this.options[type + 's'][id]` 获取对应的过滤器，如果有 `definition` ，会以 `id` 为 `key`、 `definition` 为值 赋值到 `options.filters` 对象上，最后将 `definition` 返回，此时 `Vue` 的 `filter` 是个函数，这个函数返回一个对象，保存了所有的 `filter` 。
 
-### filter 函数挂载
+### filter 不能访问 this
 
 
 一般我们在全局中会这样调用 `filter` 函数：
@@ -371,6 +418,9 @@ Vue.filter('format', function(name) {
   return `Hello, ${name} !`
 })
 ```
-这个 `filter` 是在没有创建 `Vue` 实例之前定义的，在代码中我们也没有看到任何对方法做 `this` 绑定的动作，因此全局注册的 `filter` 不能通过 `this` 访问到 `Vue` 实例。
+这个 `filter` 是在没有创建 `Vue` 实例之前定义的，在代码中我们也没有看到任何对方法做 `this` 绑定的动作，因此全局注册的 `filter` 不能通过 `this` 访问到 `Vue` 实例，而在组件的中的 `filter` ，也没有发现有改变 `filter` 函数 `this` 指向的代码。
 
-https://github.com/vuejs/vue/issues/5998
+
+### 尤大大的解释
+
+在 `vue` 的 [Issues #5998](https://github.com/vuejs/vue/issues/5998) 中可以看到尤大大的解释，过滤器应该是纯函数，建议使用 `computed` 或者 `methods` 格式化文本，所以 `vue` 的源码中也没有改变 `filter` 函数上下文的代码。
