@@ -143,3 +143,11 @@ function castPath(value, object) {
   return isKey(value, object) ? [value] : stringToPath(value)
 }
 ```
+
+`castPath` 函数首先会判断 `value` 是否是数组，是数组直接返回 `value`，否则返回一个三元表达式：
+
+```js
+isKey(value, object) ? [value] : stringToPath(value)
+```
+
+如果调用 `isKey` 检查 `value` 是属性，就将 `value` 包装成数组返回，否则就调用 `stringToPath` 将 `value` 转换成路径。

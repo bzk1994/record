@@ -52,7 +52,7 @@ function defaults(object, ...sources) {
 
 `defaults` 函数接收 2 个参数，`object` 目标对象、`sources` 其他对象。
 
-首先调用 `Object` 转化 `object` 对象，然后遍历 `sources` 数组，使用 `for...in` 循环遍历 `source` 的属性，申明 `value` 遍历保存对象 `key` 的 `value`，如果不为 `undefined` 或者 `value` 与原型上的对象 `key` 相等并且 `object` 上的没有这个属性就将 `source` 对应的 `key` 赋值给 `object` ，最近将 `object` 返回，总的来说就是循环调用 `sources` 参数数组，并且遍历参数的 `key` ，没有重复 `key` 就往原对象加 `key: value`，最后返回 `object`。
+首先调用 `Object` 转化 `object` 对象，然后遍历 `sources` 数组，使用 `for...in` 循环遍历 `source` 的属性，申明 `value` 遍历保存对象 `key` 的 `value`，如果不为 `undefined` 或者 `value` 与原型上的对象 `key` 相等并且 `object` 上的没有这个属性就将 `source` 对应的 `key` 赋值给 `object` ，最后将 `object` 返回，总的来说就是循环调用 `sources` 参数数组，并且遍历参数的 `key` ，没有重复 `key` 就往原对象加 `key: value`，最后返回 `object`。
 
 
 ## defaultsDeep
@@ -87,6 +87,8 @@ function defaultsDeep(...args) {
 }
 ```
 
+`defaultsDeep` 首先会将 `undefined, customDefaultsMerge` 插入到 `args`，调用 `mergeWith` 函数返回。
+
 ## customDefaultsMerge
 
 ```js
@@ -114,3 +116,5 @@ function customDefaultsMerge(objValue, srcValue, key, object, source, stack) {
   return objValue
 }
 ```
+
+`customDefaultsMerge` 会判断 `objValue`、`srcValue` 均为对象，调用 `set` 为 `srcValue` 增加 `objValue`，调用 `baseMerge` 函数，并且传入 `customDefaultsMerge` 自身，`baseMerge` 函数内部，还没调用 `customDefaultsMerge`，实现属性的深拷贝，在最后删除 `srcValue`，最后返回 `objValue`。
