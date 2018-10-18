@@ -117,4 +117,4 @@ function customDefaultsMerge(objValue, srcValue, key, object, source, stack) {
 }
 ```
 
-`customDefaultsMerge` 会判断 `objValue`、`srcValue` 均为对象，调用 `set` 为 `srcValue` 增加 `objValue`，调用 `baseMerge` 函数，并且传入 `customDefaultsMerge` 自身，`baseMerge` 函数内部，还没调用 `customDefaultsMerge`，实现属性的深拷贝，在最后删除 `srcValue`，最后返回 `objValue`。
+`customDefaultsMerge` 会判断 `objValue`、`srcValue` 均为对象，调用 `set` 为 `srcValue` 增加 `objValue`，调用 `baseMerge` 函数，并且传入 `customDefaultsMerge` 自身，`baseMerge` 函数内部，递归调用 `customDefaultsMerge`，实现属性的深拷贝，最后删除 `srcValue`，返回 `objValue`。
