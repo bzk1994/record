@@ -34,7 +34,7 @@
 
 * :construction:
 * [TodoList GitHub](https://github.com/zhanghao-zhoushan/react-todolist)
-* [TodoList Demo](https://zhanghao-zhoushan.github.io/react-todolist/build/index.html)
+* [TodoList Demo](https://zhanghao-zhoushan.github.io/react-todolist/dist/index.html)
 
 > 参考资料
 
