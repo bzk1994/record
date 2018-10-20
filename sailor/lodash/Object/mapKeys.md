@@ -43,26 +43,52 @@ function mapKey(object, iteratee) {
 首先调用 `Object` 方法转化 `object`，申明 `result` 空对象，调用 `Object.keys` 获取 `object` 的 `key` 数组，采用 `forEach` 循环，在循环中将 `key` 为 `iteratee` 迭代函数处理后的 `key`，`value` 还是原来的 `value`,最后将 `result` 返回。
 
 
-## 
+## mapValues
 
-> 
+> 创建一个对象，对象的key相同，值是通过 iteratee 产生的。 iteratee 会传入3个参数： (value, key, object)
 
 ```js
-
+_.mapValues(object, [iteratee=_.identity])
 ```
 
 ```js
+/**
+ * Creates an object with the same keys as `object` and values generated
+ * by running each own enumerable string keyed property of `object` thru
+ * `iteratee`. The iteratee is invoked with three arguments:
+ * (value, key, object).
+ *
+ * @since 2.4.0
+ * @category Object
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Object} Returns the new mapped object.
+ * @see mapKeys
+ * @example
+ *
+ * const users = {
+ *   'fred':    { 'user': 'fred',    'age': 40 },
+ *   'pebbles': { 'user': 'pebbles', 'age': 1 }
+ * }
+ *
+ * mapValue(users, ({ age }) => age)
+ * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
+ */
+function mapValue(object, iteratee) {
+  object = Object(object)
+  const result = {}
 
+  Object.keys(object).forEach((key) => {
+    result[key] = iteratee(object[key], key, object)
+  })
+  return result
+}
 ```
 
-## 
+`mapValue` 函数接收 2 个参数，`object` 迭代对象、`iteratee` 迭代函数。
 
-> 
+调用 `Object` 转化 `object`，申明空对象 `result`，调用 `Object.keys` 获取 `object` 的 `key` 数组，调用 `forEach` 遍历，然后调用 `iteratee` 迭代函数处理 `value` 赋值给 `result[key]`，最后将 `result` 返回。
 
-```js
 
-```
 
-```js
 
-```
