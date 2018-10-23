@@ -61,10 +61,10 @@ lifecycleMixin(Vue)
 renderMixin(Vue)
 ```
 
-`initMixin` 为 `Vue` 添加了 `init` 方法。 </br>
-`stateMixin` 为 `Vue` 添加了 `$data`、`$props`、`$set`、`$delete`、`$watch` 方法。 </br>
-`eventsMixin` 为 `Vue` 添加了 `$on`、`$once`、`$off`、`$emit` 方法。 </br>
-`lifecycleMixin` 为 `Vue` 添加了 `_update`、`$forceUpdate`、`$destroy` 方法。 </br>
+* `initMixin` 为 `Vue` 添加了 `init` 方法。
+* `stateMixin` 为 `Vue` 添加了 `$data`、`$props`、`$set`、`$delete`、`$watch` 方法。
+* `eventsMixin` 为 `Vue` 添加了 `$on`、`$once`、`$off`、`$emit` 方法。
+* `lifecycleMixin` 为 `Vue` 添加了 `_update`、`$forceUpdate`、`$destroy` 方法。
 
 关于 `filter` 的代码在 `renderMixin` 函数内部：
 
@@ -104,7 +104,7 @@ export function installRenderHelpers (target: any) {
   target._g = bindObjectListeners
 }
 ```
-关于 `filter` 就是 `target._f = resolveFilter`，`resolveFilter` 就是解析 `filter` 的赋值函数，我们来看一下 `resolveFilter` :
+关于 `filter` 就是 `target._f = resolveFilter`，`resolveFilter` 就是解析 `filter` 的辅助函数，我们来看一下 `resolveFilter` :
 
 ```js
 /**
