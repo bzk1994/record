@@ -74,11 +74,140 @@ lodash.sortedUniq = sortedUniq;
 lodash.sortedUniqBy = sortedUniqBy;
 ```
 
+挂载这些方法之后会调用 `mixin` 函数：
+
+```js
+// Add aliases.
+lodash.entries = toPairs;
+lodash.entriesIn = toPairsIn;
+lodash.extend = assignIn;
+lodash.extendWith = assignInWith;
+
+// Add methods to `lodash.prototype`.
+mixin(lodash, lodash);
+```
+
+`mixin` 函数会将 `methods` 挂载到 `lodash.prototype` 上，来看一下它的实现。
+
+```js
+function mixin(object, source, options) {
+  var props = keys(source),
+    methodNames = baseFunctions(source, props);
+
+  if (options == null &&
+    !(isObject(source) && (methodNames.length || !props.length))) {
+    options = source;
+    source = object;
+    object = this;
+    methodNames = baseFunctions(source, keys(source));
+  }
+  var chain = !(isObject(options) && 'chain' in options) || !!options.chain,
+    isFunc = isFunction(object);
+
+  arrayEach(methodNames, function (methodName) {
+    var func = source[methodName];
+    object[methodName] = func;
+    if (isFunc) {
+      object.prototype[methodName] = function () {
+        var chainAll = this.__chain__;
+        if (chain || chainAll) {
+          var result = object(this.__wrapped__),
+            actions = result.__actions__ = copyArray(this.__actions__);
+
+          actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
+          result.__chain__ = chainAll;
+          return result;
+        }
+        return func.apply(object, arrayPush([this.value()], arguments));
+      };
+    }
+  });
+
+  return object;
+}
+```
+
+`mixin` 函数接收 3 个参数，`object` 目标对象、`source` 要添加的函数的对象、`options` 配置对象。
+
+首先为申明变量 `props` 赋值为 `keys(source)` 函数调用后返回的 `source` 的 `key` 数组，
+变量 `methodNames` 赋值为 `baseFunctions(source, props)` 函数调用后返回的 `source` 中属性是 `functions` 方法名。
+
+接着会对 `options` 进行非空判断，进行只传 2 个参数时候的一些参数处理，接着会遍历 `methodNames` 数组，也就是 `source` 中可枚举属性为 `function` 的 `key` 数组，在遍历回调中会取出 `source[methodName]` 对应的 `function`，将其以相同的 `key` 添加到给 `object` 对象，也就是实现了方法属性的拷贝.
+
+接着会根据 `isFunc` 字段，`object` 是否是一个 `function`，此时应该是 `lodash` 函数，符合判断条件，进入 `if` 判断，在判断中我们会给 `object.prototype` 以 `methodName` 为方法名，添加方法。
+
+在这个方法中，我们会判断 `chain` 和 `chainAll` 变量：
+
+```js
+var chain = !(isObject(options) && 'chain' in options) || !!options.chain,
+```
+
+`chain` 是一个布尔值，`options` 不是对象并且 `options` 实例或者原型没有 `chain` 属性或者 `options.chain` 有一个 `chain` 属性。
+
+```js
+var chainAll = this.__chain__;
+```
+
+`chainAll` 代表 `this` 有 `__chain__` 属性，在第一个调用 `lodash` 后，我们会将 `__chain__` 置为 `true`。
+
+进入循环后会进行以下操作：
+
+```js
+var result = object(this.__wrapped__),
+  actions = result.__actions__ = copyArray(this.__actions__);
+
+actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
+result.__chain__ = chainAll;
+return result;
+```
+
+调用 `object` 并且传入 `this.__wrapped__`，`object` 会返回一个对象，用 `result` 变量保存，
+调用 `copyArray` 函数将 `this.__actions__` 赋值给 `actions` 已经 `result.__actions__`，然后以 `func`、`args`、`thisArg` 拼装成一个对象插入 `actions` 数组，将 `result.__chain__` 赋值为 `chainAll`，最后将 `result` 返回。
 
 
+如果不满足 `chain || chainAll`：
+
+```js
+return func.apply(object, arrayPush([this.value()], arguments));
+```
+
+这里会调用 `apply` 函数将 `func` 绑定到 `object` 上， 并且将 `arrayPush([this.value()], arguments)` 传入。
 
 
+第二次调用 `mixin` 函数：
 
+```js
+// Add aliases.
+lodash.each = forEach;
+lodash.eachRight = forEachRight;
+lodash.first = head;
+
+mixin(lodash, (function () {
+  var source = {};
+  baseForOwn(lodash, function (func, methodName) {
+    if (!hasOwnProperty.call(lodash.prototype, methodName)) {
+      source[methodName] = func;
+    }
+  });
+  return source;
+}()), { 'chain': false });
+```
+
+调用 `mixin` 函数，将 `lodash`，以及执行函数，`{'chain': false}` 配置对象传入，
+
+```js
+(function () {
+  var source = {};
+  baseForOwn(lodash, function (func, methodName) {
+    if (!hasOwnProperty.call(lodash.prototype, methodName)) {
+      source[methodName] = func;
+    }
+  });
+  return source;
+}())
+```
+
+在立即执行函数中遍历 `lodash` ，如果 `lodash.prototype` 中没有 `methodName` 对应的 `key` 会将 `func` 添加到 `source` 对象上，最后将 `source` 返回。
 
 
 
