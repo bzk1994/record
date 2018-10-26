@@ -207,10 +207,7 @@ mixin(lodash, (function () {
 }())
 ```
 
-在立即执行函数中遍历 `lodash` ，如果 `lodash.prototype` 中没有 `methodName` 对应的 `key` 会将 `func` 添加到 `source` 对象上，最后将 `source` 返回。
-
-
-
+在立即执行函数中遍历 `lodash` ，如果 `lodash.prototype` 中没有 `methodName` 对应的 `key` 会将 `func` 添加到 `source` 对象上，最后将 `source` 返回，所以这个立即执行函数会返回一个 `source` 对象，对象中拷贝了 `lodash` 的除了原型上所有属性，再次进入 `mixin` 函数对象 `lodash` 函数进行属性拷贝。
 
 
 
