@@ -47,7 +47,7 @@ function escape(string) {
 /** Used to match HTML entities and HTML characters. */
 const reHasUnescapedHtml = RegExp(reUnescapedHtml.source)
 ```
-如果匹配成功调用 `replace` 方法，并传入回调函数，将匹配 `reUnescapedHtml` 到的 `HTML` 字符串字母映射到转义字符
+如果匹配成功调用 `replace` 方法，并传入回调函数，将匹配 `reUnescapedHtml` 到的 `HTML` 字符串字母映射到转义字符。
 
 ```js
 /** Used to map characters to HTML entities. */
