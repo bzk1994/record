@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Mr'Zhang</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="styles/YUI-3-CSS-Reset.css">
+  <link rel="stylesheet" href="styles/base.css">
+</head>
+
+<body>
+  <h3> AngularJS (Ui-router)</h3>
+  <div class="nav">
+    <a ui-sref="hello" ui-sref-active="active">Hello</a>
+    <a ui-sref="about" ui-sref-active="active">About</a>
+    <a ui-sref="people" ui-sref-active="active">People</a>
+  </div>
+  <ui-view></ui-view>
+  <script data-main="js/main" src="js/libs/require.js"></script>
+</body>
+
+</html>

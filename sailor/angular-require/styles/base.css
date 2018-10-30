@@ -1,0 +1,9 @@
+h3{
+  text-align: center;
+  font-weight: bold;
+  -webkit-transition:color ease .3s;
+  line-height: 1.5;
+}
+h3:hover{
+  color: #428bca;
+}
