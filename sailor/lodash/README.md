@@ -4,22 +4,24 @@
 
 > 在 [lodash/README.md](https://github.com/lodash/lodash/blob/master/README.md) 中我们看到 `master` 分支中没有 `package.json` 文件，并不是通过 `npm` 构建的，而是了通过 `lodash-cli` 构建了 `master` 分支。
 
+```js
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
-
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
-```shell
+
 $ npm run build
 $ lodash -o ./dist/lodash.js
 $ lodash core -o ./dist/lodash.core.js
 ```
 
-> 而在 [lodash/.github/CONTRIBUTING.md](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md) 中作者也给出了解释，正在进行 `Lodash v5` 版本的开发，导致 `master` 用于贡献的 `npm` 脚本无法正常工作。
+> 在 [lodash/.github/CONTRIBUTING.md](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md) 中作者也给出了解释，正在进行 `Lodash v5` 版本的开发，导致 `master` 用于贡献的 `npm` 脚本无法正常工作。
 
+```js
 :construction: Notice :construction:
 
 Pardon the mess. The `master` branch is in flux while we work on Lodash v5. This
 means things like npm scripts, which we encourage using for contributions, may
 not be working. Thank you for your patience.
+```
 
 ## 分支管理
 
@@ -49,7 +51,7 @@ not be working. Thank you for your patience.
 
 ## build:main
 
-`build:main` 命令对应是 `lib/main/build-dist.js` 文件:
+`build:main` 命令对应的是 `lib/main/build-dist.js` 文件:
 
 ```js
 'use strict';
@@ -111,7 +113,7 @@ const baseLodash = path.join(basePath, filename);
 const distLodash = path.join(distPath, filename);
 ```
 
-接着会申明 `build` 函数，并且调用：
+接着会申明 `build` 函数，并调用：
 
 ```js
 // baseLodash lodash/lodash.js
@@ -191,7 +193,7 @@ function pitch(error) {
 
 ## build:fp
 
-`build:fp` 命令对用的是 `lib/fp/build-dist.js` 文件:
+`build:fp` 命令对应的是 `lib/fp/build-dist.js` 文件:
 
 ```js
 'use strict';
@@ -252,8 +254,7 @@ function build() {
 build();
 ```
 
-`lib/fp/build-dist.js` 与 `lib/main/build-dist.js` 基本相似，引用辅助 `npm` 包：
-
+`lib/fp/build-dist.js` 与 `lib/main/build-dist.js` 基本相似，首先是引用辅助 `npm` 包：
 
 ```js
 // 引用 lodash
@@ -309,7 +310,7 @@ const mappingConfig = {
 };
 ```
 
-然后申明 `build` 函数，并且调用：
+然后申明 `build` 函数，并调用：
 
 ```js
 function build() {
@@ -323,11 +324,13 @@ function build() {
 build();
 ```
 
-这里会将调用 `partial` 函数进行 `webpack` 参数预设，`async.series` 函数会串行执行 2 个 `webpack` 函数，接着调用 `file.min` 函数，在 `lodash/dist` 文件夹中生成 `lodash.fp.js` 文件。
+在 `build` 函数内，调用 `async.series` 函数，传入 2 个调用 `partial` 函数进行参数预设后的 `webpack` 函数，`async.series` 函数会串行执行 `webpack` 函数，接着调用 `file.min` 函数，在 `lodash/dist` 文件夹中生成 `lodash.fp.js` 文件。
 
 ## 阅读建议
 
-阅读源码的顺序是按照 [Lodash 文档](https://lodash.com/docs/4.17.10#partial) 目录顺序来的，首先会在 [Lodash Branch: master](https://github.com/lodash/lodash) 中寻找 `es6` 实现的 `method`，如果没有实现再去看 `4.17.11-pre` 的 `lodash.js`，作者正在进行 `v5` 版本的开发，估计到时会全面支持 `es6` 语法，并且抛弃旧版本， 因为 `lodash.js` 已经十分庞大了，有 `17102` 行代码，大约 `540k` ，功能迭代全在一个 `js` 中，肯定对功能迭代或者开发过程有一定影响。
+我是按照 [Lodash 文档](https://lodash.com/docs/4.17.10#partial) 目录顺序来阅读的，首先会在 [Lodash Branch: master](https://github.com/lodash/lodash) 中寻找 `es6` 实现的 `method`，如果没有实现再去看 `4.17.11-pre` 的 `lodash.js`。
+
+作者正在进行 `v5` 版本的开发，估计到时候会全面拥抱 `es6` 语法，抛弃 `es5`， 因为 `lodash.js` 已经十分庞大了，有 `17102` 行代码，大约 `540k` ，功能迭代全在一个 `js` 中，肯定对功能迭代或者开发过程有一定影响。
 
 在阅读过程中，建议 `clone` 到本地项目， `checkout` 到 `4.17.11-pre` 分支，方面查找 `lodash.js` 中的方法，而在浏览器中打开 [Lodash Branch: master](https://github.com/lodash/lodash)，建议下载 `Chrome` 的 `Octotree` 、`Awesome Autocomplete for GitHub` 插件，方面切换、查找文件。
 
