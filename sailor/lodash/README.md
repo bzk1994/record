@@ -330,13 +330,29 @@ build();
 
 我是按照 [Lodash 文档](https://lodash.com/docs/4.17.10#partial) 目录顺序来阅读的，首先会在 [Lodash Branch: master](https://github.com/lodash/lodash) 中寻找 `es6` 实现的 `method`，如果没有实现再去看 `4.17.11-pre` 的 `lodash.js`。
 
-作者正在进行 `v5` 版本的开发，估计到时候会全面拥抱 `es6` 语法，抛弃 `es5`， 因为 `lodash.js` 已经十分庞大了，有 `17102` 行代码，大约 `540k` ，功能迭代全在一个 `js` 中，肯定对功能迭代或者开发过程有一定影响。
+作者正在进行 `v5` 版本的开发，估计到时候会全面拥抱 `es6` 语法，摒弃 `es5`， 因为 `lodash.js` 已经十分庞大了，有 `17102` 行代码，大约 `540k` ，功能迭代全在一个 `js` 中，肯定对功能迭代或者开发过程有一定影响。
 
 在阅读过程中，建议 `clone` 到本地项目， `checkout` 到 `4.17.11-pre` 分支，方面查找 `lodash.js` 中的方法，而在浏览器中打开 [Lodash Branch: master](https://github.com/lodash/lodash)，建议下载 `Chrome` 的 `Octotree` 、`Awesome Autocomplete for GitHub` 插件，方面切换、查找文件。
 
+
+```js
+var list = document.querySelectorAll('.react-menu-container a')
+list.forEach(item => {console.log(item.innerText)})
+```
 ## Array
 
-[Array](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/lodash/Array.md)
+> [Array 1 - 10](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/lodash/Array.md)
+
+- _.chunk
+- _.compact
+- _.concat
+- _.difference
+- _.differenceBy
+- _.differenceWith
+- _.drop
+- _.dropRight
+- _.dropRightWhile
+- _.dropWhile
 
 ## Collection
 ## Date
@@ -350,3 +366,8 @@ build();
 ## Util
 ## Properties
 ## Methods
+
+## 参考文档
+
+* [lodash](https://lodash.com/docs/4.17.10#chunk)
+* [lodash 中文文档](http://lodash.think2011.net/)
