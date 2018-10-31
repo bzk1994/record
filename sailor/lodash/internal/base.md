@@ -83,3 +83,156 @@ function baseAssignValue(object, key, value) {
 
 判断 `key` 如果是 `__proto__` 是会调用 `Object.defineProperty` 为对象赋值，否则进行简单的属性赋值，
 改方法只要是要进行简单的属性拷贝。
+
+## baseDifference
+
+```js
+/** Used as the size to enable large array optimizations. */
+const LARGE_ARRAY_SIZE = 200
+
+/**
+ * The base implementation of methods like `difference` without support
+ * for excluding multiple arrays.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {Array} values The values to exclude.
+ * @param {Function} [iteratee] The iteratee invoked per element.
+ * @param {Function} [comparator] The comparator invoked per element.
+ * @returns {Array} Returns the new array of filtered values.
+ */
+function baseDifference(array, values, iteratee, comparator) {
+  let includes = arrayIncludes
+  let isCommon = true
+  const result = []
+  const valuesLength = values.length
+
+  if (!array.length) {
+    return result
+  }
+  if (iteratee) {
+    values = map(values, (value) => iteratee(value))
+  }
+  if (comparator) {
+    includes = arrayIncludesWith
+    isCommon = false
+  }
+  else if (values.length >= LARGE_ARRAY_SIZE) {
+    includes = cacheHas
+    isCommon = false
+    values = new SetCache(values)
+  }
+  outer:
+  for (let value of array) {
+    const computed = iteratee == null ? value : iteratee(value)
+
+    value = (comparator || value !== 0) ? value : 0
+    if (isCommon && computed === computed) {
+      let valuesIndex = valuesLength
+      while (valuesIndex--) {
+        if (values[valuesIndex] === computed) {
+          continue outer
+        }
+      }
+      result.push(value)
+    }
+    else if (!includes(values, computed, comparator)) {
+      result.push(value)
+    }
+  }
+  return result
+}
+```
+
+`baseDifference` 接收 `array` `values` `iteratee` `comparator` 四个函数，但是 `difference` 只传 2 个函数，没有 `iteratee` `comparator` 跳过 2 个 `if` 判断，判断数组长度大于 200，使用 `SetCache` 类缓存 `values`。
+
+进入 `for..of` 循环，此时 `iteratee === null` ，申明 `computed` 赋值为 `value`，接着使用 `while` 循环，将满足条件的 `value` 插入数组，最后将 `result` 返回。
+
+## baseWhile
+
+```js
+/**
+ * The base implementation of methods like `dropWhile` and `takeWhile`.
+ *
+ * @private
+ * @param {Array} array The array to query.
+ * @param {Function} predicate The function invoked per iteration.
+ * @param {boolean} [isDrop] Specify dropping elements instead of taking them.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Array} Returns the slice of `array`.
+ */
+function baseWhile(array, predicate, isDrop, fromRight) {
+  const { length } = array
+  let index = fromRight ? length : -1
+
+  while ((fromRight ? index-- : ++index < length) &&
+    predicate(array[index], index, array)) {}
+
+  return isDrop
+    ? slice(array, (fromRight ? 0 : index), (fromRight ? index + 1 : length))
+    : slice(array, (fromRight ? index + 1 : 0), (fromRight ? length : index))
+}
+```
+
+`baseFill` 函数：
+
+```js
+/**
+  * The base implementation of `_.fill` without an iteratee call guard.
+  *
+  * @private
+  * @param {Array} array The array to fill.
+  * @param {*} value The value to fill `array` with.
+  * @param {number} [start=0] The start position.
+  * @param {number} [end=array.length] The end position.
+  * @returns {Array} Returns `array`.
+  */
+function baseFill(array, value, start, end) {
+  var length = array.length;
+
+  start = toInteger(start);
+  if (start < 0) {
+    start = -start > length ? 0 : (length + start);
+  }
+  end = (end === undefined || end > length) ? length : toInteger(end);
+  if (end < 0) {
+    end += length;
+  }
+  end = start > end ? 0 : toLength(end);
+  while (start < end) {
+    array[start++] = value;
+  }
+  return array;
+}
+```
+
+`baseFindIndex` 函数
+
+```js
+/**
+ * The base implementation of `findIndex` and `findLastIndex`.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {Function} predicate The function invoked per iteration.
+ * @param {number} fromIndex The index to search from.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function baseFindIndex(array, predicate, fromIndex, fromRight) {
+  const { length } = array
+  let index = fromIndex + (fromRight ? 1 : -1)
+
+  while ((fromRight ? index-- : ++index < length)) {
+    if (predicate(array[index], index, array)) {
+      return index
+    }
+  }
+  return -1
+}
+```
+
+`findIndex` 函数接收 4 个参数，`array` 数组、`predicate` 迭代函数，`fromIndex` 搜索开始下标，`fromRight` 是否从右到左。
+
+开始申明 `length` 变量保存 `array` 长度，申明 `index` 初始下标，
+接着通过 `while` 循环不断迭代， `fromRight` 为真 说明从右到左，`index` 累减，否则 `index` 累加小于数组长度，在循环中有个 `if` 判断，判断 `predicate` 函数的返回值判断是否为真，为真的话返回对象下标，否则返回 -1。

@@ -1,5 +1,7 @@
 # Lodash 源码解析
 
+[源码解析的目录](https://github.com/zhanghao-zhoushan/record/issues/16)
+
 ## Branch: master
 
 > 在 [lodash/README.md](https://github.com/lodash/lodash/blob/master/README.md) 中我们看到 `master` 分支中没有 `package.json` 文件，并不是通过 `npm` 构建的，而是了通过 `lodash-cli` 构建了 `master` 分支。
@@ -333,39 +335,6 @@ build();
 作者正在进行 `v5` 版本的开发，估计到时候会全面拥抱 `es6` 语法，摒弃 `es5`， 因为 `lodash.js` 已经十分庞大了，有 `17102` 行代码，大约 `540k` ，功能迭代全在一个 `js` 中，肯定对功能迭代或者开发过程有一定影响。
 
 在阅读过程中，建议 `clone` 到本地项目， `checkout` 到 `4.17.11-pre` 分支，方面查找 `lodash.js` 中的方法，而在浏览器中打开 [Lodash Branch: master](https://github.com/lodash/lodash)，建议下载 `Chrome` 的 `Octotree` 、`Awesome Autocomplete for GitHub` 插件，方面切换、查找文件。
-
-
-```js
-var list = document.querySelectorAll('.react-menu-container a')
-list.forEach(item => {console.log(item.innerText)})
-```
-## Array
-
-> [Array 1 - 10](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/lodash/Array.md)
-
-- _.chunk
-- _.compact
-- _.concat
-- _.difference
-- _.differenceBy
-- _.differenceWith
-- _.drop
-- _.dropRight
-- _.dropRightWhile
-- _.dropWhile
-
-## Collection
-## Date
-## Function
-## Lang
-## Math
-## Number
-## Object
-## Seq
-## String
-## Util
-## Properties
-## Methods
 
 ## 参考文档
 
