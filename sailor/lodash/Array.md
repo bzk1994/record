@@ -241,35 +241,6 @@ function baseIndexOf(array, value, fromIndex) {
 }
 ```
 
-
-## initial
-
-> 获取数组中除了最后一个元素之外的所有元素。
-
-```js
-/**
- * Gets all but the last element of `array`.
- *
- * @since 0.1.0
- * @category Array
- * @param {Array} array The array to query.
- * @returns {Array} Returns the slice of `array`.
- * @example
- *
- * initial([1, 2, 3])
- * // => [1, 2]
- */
-function initial(array) {
-  const length = array == null ? 0 : array.length
-  return length ? slice(array, 0, -1) : []
-}
-```
-
-`initial` 函数接收一个数组参数，首先会取出数组长度，最后调用 `slice` 函数处理后的数组，此时传参为 `0 -1`，会从第零个开始截取到最后第二个。
-
-
-
-
 ## strictLastIndexOf
 
 > 严格相等的 lastIndexOf 。
