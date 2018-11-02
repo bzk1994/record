@@ -761,3 +761,96 @@ const result = [] // 要返回数组
 接着进行判断，判断 `!index` 为真，`index` 初始值为 -1，循环累加，是第一个循环时，`index` 为 0 的情况，或者 `computed` 与 `seen` 不相等， 进入判断后会将 `seen` 赋值为 `computed`，这里保存了临时变量 `seen`，实现数组的去重，将 `value` 插入 `result`。
 
 循环结束后，将 `result` 返回。
+
+
+## baseUniq
+
+> union 函数的基本实现。
+
+```js
+/** Used as the size to enable large array optimizations. */
+const LARGE_ARRAY_SIZE = 200
+
+/**
+ * The base implementation of `uniqBy`.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {Function} [iteratee] The iteratee invoked per element.
+ * @param {Function} [comparator] The comparator invoked per element.
+ * @returns {Array} Returns the new duplicate free array.
+ */
+function baseUniq(array, iteratee, comparator) {
+  let index = -1
+  let includes = arrayIncludes
+  let isCommon = true
+
+  const { length } = array
+  const result = []
+  let seen = result
+
+  if (comparator) {
+    isCommon = false
+    includes = arrayIncludesWith
+  }
+  else if (length >= LARGE_ARRAY_SIZE) {
+    const set = iteratee ? null : createSet(array)
+    if (set) {
+      return setToArray(set)
+    }
+    isCommon = false
+    includes = cacheHas
+    seen = new SetCache
+  }
+  else {
+    seen = iteratee ? [] : result
+  }
+  outer:
+  while (++index < length) {
+    let value = array[index]
+    const computed = iteratee ? iteratee(value) : value
+
+    value = (comparator || value !== 0) ? value : 0
+    if (isCommon && computed === computed) {
+      let seenIndex = seen.length
+      while (seenIndex--) {
+        if (seen[seenIndex] === computed) {
+          continue outer
+        }
+      }
+      if (iteratee) {
+        seen.push(computed)
+      }
+      result.push(value)
+    }
+    else if (!includes(seen, computed, comparator)) {
+      if (seen !== result) {
+        seen.push(computed)
+      }
+      result.push(value)
+    }
+  }
+  return result
+}
+```
+
+`baseUniq` 函数接收 3 个参数，`array` 数组、`iteratee` 迭代函数、`comparator` 比较函数。
+
+开始是申明一些初始变量:
+
+```js
+let index = -1
+let includes = arrayIncludes
+let isCommon = true
+
+const { length } = array
+const result = []
+let seen = result
+```
+
+如果传入了 `comparator` 比较函数，将 `isCommon` 赋值 `true` ，`includes` 赋值为
+`arrayIncludesWith` 函数，如果数组长度大于 `LARGE_ARRAY_SIZE` 200 ，会使用 `SetCache` 类做缓存优化。
+
+接着进入 `while` 循环，`index` 累加，申明 `value` 变量保存当前循环 `value`，申明 `computed`变量不保存迭代函数 `iteratee` 处理后的 `value`。
+
+接着会判断 `isCommon`，`isCommon` 为 `true` 说明没有传入 `length < LARGE_ARRAY_SIZE`，按照普通模式处理，`seenIndex` 累减，如果 `seenIndex` 对应的 `value` 与 `computed` 相等， `continue outer`，如果有 `iteratee` ，将 `computed` 插入 `seen`，接着将 `value` 插入 `result`，最后将 `result` 返回。

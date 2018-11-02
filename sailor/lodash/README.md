@@ -1,6 +1,40 @@
 # Lodash 源码解析
 
-[源码解析的目录](https://github.com/zhanghao-zhoushan/record/issues/16)
+## 目录
+
+> [Array c ~ h](https://github.com/zhanghao-zhoushan/record/issues/17)
+
+> [Array i - s](https://github.com/zhanghao-zhoushan/record/issues/18)
+
+> [Array t - z](https://github.com/zhanghao-zhoushan/record/issues/19)
+
+> [Collection](https://github.com/zhanghao-zhoushan/record/issues/20)
+
+> [Date](https://github.com/zhanghao-zhoushan/record/issues/21)
+
+> [Function](https://github.com/zhanghao-zhoushan/record/issues/22)
+
+> [Lang](https://github.com/zhanghao-zhoushan/record/issues/23)
+
+> [Lang is](https://github.com/zhanghao-zhoushan/record/issues/24)
+
+> [Math](https://github.com/zhanghao-zhoushan/record/issues/25)
+
+> [Number](https://github.com/zhanghao-zhoushan/record/issues/26)
+
+> [Object a ~ f](https://github.com/zhanghao-zhoushan/record/issues/27)
+
+> [Object e ~ v](https://github.com/zhanghao-zhoushan/record/issues/28)
+
+> [Seq](https://github.com/zhanghao-zhoushan/record/issues/29)
+
+> [String](https://github.com/zhanghao-zhoushan/record/issues/30)
+
+> [Util](https://github.com/zhanghao-zhoushan/record/issues/31)
+
+> [Collection](https://github.com/zhanghao-zhoushan/record/issues/32)
+
+> [Methods](https://github.com/zhanghao-zhoushan/record/issues/33)
 
 ## Branch: master
 

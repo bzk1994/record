@@ -51,7 +51,7 @@
 ## JavaScript
 
 * [浅谈异步编程](https://github.com/zhanghao-zhoushan/record/issues/11)
-* [Lodash 源码](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/lodash/README.md)
+* [Lodash 源码解析](https://github.com/zhanghao-zhoushan/record/blob/master/sailor/lodash/README.md)
 * [es6-promise]()
 * [vue-socket]()
 * [invalid-date-in-safari](https://stackoverflow.com/questions/4310953/invalid-date-in-safari)
