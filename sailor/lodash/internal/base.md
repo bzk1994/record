@@ -46,10 +46,11 @@ function baseFlatten(array, depth, predicate, isStrict, result) {
 baseFlatten(values, 1, isArrayLikeObject, true)
 ```
 
-`baseFlatten` 接收 `array` 数组、`depth` 深度, `predicate`, `isStrict` 严格, `result` 默认为空数组，
+`baseFlatten` 接收 `array` 数组、`depth` 深度, `predicate` 断言函数, `isStrict` 是否严格, `result` 默认为空数组。
+
 判断 `array == null` 如果等于 `null` ， 返回传入的 `result`。
 
-进入 `for...of ` 循环，这个判断 `depth > 0` 并且调用传入 `predicate` 函数，就是 `isArrayLikeObject`， 满足条件再次判断 `depth > 1` ，就递归调用 `baseFlatten` 扁平化数组，
+进入 `for...of ` 循环，然后判断 `depth > 0` 并且调用传入 `predicate` 函数为真，就是 `isArrayLikeObject`， 满足条件再次判断 `depth > 1` ，就递归调用 `baseFlatten` 扁平化数组，
 不满足就将 `...value` 插入 `result` 数组，此时 `isStrict` 为 `true`，并不会进入 `else if` 判断， 最后将 `result` 数组返回。
 
 ## baseAssignValue
