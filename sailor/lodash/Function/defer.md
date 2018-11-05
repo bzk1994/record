@@ -31,4 +31,4 @@ function defer(func, ...args) {
 
 `defer` 函数接收 2 个参数，`func` 延迟函数、`args` 延迟函数调用参数。
 
-判断如果 `func` 不是 `function` 就抛出异常，接着返回 `setTimeout` 函数，传入 `func` 延迟函数，延迟 1ms，`args` 延迟函数调用参数，`func` 延迟函数会在下一次时间循环执行。
+判断如果 `func` 不是 `function` 就抛出异常，接着返回 `setTimeout` 函数，传入 `func` 延迟函数，延迟 `1ms`，`args` 延迟函数调用参数，`func` 延迟函数会在下一次事件循环完成后执行。

@@ -27,10 +27,9 @@ function flip(func) {
     throw new TypeError('Expected a function')
   }
   return function(...args) {
-    return func.apply(this, args. ())
+    return func.apply(this, args.reverse())
   }
 }
 ```
 
-`flip` 函数会返回一个 `function`，`function` 内部又返回了一个使用 `apply` 调用的 `func`，传入的参数使用
-`reverse` 方法翻转了。
+`flip` 函数会返回一个 `function`，`function` 内部又返回了一个使用 `apply` 调用的 `func`，内部传入的参数使用 `reverse` 方法进行了反转。

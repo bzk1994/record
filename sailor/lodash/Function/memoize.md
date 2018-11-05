@@ -71,9 +71,9 @@ function memoize(func, resolver) {
 memoize.Cache = MapCache
 ```
 
-`memoize` 接收 2 个参数，`func` 需要缓存的函数、`resolver` 解析缓存 `key` 的函数
+`memoize` 接收 2 个参数，`func` 需要缓存的函数、`resolver` 解析缓存 `key` 的函数。
 
-开始是一个类型的 `func` 、`resolver` 的非空和类型判断，申明 `memoized` 方法
+函数开始是一个类型的 `func` 、`resolver` 的非空和类型判断，接着申明 `memoized` 函数：
 
 ```js
 const memoized = function(...args) {
@@ -89,7 +89,9 @@ const memoized = function(...args) {
 }
 ```
 
-`memoized` 函数内中首先申明 `resolver` 函数处理后的 `key`、函数的缓存对象 `cache`，这个会判断如果缓存中有这个 `key` 值，调用 `cache` 的 `get` 返回对象的 `value`，如果缓存中没有 `key` 值，申明 `result` 变量保存使用 `apply` 调用的 `func` 函数的结果，然后为 `memoized` 的 `cache` 初始化缓存方法，最后返回 `result`。
+`memoized` 函数内中首先申明 `resolver` 函数处理后的 `key`、函数的缓存对象 `cache`，接着调用 `has` 方法判断缓存中如果有这个 `key` 值，调用 `cache` 的 `get` 返回对象的 `value`。
+
+如果缓存中没有 `key` 值，申明 `result` 变量保存使用 `apply` 调用的 `func` 函数的结果，然后为 `memoized` 的 `cache` 初始化缓存方法，最后返回 `result`。
 
 ```js
 function memoize(func, resolver) {
