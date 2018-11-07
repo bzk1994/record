@@ -1,3 +1,263 @@
+## castArray
+
+> 如果 value 不是数组, 那么强制转为数组。
+
+```js
+_.castArray(value)
+```
+
+```js
+/**
+ * Casts `value` as an array if it's not one.
+ *
+ * @since 4.4.0
+ * @category Lang
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast array.
+ * @example
+ *
+ * castArray(1)
+ * // => [1]
+ *
+ * castArray({ 'a': 1 })
+ * // => [{ 'a': 1 }]
+ *
+ * castArray('abc')
+ * // => ['abc']
+ *
+ * castArray(null)
+ * // => [null]
+ *
+ * castArray(undefined)
+ * // => [undefined]
+ *
+ * castArray()
+ * // => []
+ *
+ * const array = [1, 2, 3]
+ * console.log(castArray(array) === array)
+ * // => true
+ */
+function castArray(...args) {
+  if (!args.length) {
+    return []
+  }
+  const value = args[0]
+  return Array.isArray(value) ? value : [value]
+}
+```
+
+`castArray` 接收 `args` 参数数组，如果没有 `length`，返回空数组。
+
+然后申明 `value` 获取 `args[0]` ，调用 `Array.isArray` 函数判断 `value` 是否为数组，不是就使用 `[]` 包装成数组，然后返回。
+
+## eq
+
+> 执行 SameValueZero 比较两者的值确定它们是否相等。
+
+```js
+_.eq(value, other)
+```
+
+```js
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * const object = { 'a': 1 }
+ * const other = { 'a': 1 }
+ *
+ * eq(object, object)
+ * // => true
+ *
+ * eq(object, other)
+ * // => false
+ *
+ * eq('a', 'a')
+ * // => true
+ *
+ * eq('a', Object('a'))
+ * // => false
+ *
+ * eq(NaN, NaN)
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other)
+}
+```
+
+`eq` 接收 2 个比较的参数，使用 `===` 判断是否全等，并且根据 `NaN` 不等于自身，排除 2 个参数是 `NaN` 的情况。
+
+## gt
+
+> 检查 value 是否大于 other
+
+```js
+_.gt(value, other)
+```
+
+```js
+
+/**
+ * Checks if `value` is greater than `other`.
+ *
+ * @since 3.9.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if `value` is greater than `other`,
+ *  else `false`.
+ * @see gte, lt, lte
+ * @example
+ *
+ * gt(3, 1)
+ * // => true
+ *
+ * gt(3, 3)
+ * // => false
+ *
+ * gt(1, 3)
+ * // => false
+ */
+function gt(value, other) {
+  if (!(typeof value == 'string' && typeof other == 'string')) {
+    value = +value
+    other = +other
+  }
+  return value > other
+}
+```
+
+`gt` 首先会进行类型的判断，如果当 `value` 、`other` 都为字符串时，为防止字符串拼接，使用 `+` 转化为数字，当只有一个字符串时使用 `>` 有会隐式转换的效果，将另一个不是数字的 `value` 转化为数字，返回比较后的 `Boolean`。
+
+## gte
+
+> 检查 value 是否大于等于 other。
+
+```js
+/**
+ * Checks if `value` is greater than or equal to `other`.
+ *
+ * @since 3.9.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if `value` is greater than or equal to
+ *  `other`, else `false`.
+ * @see gt, lt, lte
+ * @example
+ *
+ * gte(3, 1)
+ * // => true
+ *
+ * gte(3, 3)
+ * // => true
+ *
+ * gte(1, 3)
+ * // => false
+ */
+function gte(value, other) {
+  if (!(typeof value == 'string' && typeof other == 'string')) {
+    value = +value
+    other = +other
+  }
+  return value >= other
+}
+```
+
+`gte` 与 `gt` 实现一致，返回 `value >= other` 。
+
+## lt
+
+> 检查 value 是否是 小于 other。
+
+```js
+_.lt(value, other)
+```
+
+```js
+/**
+ * Checks if `value` is less than `other`.
+ *
+ * @since 3.9.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if `value` is less than `other`,
+ *  else `false`.
+ * @see gt, gte, lte
+ * @example
+ *
+ * lt(1, 3)
+ * // => true
+ *
+ * lt(3, 3)
+ * // => false
+ *
+ * lt(3, 1)
+ * // => false
+ */
+function lt(value, other) {
+  if (!(typeof value == 'string' && typeof other == 'string')) {
+    value = +value
+    other = +other
+  }
+  return value < other
+}
+```
+
+与 `gt` 实现基本一致，返回 `value > other`。
+
+## lte
+
+> 检查 value 是否是 小于等于 other.
+
+```js
+_.lte(value, other)
+```
+
+```js
+/**
+ * Checks if `value` is less than or equal to `other`.
+ *
+ * @since 3.9.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if `value` is less than or equal to
+ *  `other`, else `false`.
+ * @see gt, gte, lt
+ * @example
+ *
+ * lte(1, 3)
+ * // => true
+ *
+ * lte(3, 3)
+ * // => true
+ *
+ * lte(3, 1)
+ * // => false
+ */
+function lte(value, other) {
+  if (!(typeof value == 'string' && typeof other == 'string')) {
+    value = +value
+    other = +other
+  }
+  return value <= other
+}
+```
+
+与 `gt` 实现基本一致，返回 `value <= other`。
+
 ## isArguments
 
 > 检查 value 是否是 类 arguments 对象。
@@ -27,7 +287,7 @@ function isArguments(value) {
 }
 ```
 
-`isArguments` 函数内部会调用 `isObjectLike` 判断 `value` 是对象，并且调用 `getTag` 方法判断类型字符串等于 `'[object Arguments]'`。
+`isArguments` 函数内部会调用 `isObjectLike` 判断 `value` 是对象，并且调用 `getTag` 方法判断类型字符串等于 `[object Arguments]`。
 
 ## isArray
 
@@ -1601,3 +1861,443 @@ function isFlattenable(value) {
 对象的 `Symbol.isConcatSpreadable` 属性等于一个布尔值，表示该对象用于 `Array.prototype.concat()` 时，是否可以展开。
 
 `isFlattenable` 接收 `value` 作为参数，通过 `Array.isArray` 、`isArguments` 判断 ``value`` 是数组或是 一个 `arguments` 对象或者是一个能展开的 `Symbol`。
+
+## toArray
+
+> 转换 value 为数组
+
+```js
+_.toArray(value)
+```
+
+```js
+
+/** `Object#toString` result references. */
+const mapTag = '[object Map]'
+const setTag = '[object Set]'
+
+/** Built-in value references. */
+const symIterator = Symbol ? Symbol.iterator : undefined
+
+/**
+ * Converts `value` to an array.
+ *
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {Array} Returns the converted array.
+ * @example
+ *
+ * toArray({ 'a': 1, 'b': 2 })
+ * // => [1, 2]
+ *
+ * toArray('abc')
+ * // => ['a', 'b', 'c']
+ *
+ * toArray(1)
+ * // => []
+ *
+ * toArray(null)
+ * // => []
+ */
+function toArray(value) {
+  if (!value) {
+    return []
+  }
+  if (isArrayLike(value)) {
+    return isString(value) ? stringToArray(value) : copyArray(value)
+  }
+  if (symIterator && value[symIterator]) {
+    return iteratorToArray(value[symIterator]())
+  }
+  const tag = getTag(value)
+  const func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values)
+
+  return func(value)
+}
+```
+
+`toArray` 函数首先会进行非空判断，然后调用 `isArrayLike` 判断是否是类数组，如果是 `isString`，调用 `stringToArray` 转成数组，否则调用 `copyArray` 返回一个浅拷贝的数组。
+
+如果是 `symIterator` 类型调用 `iteratorToArray` 返回转化后的数组，
+不满足已上情况调用 `getTag` 获取 `value` 的对象类型字符串，这个会根据 `map` 、`set` 类型返回 `mapToArray`、`setToArray` 方法。
+
+## toFinite
+
+> 将值转换为有限数字。
+
+```js
+_.toFinite(value)
+```
+
+```js
+/** Used as references for various `Number` constants. */
+const INFINITY = 1 / 0
+const MAX_INTEGER = 1.7976931348623157e+308
+
+/**
+ * Converts `value` to a finite number.
+ *
+ * @since 4.12.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted number.
+ * @example
+ *
+ * toFinite(3.2)
+ * // => 3.2
+ *
+ * toFinite(Number.MIN_VALUE)
+ * // => 5e-324
+ *
+ * toFinite(Infinity)
+ * // => 1.7976931348623157e+308
+ *
+ * toFinite('3.2')
+ * // => 3.2
+ */
+function toFinite(value) {
+  if (!value) {
+    return value === 0 ? value : 0
+  }
+  value = toNumber(value)
+  if (value === INFINITY || value === -INFINITY) {
+    const sign = (value < 0 ? -1 : 1)
+    return sign * MAX_INTEGER
+  }
+  return value === value ? value : 0
+}
+```
+
+`toFinite` 函数内部有多个判断，`value` 取非为真返回 0，使用 `toInteger` 函数将 `value` 转化为整数，如果小于负的 `MAX_SAFE_INTEGER` 返回 `-MAX_SAFE_INTEGER`，如果大于 `MAX_SAFE_INTEGER` 返回 `MAX_SAFE_INTEGER`，最后 `value` 等于自身返回 `value`，不是的话说明是 `NaN`，返回 0。
+
+## toInteger
+
+> 将 `value` 转换为整数。
+
+```js
+_.toInteger(value)
+```
+
+```js
+/**
+ * Converts `value` to an integer.
+ *
+ * **Note:** This method is loosely based on
+ * [`ToInteger`](http://www.ecma-international.org/ecma-262/7.0/#sec-tointeger).
+ *
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted integer.
+ * @see isInteger, isNumber, toNumber
+ * @example
+ *
+ * toInteger(3.2)
+ * // => 3
+ *
+ * toInteger(Number.MIN_VALUE)
+ * // => 0
+ *
+ * toInteger(Infinity)
+ * // => 1.7976931348623157e+308
+ *
+ * toInteger('3.2')
+ * // => 3
+ */
+function toInteger(value) {
+  const result = toFinite(value)
+  const remainder = result % 1
+
+  return remainder ? result - remainder : result
+}
+```
+
+`toInteger` 函数调用 `toFinite` 将 `value` 转成有效数字，然后对其进行 `% 1` 取值，如果有 `remainder` 返回 `result - remainder `，否则返回 `result`。
+
+## toLength
+
+> 转换 value 为用作类数组对象的长度整数。 
+
+```js
+_.toLength(value)
+```
+
+```js
+
+/** Used as references for the maximum length and index of an array. */
+const MAX_ARRAY_LENGTH = 4294967295
+
+/**
+ * Converts `value` to an integer suitable for use as the length of an
+ * array-like object.
+ *
+ * **Note:** This method is based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
+ *
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted integer.
+ * @example
+ *
+ * toLength(3.2)
+ * // => 3
+ *
+ * toLength(Number.MIN_VALUE)
+ * // => 0
+ *
+ * toLength(Infinity)
+ * // => 4294967295
+ *
+ * toLength('3.2')
+ * // => 3
+ */
+function toLength(value) {
+  if (!value) {
+    return 0
+  }
+  value = toInteger(value)
+  if (value < 0) {
+    return 0
+  }
+  if (value > MAX_ARRAY_LENGTH) {
+    return MAX_ARRAY_LENGTH
+  }
+  return value
+}
+```
+
+`toLength` 函数首先会进行非空哦按段，然后将 `value` 转换成整数，小于 0 返回 0，大于 `MAX_ARRAY_LENGTH` 返回 `MAX_ARRAY_LENGTH`，最后返回 `value` 。
+
+## toNumber
+
+> 将值转换为数字。
+
+```js
+_.toNumber(value)
+```
+
+```js
+/** Used as references for various `Number` constants. */
+const NAN = 0 / 0
+
+/** Used to match leading and trailing whitespace. */
+const reTrim = /^\s+|\s+$/g
+
+/** Used to detect bad signed hexadecimal string values. */
+const reIsBadHex = /^[-+]0x[0-9a-f]+$/i
+
+/** Used to detect binary string values. */
+const reIsBinary = /^0b[01]+$/i
+
+/** Used to detect octal string values. */
+const reIsOctal = /^0o[0-7]+$/i
+
+/** Built-in method references without a dependency on `root`. */
+const freeParseInt = parseInt
+
+/**
+ * Converts `value` to a number.
+ *
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @see isInteger, toInteger, isNumber
+ * @example
+ *
+ * toNumber(3.2)
+ * // => 3.2
+ *
+ * toNumber(Number.MIN_VALUE)
+ * // => 5e-324
+ *
+ * toNumber(Infinity)
+ * // => Infinity
+ *
+ * toNumber('3.2')
+ * // => 3.2
+ */
+function toNumber(value) {
+  if (typeof value == 'number') {
+    return value
+  }
+  if (isSymbol(value)) {
+    return NAN
+  }
+  if (isObject(value)) {
+    const other = typeof value.valueOf == 'function' ? value.valueOf() : value
+    value = isObject(other) ? `${other}` : other
+  }
+  if (typeof value != 'string') {
+    return value === 0 ? value : +value
+  }
+  value = value.replace(reTrim, '')
+  const isBinary = reIsBinary.test(value)
+  return (isBinary || reIsOctal.test(value))
+    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+    : (reIsBadHex.test(value) ? NAN : +value)
+}
+```
+
+`toNumber` 函数内部有很多类型判断，
+如果是 `number` 类型返回 `value`，
+如果是 `isSymbol` 返回 `NaN`，
+如果是 `object` 调用内置的 `valueOf` 方法，
+如果不是字符串，等于 0 返回 0，否则用 `+value` 隐式转换后返回，
+最后使用正则去除空格后调用 `freeParseInt` 转换。
+
+## toPlainObject
+
+> 转换 value 为普通对象。 包括继承的可枚举属性。
+
+```js
+_.toPlainObject(value)
+```
+
+```js
+/**
+ * Converts `value` to a plain object flattening inherited enumerable string
+ * keyed properties of `value` to own properties of the plain object.
+ *
+ * @since 3.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {Object} Returns the converted plain object.
+ * @example
+ *
+ * function Foo() {
+ *   this.b = 2
+ * }
+ *
+ * Foo.prototype.c = 3
+ *
+ * assign({ 'a': 1 }, new Foo)
+ * // => { 'a': 1, 'b': 2 }
+ *
+ * assign({ 'a': 1 }, toPlainObject(new Foo))
+ * // => { 'a': 1, 'b': 2, 'c': 3 }
+ */
+function toPlainObject(value) {
+  value = Object(value)
+  const result = {}
+  for (const key in value) {
+    result[key] = value[value]
+  }
+  return result
+}
+```
+
+`toPlainObject` 函数内部是一个 `for...in` 循环，申明空对象 `result` ，往对象上赋值，最后返回。
+
+## toSafeInteger
+
+> 将值转换为安全整数。
+
+```js
+_.toSafeInteger(value)
+```
+
+```js
+/** Used as references for various `Number` constants. */
+const MAX_SAFE_INTEGER = 9007199254740991
+
+/**
+ * Converts `value` to a safe integer. A safe integer can be compared and
+ * represented correctly.
+ *
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted integer.
+ * @example
+ *
+ * toSafeInteger(3.2)
+ * // => 3
+ *
+ * toSafeInteger(Number.MIN_VALUE)
+ * // => 0
+ *
+ * toSafeInteger(Infinity)
+ * // => 9007199254740991
+ *
+ * toSafeInteger('3.2')
+ * // => 3
+ */
+function toSafeInteger(value) {
+  if (!value) {
+    return value === 0 ? value : 0
+  }
+  value = toInteger(value)
+  if (value < -MAX_SAFE_INTEGER) {
+    return -MAX_SAFE_INTEGER
+  }
+  if (value > MAX_SAFE_INTEGER) {
+    return MAX_SAFE_INTEGER
+  }
+  return value
+}
+```
+
+`toSafeInteger` 函数内部有多个判断，`value` 取非为真返回 0，使用 `toInteger` 函数将 `value` 转化为整数，如果小于负的 `MAX_SAFE_INTEGER` 返回 `-MAX_SAFE_INTEGER`，如果大于 `MAX_SAFE_INTEGER` 返回 `MAX_SAFE_INTEGER`。
+
+## toString
+
+> 如果 value 不是字符串，将其转换为字符串。 null 和 undefined 将返回空字符串。
+
+```js
+_.toString(value)
+```
+
+```js
+/** Used as references for various `Number` constants. */
+const INFINITY = 1 / 0
+
+/** Used to convert symbols to primitives and strings. */
+const symbolProto = Symbol ? Symbol.prototype : undefined
+const symbolToString = symbolProto ? symbolProto.toString : undefined
+
+/**
+ * Converts `value` to a string. An empty string is returned for `null`
+ * and `undefined` values. The sign of `-0` is preserved.
+ *
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ * @example
+ *
+ * toString(null)
+ * // => ''
+ *
+ * toString(-0)
+ * // => '-0'
+ *
+ * toString([1, 2, 3])
+ * // => '1,2,3'
+ */
+function toString(value) {
+  if (value == null) {
+    return ''
+  }
+  // Exit early for strings to avoid a performance hit in some environments.
+  if (typeof value == 'string') {
+    return value
+  }
+  if (Array.isArray(value)) {
+    // Recursively convert values (susceptible to call stack limits).
+    return `${map(value, (other) => other == null ? other : toString(other))}`
+  }
+  if (isSymbol(value)) {
+    return symbolToString ? symbolToString.call(value) : ''
+  }
+  const result = `${value}`
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result
+}
+```
+
+`toString` 函数首先进行非空处理，如果是字符串直接返回，返回循环后的字符串模板，
+如果是  `Symbol` 调用 `symbolToString` 方法，
+最后判断使用 `es6` 模板转成字符串，等于字符串 0 或者等于 `INFINITY`，返回 `-1`，
+否则返回 `result`。
