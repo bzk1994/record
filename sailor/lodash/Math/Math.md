@@ -1,6 +1,6 @@
 ## add
 
-> 相加两个数
+> 相加两个数。
 
 ```js
 _.add(augend, addend)
@@ -23,7 +23,15 @@ _.add(augend, addend)
 const add = createMathOperation((augend, addend) => augend + addend, 0)
 ```
 
-`add` 函数是 `createMathOperation` 函数，并且将回调函数和初始值 0 传入，`createMathOperation` 中会将传入的参数进行处理后返回传入的回调函数。
+`add` 函数是调用 `createMathOperation` 函数返回的函数，并且传入了回调函数和初始值 0。
+
+传入的回调函数：
+
+```js
+(augend, addend) => augend + addend
+```
+
+回调函数会在 `createMathOperation` 函数中进行处理，然后返回一个 `fucntion`，改 `function` 会返回调用 `operator` 也就是传入的回调函数的返回值。
 
 ## createMathOperation
 
@@ -60,8 +68,16 @@ function createMathOperation(operator, defaultValue) {
 }
 ```
 
-`createMathOperation` 函数接收 2 个参数，`operator` 回调函数、`defaultValue` 初始值，
-调用 `createMathOperation` 会返回一个函数，这个函数会把传入的进行一些非空判断、字符串类型转换、数组类型转换，最后会返回 `operator(value, other)` ，也就是传入的回调函数。
+`createMathOperation` 函数接收 2 个参数，`operator` 回调函数、`defaultValue` 初始值。
+
+调用 `createMathOperation` 后会返回一个函数，函数接收 2 个 `value`。
+
+函数首先会对 `value`、`other` 做非空判断，如果都为 `undefined` 返回默认值，如果其中一个 `value` 为 `undefined`，返回另一个值。
+
+接着会对 `value`、`other` 做类型判断，如果为 `string`，调用 `baseToString` 进行字符串转换，
+否则调用 `baseToNumber` 进行数字转换。
+
+最后会返回 `operator(value, other)` ，`operator` 也就是传入的回调函数。
 
 ## ceil
 
@@ -94,7 +110,7 @@ _.ceil(number, [precision=0])
 const ceil = createRound('ceil')
 ```
 
-`ceil` 函数是 `createRound('ceil')` 函数的返回值。
+`ceil` 函数是 `createRound` 函数的返回函数，传入了 `ceil` 字符串。
 
 ## createRound
 
@@ -124,7 +140,15 @@ function createRound(methodName) {
 }
 ```
 
-`createRound` 函数接收一个原生 `Math` 方法字符串，最后返回这个原生方法，如果有 `precision` 需要精确到几位数，会进入 `precision` 判断，进行处理。
+`createRound` 函数接收一个原生 `Math` 方法字符串 `methodName`，比方说 `ceil`。
+
+申明 `func` 函数取出原生 `Math` 方法，然后返回一个 `function`，`function` 接收 2 个参数，`number` 需要四舍五入的数、`precision` 精确位数。
+
+首先对 `precision` 进行处理，默认为 0，最大值为 292。
+
+如果 `precision` 为真，这里为了防止浮点数问题，做了特殊处理采用，转成科学计数法和字符串拼接的方式进行运算，最后使用 `+` 进行隐式转换成数字后返回。
+
+如果 `precision` 为假，直接返回 `return func(number)` 函数调用。
 
 ## divide
 
@@ -151,7 +175,7 @@ _.divide(dividend, divisor)
 const divide = createMathOperation((dividend, divisor) => dividend / divisor, 1)
 ```
 
-`divide` 函数与 `add` 函数相似，传入了相除的回调函数。
+`divide` 函数与 `add` 函数相似，传入了相除的回调函数和默认值 1。
 
 ## floor
 
@@ -184,7 +208,7 @@ _.floor(number, [precision=0])
 const floor = createRound('floor')
 ```
 
-`floor` 函数与 `ceil` 函数相似，调用 `Math.ceil` 方法。
+`floor` 函数与 `ceil` 函数相似，调用 `Math.floor` 方法。
 
 ## max
 
@@ -220,7 +244,7 @@ function max(array) {
 }
 ```
 
-如果有 `array` 并且有 `length`，返回 `baseExtremum` 调用，否则返回 `undefined`，并且传入 `identity` 、`baseGt` 函数。
+`max` 函数返回一个三元表达式，如果有 `array` 并且有 `length`，返回 `baseExtremum` 调用，否则返回 `undefined`，调用 `baseExtremum` 函数时传入了 `array`、 `identity` 、`baseGt` 函数。
 
 ```js
 function identity(value) {
@@ -231,6 +255,8 @@ function baseGt(value, other) {
   return value > other;
 }
 ```
+
+`identity` 只是一个返回原值的 `function`， `baseGt` 是一个比较大小返回 `Boolean` 的 `function`。
 
 ## baseExtremum
 
@@ -267,8 +293,8 @@ function baseExtremum(array, iteratee, comparator) {
 
 `baseExtremum` 接收 3个参数， `array` 数组，`iteratee` 迭代函数、`comparator` 比较函数。
 
-申明初始变量，进入 `while` 循环，得到 `iteratee` 迭代函数处理的 `current`，然后调用 `comparator` 比较函数，循环赋值 `result` ，最近返回 `result`。
-
+申明初始变量，`index` -1、`length` 数组长度，
+然后进入 `while` 循环，得到 `iteratee` 迭代函数处理的 `current`，然后调用 `comparator` 比较函数，循环赋值 `result` ，最近返回 `result`。
 
 ## maxBy
 
@@ -319,7 +345,7 @@ function maxBy(array, iteratee) {
 
 `baseExtremum` 接收 2个参数， `array` 数组，`iteratee` 迭代函数。
 
-首先会进行非空判断，接着进入 `while` 循环，`current` 为迭代函数处理后的值，不断比较赋值，最后将 `result` 返回。
+首先会进行非空判断，接着进入 `for...of` 循环，`current` 为迭代函数 `iteratee` 处理后的值，不断比较赋值，最后将 `result` 返回。
 
 ## mean
 
@@ -347,7 +373,7 @@ function mean(array) {
 }
 ```
 
-`mean` 函数是 `baseMean` 的封装。
+`mean` 函数是 `baseMean` 的封装，传入 `array` 数组、返回原值的 `function`。
 
 ## baseMean
 
@@ -369,7 +395,7 @@ function baseMean(array, iteratee) {
 
 `baseMean` 函数接收 2 个参数，`array` 数组，`iteratee` 迭代函数。
 
-取出 `array` 的 `length`，如果有 `length`，调用 `baseSum` 返回值除以 `length` 取平均值，否则返回 `NaN`。
+取出 `array` 的 `length`，然后返回一个三元表达式，如果有 `length`，调用 `baseSum` 返回值除以 `length` 取平均值，否则返回 `NaN`。
 
 
 ## meanBy
