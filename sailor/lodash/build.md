@@ -16,7 +16,7 @@
 }
 ```
 
-我们来先看 `build`，命令，执行 `build` 命令后会再次执行 `npm run build:main` 和 `npm run build:fp` 命令，而在 `build:fp`、`build:fp` 等命令中会调用 `node` 执行对应 `js` 文件。
+我们来看 `build`，命令，执行 `build` 命令后会再次执行 `npm run build:main` 和 `npm run build:fp` 命令，而在 `build:fp`、`build:fp` 等命令中会调用 `node` 执行对应 `js` 文件。
 
 
 ## build:main
