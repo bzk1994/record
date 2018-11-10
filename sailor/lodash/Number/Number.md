@@ -1,13 +1,13 @@
 ## clamp
 
-> 返回限制在 min 和 max 之间的值
+> 返回限制在 min 和 max 之间的值。
 
 ```js
 _.clamp(number, [lower], upper)
 ```
 
 ```js
-**
+/**
  * Clamps `number` within the inclusive `lower` and `upper` bounds.
  *
  * @since 4.0.0
@@ -94,7 +94,8 @@ function inRange(number, start, end) {
 }
 ```
 
-`inRange` 函数会对没有 `end` 的情况处理，然后返回 `baseInRange` 调用。
+`inRange` 函数会对没有 `end` 的情况进行处理，将 `start` 赋值给 `end`， `start` 赋值为 0，
+然后返回 `baseInRange` 调用。
 
 ## baseInRange
 
@@ -113,11 +114,24 @@ function baseInRange(number, start, end) {
 }
 ```
 
-`baseInRange` 函数会判断 `number` 大于数组最小值并且大于数组最大值。
+`baseInRange` 函数返回 2 个大小比较。
+
+```js
+number >= Math.min(start, end)
+```
+
+`number` 大于等于 `start` 和 `end` 的最小值。
+
+```js
+number < Math.max(start, end)
+```
+`number` 小于 `start` 和 `end` 的最大值。
+
+符合 2 个比较返回 `true`，否则返回 `false`。
 
 ## random
 
-> 产生一个包括 min 与 max 之间的数。 如果只提供一个参数返回一个0到提供数之间的数。 如果 floating 设为 true，或者 min 或 max 是浮点数，结果返回浮点数。 
+> 产生一个包括 min 与 max 之间的数。 如果只提供一个参数返回一个 0 到提供数之间的数。 如果 floating 设为 true，或者 min 或 max 是浮点数，结果返回浮点数。 
 
 ```js
 
@@ -171,8 +185,7 @@ function random(lower, upper, floating) {
   if (lower === undefined && upper === undefined) {
     lower = 0
     upper = 1
-  }
-  else {
+  } else {
     lower = toFinite(lower)
     if (upper === undefined) {
       upper = lower
@@ -197,13 +210,63 @@ function random(lower, upper, floating) {
 
 `random` 函数接收 3 个函数，`lower` 最小值、 `upper` 最大值、`floating` 是否返回浮点数。
 
-首先判断没有 `floating`，会判断 `lower` 、 `upper` 是否是布尔值，进行交换处理，如果都没传入，默认取 `1 ~ 0`，否则将 `lower` 、 `upper` 转成数字，日过 `lower > upper` 进行交换赋值。
+`random` 函数内部有 4 个 `if` 判断。
 
-如果需要 `floating` 则进行浮点数处理，否则直接返回:
+```js
+if (floating === undefined) {
+  if (typeof upper == 'boolean') {
+    floating = upper
+    upper = undefined
+  }
+  else if (typeof lower == 'boolean') {
+    floating = lower
+    lower = undefined
+  }
+}
+```
+
+首先判断 `floating` 是否等于 `undefined`，如果为 `undefined`，说明没有传入第三个参数，接着判断 `upper`、`upper` 类型是否是 `Boolean`，如果是则与 `floating` 进行交换赋值处理，此处主要是处理参数缺少的情况。
+
+```js
+if (lower === undefined && upper === undefined) {
+  lower = 0
+  upper = 1
+} else {
+  lower = toFinite(lower)
+  if (upper === undefined) {
+    upper = lower
+    lower = 0
+  } else {
+    upper = toFinite(upper)
+  }
+}
+```
+
+如果 `upper`、`upper` 都为 `undefined`，取默认值 `0 ~ 1`，
+否则将 `lower`、`upper` 转成整数，如果 `upper` 为 `undefined`，`upper` 赋值为 `lower`， `lower` 赋值为 0。
+
+```js
+if (lower > upper) {
+  const temp = lower
+  lower = upper
+  upper = temp
+}
+```
+
+如果 `lower` 大于 `upper`，对它们进行交换赋值。
+
+```js
+if (floating || lower % 1 || upper % 1) {
+  const rand = Math.random()
+  const randLength = `${rand}`.length - 1
+  return Math.min(lower + (rand * (upper - lower + freeParseFloat(`1e-${randLength}`)), upper))
+}
+```
+如果 `floating` 为真或者 `lower`、`upper` 不为整数，申明 `rand` 变量保存 `0 ~ 1` 随机数，`randLength` 变量保存随机数长度，这里会得到采用科学计数法保存随机数，并且调用 `Math.min` 函数取 `upper` 与得到随机数的最小值，然后返回。
 
 ```js
 lower + Math.floor(Math.random() * (upper - lower + 1))
 ```
 
-取到 `upper` 、`lower` 之差的随机数，向下取整，再加上 `lower`，就是 `upper` 、`lower` 之间的随机数，返回。
+如果不满足上述条件，取到 `upper` 、`lower` 之差的随机数，向下取整，再加上 `lower`，就是 `upper` 、`lower` 之间的随机数，最后返回。
 
