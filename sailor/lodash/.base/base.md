@@ -1,4 +1,3 @@
-# internal
 
 ## baseFlatten
 
@@ -53,37 +52,24 @@ baseFlatten(values, 1, isArrayLikeObject, true)
 进入 `for...of ` 循环，然后判断 `depth > 0` 并且调用传入 `predicate` 函数为真，就是 `isArrayLikeObject`， 满足条件再次判断 `depth > 1` ，就递归调用 `baseFlatten` 扁平化数组，
 不满足就将 `...value` 插入 `result` 数组，此时 `isStrict` 为 `true`，并不会进入 `else if` 判断， 最后将 `result` 数组返回。
 
-## baseAssignValue
+## isFlattenable
 
-> 简单的属性拷贝。
 ```js
+/** Built-in value reference. */
+const spreadableSymbol = Symbol.isConcatSpreadable
+
 /**
- * The base implementation of `assignValue` and `assignMergeValue` without
- * value checks.
+ * Checks if `value` is a flattenable `arguments` object or array.
  *
  * @private
- * @param {Object} object The object to modify.
- * @param {string} key The key of the property to assign.
- * @param {*} value The value to assign.
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
  */
-function baseAssignValue(object, key, value) {
-  if (key == '__proto__') {
-    Object.defineProperty(object, key, {
-      'configurable': true,
-      'enumerable': true,
-      'value': value,
-      'writable': true
-    })
-  } else {
-    object[key] = value
-  }
+function isFlattenable(value) {
+  return Array.isArray(value) || isArguments(value) ||
+    !!(spreadableSymbol && value && value[spreadableSymbol])
 }
 ```
-
-`baseAssignValue` 接收 2 个参数 `object` 赋值对象、`key`、`value` 。
-
-判断 `key` 如果是 `__proto__` 是会调用 `Object.defineProperty` 为对象赋值，否则进行简单的属性赋值，
-改方法只要是要进行简单的属性拷贝。
 
 ## baseDifference
 
@@ -149,6 +135,39 @@ function baseDifference(array, values, iteratee, comparator) {
 
 进入 `for..of` 循环，此时 `iteratee === null` ，申明 `computed` 赋值为 `value`，接着使用 `while` 循环，将满足条件的 `value` 插入数组，最后将 `result` 返回。
 
+
+## baseAssignValue
+
+> 简单的属性拷贝。
+```js
+/**
+ * The base implementation of `assignValue` and `assignMergeValue` without
+ * value checks.
+ *
+ * @private
+ * @param {Object} object The object to modify.
+ * @param {string} key The key of the property to assign.
+ * @param {*} value The value to assign.
+ */
+function baseAssignValue(object, key, value) {
+  if (key == '__proto__') {
+    Object.defineProperty(object, key, {
+      'configurable': true,
+      'enumerable': true,
+      'value': value,
+      'writable': true
+    })
+  } else {
+    object[key] = value
+  }
+}
+```
+
+`baseAssignValue` 接收 2 个参数 `object` 赋值对象、`key`、`value` 。
+
+判断 `key` 如果是 `__proto__` 是会调用 `Object.defineProperty` 为对象赋值，否则进行简单的属性赋值，
+改方法只要是要进行简单的属性拷贝。
+
 ## baseWhile
 
 ```js
@@ -175,7 +194,7 @@ function baseWhile(array, predicate, isDrop, fromRight) {
 }
 ```
 
-`baseFill` 函数：
+## baseFill
 
 ```js
 /**
@@ -207,7 +226,16 @@ function baseFill(array, value, start, end) {
 }
 ```
 
-`baseFindIndex` 函数
+`baseFill` 是 `fill` 函数的基本实现，首先是处理 `length`、 `start`、 `end` 变量。
+
+申明 `length` 变量，保存数组 `length`，调用 `toInteger` 对 `start` 取整，这里会对 `start` 做临界判断，如果 `start < 0`，`-start > length` 就将 `start` 赋值为 0，否则就赋值为 `length + start`。
+
+接着对 `end` 也做了临界判断，`end` 等于 `undefined` 或者大于 `length` 情况，将 `end` 赋值为 `length`，否则将 `length` 赋值为调用 `toInteger` 取整后的 `end`，
+`end < 0`， 赋值为 `end += length`。
+
+然后进入 `while` 循环， `start` 累加，将 `array[start]` 赋值为 `value`，最后将填充后的 `array` 返回。
+
+## baseFindIndex
 
 ```js
 /**
@@ -855,3 +883,36 @@ let seen = result
 接着进入 `while` 循环，`index` 累加，申明 `value` 变量保存当前循环 `value`，申明 `computed`变量不保存迭代函数 `iteratee` 处理后的 `value`。
 
 接着会判断 `isCommon`，`isCommon` 为 `true` 说明没有传入 `length < LARGE_ARRAY_SIZE`，按照普通模式处理，`seenIndex` 累减，如果 `seenIndex` 对应的 `value` 与 `computed` 相等， `continue outer`，如果有 `iteratee` ，将 `computed` 插入 `seen`，接着将 `value` 插入 `result`，最后将 `result` 返回。
+
+
+## baseGet
+
+```js
+/**
+ * The base implementation of `get` without support for default values.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
+ * @returns {*} Returns the resolved value.
+ */
+function baseGet(object, path) {
+  path = castPath(path, object)
+
+  let index = 0
+  const length = path.length
+
+  while (object != null && index < length) {
+    object = object[toKey(path[index++])]
+  }
+  return (index && index == length) ? object : undefined
+}
+```
+
+`baseGet` 函数接收 2 个参数，`object` 对象、`path` 路径。
+
+调用 `castPath` 函数将路径解析成数组形式，然后进入 `while` 循环，
+
+在 `baseGet` 函数中，首先会调用 `castPath` 函数解析 `path`，此时 `path` 为一个数组，申明初始值 `index`、`length` 路径长度。
+
+然后进行 `while` 循环，不断从 `object` 取出路径对应的 `value` 替换 `object`，最后将 `object` 最终取出的值返回。

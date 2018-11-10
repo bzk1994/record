@@ -40,13 +40,13 @@ function chunk(array, size) {
 
 `chunk` 函数接收 `2` 个参数，`array` 处理数组，`size` 尺寸。
 
-首先会调用 `Math.max` 取出 `size`，申明 `length` 变量保存数组长度，如果 `array == null` 长度为 0，
-如果数组长度或者 `size` 小于 1 ，`return` 空数组。
+首先会调用 `Math.max` 方法取出 `size`，申明 `length` 变量保存数组长度，如果 `array == null` 长度为 0，
+如果 `length` 为假或者 `size` 小于 1 ，返回空数组。
 
 接着申明 `index`、`resIndex`、 `result` 初始变量，`result` 是由一个 `new Array` 生成的新数组，数组长度采用 `Math.ceil(length / size)` 向上取整，保证数组不均分时将多余的放在最后数组返回。
 
 然后进入 `while` 循环 ，这里引入了一个 `slice` 方法，
-`slice` 方法主要是将传入数组 `array` 根据 `array` 和 `end` 位置切割后返回，不包括 `end`， 将 `slice` 切割后的数组保存到 `result` 的第 `resIndex` 上，`resIndex` 不断累加，最后将 `result` 数组返回。
+`slice` 方法主要是将传入数组 `array` 根据 `array` 和 `end` 位置切割后返回，不包括 `end`， 将 `slice` 切割返回的数组保存到 `result` 的第 `resIndex` 上，`resIndex` 不断累加，循环结束后将 `result` 数组返回。
 
 ## compact
 
@@ -87,10 +87,11 @@ function compact(array) {
 }
 ```
 
-`compact` 接收一个数组 `array`，首先会申明 `resIndex` `result` 初始变量，
-接着进行非空判断，如果 `array` 等于 `null` ，`return` 空数组。
+`compact` 接收一个数组 `array`，首先会申明 `resIndex` `result` 初始变量。
 
-然后采用 `for...of` 循环，如果有 `value` ，就将 `value` 插入 `result` 数组，`resIndex` 累加，最后返回 `result`。
+接着对 `array` 进行非空判断，如果 `array` 等于 `null` ，`return` 空数组。
+
+然后采用 `for...of` 循环，如果 `value` 为真 ，就将 `value` 保存到 `result` 的第 `resIndex` 上，`resIndex` 累加，循环结束后返回 `result`。
 
 ## concat
 
@@ -139,12 +140,12 @@ _.concat(array, [values])
   }
 ```
 
-`concat` 函数使用 `arguments` 获取传入参数， 申明 `length` 得到参数长度，如果没有 `length`，`return` 空数组。
+`concat` 函数使用 `arguments` 获取传入参数， 申明 `length` 保存参数长度，如果没有 `length`，`return` 空数组。
 
 接着会申明一些变量，`args` 新数组、`array` 要合并数组，`index` 参数长度，
-然后会使用 `while` 循环将剩余参数保存到 `args`。
+然后会使用 `while` 循环，`index` 累减，将剩余参数保存到 `args` 数组。
 
-最后调用 `arrayPush` 方法，此时传入 2 个参数。
+调用 `arrayPush` 方法，此时传入 2 个参数。
 
 ```js
 isArray(array) ? copyArray(array) : [array]
@@ -156,7 +157,9 @@ isArray(array) ? copyArray(array) : [array]
 baseFlatten(args, 1)
 ```
 
-第二个参数是调用 `baseFlatten` 函数的返回，`baseFlatten` 函数是用来扁平化数组，传入参数 1，代表扁平化 1 层，调用 `arrayPush`函数后，会返回一个合并后的数组，`concat` 函数最后会将合并后的数组返回。
+第二个参数是调用 `baseFlatten` 函数的返回，`baseFlatten` 函数是用来扁平化数组，传入参数 1，代表扁平化 1 层。
+
+调用 `arrayPush`函数后，会返回一个合并后的数组，`concat` 函数最后会将合并后返回。
 
 ## difference
 
@@ -193,9 +196,9 @@ function difference(array, ...values) {
 }
 ```
 
-`difference` 接收2个参数，`array` 数组，`..values` 剩余参数。
+`difference` 接收 2 个参数，`array` 数组，`..values` 剩余参数。
 
-通过 `isArrayLikeObject` 判断 `array` 如果是类数组，就调用 `baseDifference` 函数作为返回，否则就返回一个空数组。
+通过 `isArrayLikeObject` 方法判断 `array` 是否是类数组，如果是就调用 `baseDifference` 函数作为返回，否则就返回一个空数组。
 
 ```js
 baseFlatten(values, 1, isArrayLikeObject, true)
@@ -243,9 +246,9 @@ function differenceBy(array, ...values) {
 
 `differenceBy` 接收 2 个参数，`array` 数组，`values` 剩余参数。
 
-首先会调用 `last` 方法取出的 `values` 参数最后一个，调用 `isArrayLikeObject` 对取出的 `iteratee` 进行，判断如果是对象并且是类数组，将 `iteratee` 置为 `null`，说明没有传入迭代器函数。
+首先会调用 `last` 方法取出的 `values` 参数最后一个，调用 `isArrayLikeObject` 对取出的 `iteratee` 进行判断，如果是类数组对象，说明没有传入迭代器函数，将 `iteratee` 置为 `null`。
 
-最后返回一个三元表达式，调用 `isArrayLikeObject` 判断 `array` 如果是是对象并且是类数组，返回调用 `baseDifference` 函数后返回的数组，相比与在 `difference` 函数内调用 `baseDifference`，多传了一个 `iteratee` 迭代函数，否则返回空数组。
+`differenceBy` 最后返回一个三元表达式，调用 `isArrayLikeObject` 判断 `array` 如果是类数组对象，返回调用 `baseDifference` 函数后返回的数组，相比与在 `difference` 函数内调用 `baseDifference`，多传了一个 `iteratee` 迭代函数，否则返回空数组。
 
 在 `baseDifference` 函数中：
 
@@ -361,7 +364,7 @@ function drop(array, n=1) {
 
 `drop` 函数接收 2 个数组， `array` 数组，`n` 裁剪的个数，默认为 1 。
 
-首先申明 `length` 来保存数组长度，默认为 0，`drop` 会返回一个三元表达式，如果有 `length` 就调用 `slice`，其实也就是 `slice` 的一层包装。
+首先申明 `length` 来保存数组长度，默认为 0，`drop` 会返回一个三元表达式，如果有 `length` 就调用 `slice` 进行切割，返回剩余数组，其实也就是 `slice` 的一层包装。
 
 ## dropRight
 
@@ -433,7 +436,7 @@ function dropRightWhile(array, predicate) {
 
 `dropRightWhile` 函数接收 2 个参数，`array` 数组、`predicate` 迭代函数。
 
-`dropRightWhile` 会返回一个三元表达式，如果 `array` 不为 `null` 并且有 `length`，调用 `baseWhile` 函数，返回处理后的数组，否则返回空数组。
+`dropRightWhile` 会返回一个三元表达式，如果 `array` 不为 `null` 并且有 `length`，调用 `baseWhile` 函数，返回处理后的数组，`baseWhile` 调用 `predicate` 会对数组进行循环处理，并且删除调用 `predicate` 函数为 `false` 的元素，否则返回空数组。
 
 ## dropWhile
 
@@ -469,7 +472,6 @@ function dropWhile(array, predicate) {
 ```
 
 `dropWhile` 处理逻辑与 `dropRightWhile` 相似，只是调用 `baseWhile` 函数的时候没有传第四个参数，默认从左往右开始截取。
-
 
 ## fill
 
@@ -520,44 +522,12 @@ function fill(array, value, start, end) {
 
 `fill` 函数接收 4 个参数，`array` 填充数组、`value` 填充的值、`start` 开始位置，`end` 结束位置。
 
-首先申明 `length` 变量，保存数组 `length`，默认为 0，
+首先申明 `length` 变量保存数组 `length`，默认为 0，
 如果没有 `length` 返回空数组。
 
-接着判断如果有 `start` 并且 `start` 的类型不是 `number`，并且调用 `isIterateeCall` 函数检查参数是否来自迭代器调用，如果符合条件，将 `start` 赋值为 0，`end` 赋值为数组长度。
+接着判断如果有 `start`、 `start` 的类型不是 `number`，并且调用 `isIterateeCall` 函数检查参数是否来自迭代器调用，如果符合条件，将 `start` 赋值为 0，`end` 赋值为数组长度。
 
 最后调用 `baseFill` 函数进行填充，并将填充后的数组返回。
-
-
-`baseFill` 函数：
-
-```js
-function baseFill(array, value, start, end) {
-  var length = array.length;
-
-  start = toInteger(start);
-  if (start < 0) {
-    start = -start > length ? 0 : (length + start);
-  }
-  end = (end === undefined || end > length) ? length : toInteger(end);
-  if (end < 0) {
-    end += length;
-  }
-  end = start > end ? 0 : toLength(end);
-  while (start < end) {
-    array[start++] = value;
-  }
-  return array;
-}
-```
-
-`baseFill` 是 `fill` 函数的基本实现，首先是处理 `length`、 `start`、 `end` 变量。
-
-申明 `length` 变量，保存数组 `length`，调用 `toInteger` 对 `start` 取整，这里会对 `start` 做临界判断，如果 `start < 0`，`-start > length` 就将 `start` 赋值为 0，否则就赋值为 `length + start`。
-
-接着对 `end` 也做了临界判断，`end` 等于 `undefined` 或者大于 `length` 情况，将 `end` 赋值为 `length`，否则将 `length` 赋值为调用 `toInteger` 取整后的 `end`，
-`end < 0`， 赋值为 `end += length`。
-
-然后进入 `while` 循环， `start` 累加，将 `array[start]` 赋值为 `value`，最后将填充后的 `array` 返回。
 
 ## findIndex
 
