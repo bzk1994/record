@@ -1,10 +1,46 @@
+
 ## chain
 
 > 创建一个经 lodash 包装的对象以启用显式链模式，要解除链必须使用 _#value 方法。
 
-## chain 调用
+```js
+/**
+  * Creates a `lodash` wrapper instance that wraps `value` with explicit method
+  * chain sequences enabled. The result of such sequences must be unwrapped
+  * with `_#value`.
+  *
+  * @static
+  * @memberOf _
+  * @since 1.3.0
+  * @category Seq
+  * @param {*} value The value to wrap.
+  * @returns {Object} Returns the new `lodash` wrapper instance.
+  * @example
+  *
+  * var users = [
+  *   { 'user': 'barney',  'age': 36 },
+  *   { 'user': 'fred',    'age': 40 },
+  *   { 'user': 'pebbles', 'age': 1 }
+  * ];
+  *
+  * var youngest = _
+  *   .chain(users)
+  *   .sortBy('age')
+  *   .map(function(o) {
+  *     return o.user + ' is ' + o.age;
+  *   })
+  *   .head()
+  *   .value();
+  * // => 'pebbles is 1'
+  */
+function chain(value) {
+  var result = lodash(value);
+  result.__chain__ = true;
+  return result;
+}
+```
 
-当调用 `chain` 函数时，我们会将 `users` 作为参数传入。
+### 栗子 🌰 
 
 ```js
 var users = [
@@ -24,6 +60,8 @@ var youngest = _
 // => 'pebbles is 1'
 ```
 
+在栗子 🌰 中，我们调用 `chain` 函数并传了 `users` 对象。
+
 ```js
 function chain(value) {
   var result = lodash(value);
@@ -32,9 +70,12 @@ function chain(value) {
 }
 ```
 
-`chain` 函数接收一个 `value`，在函数内会调用 `lodash` 函数返回一个包装后的 `result` 对象，将属性 `__chain__` 设置为 `true`，最后将 `result` 返回，那么这个 `result` 是调用 `lodash` 函数返回的对象，该对象有 `sortBy` 方法，`lodash` 内部是如何实现将 `sortBy` 添加到 `result` 的呢？
+函数首先会调用 `lodash` 函数，并且将 `value`，也就是 `users` 对象传入，将返回的值保存在 `result` 变量中，
+接着设置 `__chain__` 属性为 `true`，最后返回 `result`。
 
-我们来看一下这个 `lodash` 函数：
+调用 `chain` 函数后可以连缀调用 `sortBy` 方法，`lodash` 内部是如何实现将 `sortBy` 方法添加到 `result` 上的呢？ 又是如何实现函数的连缀调用呢？
+
+我们来看看 `lodash` 函数：
 
 ```js
 function lodash(value) {
@@ -50,7 +91,14 @@ function lodash(value) {
 }
 ```
 
-`lodash` 函数接收 `value`，在函数内部首先会进行一个判断，满足 3 个条件，`isObjectLike(value)` 是一个类对象、`!isArray(value) ` 不是一个数组、` !(value instanceof LazyWrapper)` 不是 `LazyWrapper` 构造函数的实例，进入 `if` 判断后，又是一个 `if` 判断，如果已经是 `LodashWrapper` 构造函数的实例的话直接返回 `value`，如果不是继续往下运行代码，判断如果 `value` 上有 `__wrapped__` 这个属性直接返回 `wrapperClone` 函数的调用返回，不满足 3 个条件或者在上面的判断中没有 `return` 的情况下说明是第一次调用 `lodash` 进行包装，此时的 `value` 还是一个单纯的对象，返回 `LodashWrapper` 构造函数的实例，这里我们对象这几个构造函数和方法的作用还不清楚，我们接着往下看 `LodashWrapper` 构造函数：
+`lodash` 函数接收 `value`，也就是 `users` 对象, 
+在函数内部首先会进行一个 `if` 判断，3 个条件，`isObjectLike(value)` 是一个类对象、`!isArray(value) ` 不是一个数组、` !(value instanceof LazyWrapper)` 不是 `LazyWrapper` 构造函数的实例，如果都符合条件进入判断。
+
+如果 `value` 是 `LodashWrapper` 构造函数的实例，直接返回 `value`。
+
+判断如果 `value` 上有 `__wrapped__` 这个属性直接返回 `wrapperClone` 函数的调用返回，
+不满足 3 个条件或者在上面的判断中没有 `return` 的情况下说明是第一次调用 `lodash` 进行包装，
+此时的 `value` 还是一个单纯的对象，返回 `LodashWrapper` 构造函数的实例，这里我们对象这几个构造函数和方法的作用还不清楚，我们接着往下看 `LodashWrapper` 构造函数：
 
 ```js
 function LodashWrapper(value, chainAll) {
@@ -62,7 +110,13 @@ function LodashWrapper(value, chainAll) {
 }
 ```
 
-`LodashWrapper` 构造函数是创建 `lodash` 包装器对象的基本构造函数，这里会给实例添加几个私有属性，将 `value` 赋值给 `__wrapped__` 属性、`__actions__` 为空数组、`__chain__` 为传入的 `__chain__` 取非非成布尔值、`__index__` 为 0、`__values__` 为 `undefined`。
+`LodashWrapper` 构造函数是创建 `lodash` 包装器对象的基本构造函数，这里会给实例添加几个私有属性。
+
+将 `value` 赋值给 `__wrapped__` 属性，在 `lodash` 函数中会判断 `__wrapped__`，
+`__actions__` 为空数组，
+`__chain__` 为传入的 `chainAll` 转成布尔值、
+`__index__` 为 0、
+`__values__` 为 `undefined`。
 
 在 `lodash.js` 末尾处我们会将 `lodash.js` 中申明的各种方法挂载到 `lodash` 函数上：
 
@@ -132,9 +186,9 @@ function mixin(object, source, options) {
 首先为申明变量 `props` 赋值为 `keys(source)` 函数调用后返回的 `source` 的 `key` 数组，
 变量 `methodNames` 赋值为 `baseFunctions(source, props)` 函数调用后返回的 `source` 中属性是 `functions` 方法名。
 
-接着会对 `options` 进行非空判断，进行只传 2 个参数时候的一些参数处理，接着会遍历 `methodNames` 数组，也就是 `source` 中可枚举属性为 `function` 的 `key` 数组，在遍历回调中会取出 `source[methodName]` 对应的 `function`，将其以相同的 `key` 添加到给 `object` 对象，也就是实现了方法属性的拷贝.
+接着会对 `options` 进行非空判断，进行只传 2 个参数时候的一些参数处理，接着会遍历 `methodNames` 数组，也就是 `source` 中可枚举属性为 `function` 的 `key` 数组，在遍历回调中会取出 `source[methodName]` 对应的 `function`，将其以相同的 `key` 添加到给 `object` 对象，也就是实现了方法属性的拷贝。
 
-接着会根据 `isFunc` 字段，`object` 是否是一个 `function`，此时应该是 `lodash` 函数，符合判断条件，进入 `if` 判断，在判断中我们会给 `object.prototype` 以 `methodName` 为方法名，添加方法。
+接着会根据 `isFunc` 字段，判断 `object` 是否是一个 `function`，此时应该是 `lodash` 函数，符合判断条件，进入 `if` 判断，在判断中我们会给 `object.prototype` 以 `methodName` 为方法名，添加方法。
 
 在这个方法中，我们会判断 `chain` 和 `chainAll` 变量：
 
