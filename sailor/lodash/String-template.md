@@ -206,6 +206,47 @@ var reDelimiters = RegExp(
   , 'g');
 ```
 
+接着是一段正则，这里会尝试将 `options` 中正则用 `|` 连接，默认为 `reNoMatch`。
+
+```js
+// Use a sourceURL for easier debugging.
+var sourceURL = '//# sourceURL=' +
+  ('sourceURL' in options
+    ? options.sourceURL
+    : ('lodash.templateSources[' + (++templateCounter) + ']')
+  ) + '\n';
+```
+
+`sourceURL` 是主要是用于 `debugger`。
+
+```js
+ string.replace(reDelimiters, function (match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
+  interpolateValue || (interpolateValue = esTemplateValue);
+  // Escape characters that can't be included in string literals.
+  source += string.slice(index, offset).replace(reUnescapedString, escapeStringChar);
+
+  // Replace delimiters with snippets.
+  if (escapeValue) {
+    isEscaping = true;
+    source += "' +\n__e(" + escapeValue + ") +\n'";
+  }
+  if (evaluateValue) {
+    isEvaluating = true;
+    source += "';\n" + evaluateValue + ";\n__p += '";
+  }
+  if (interpolateValue) {
+    source += "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'";
+  }
+  index = offset + match.length;
+  // The JS engine embedded in Adobe products needs `match` returned in
+  // order to produce the correct `offset` value.
+  return match;
+});
+```
+
+调用 `replace` 函数替换 `reDelimiters` 正则匹配到的字符串，并传入回调函数。
+
+在回调函数中，会根据 `reDelimiters` 中的各种正则，最后将匹配的 `match` 返回。
 
 
 
