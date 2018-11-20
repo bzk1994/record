@@ -248,12 +248,76 @@ var sourceURL = '//# sourceURL=' +
 
 在回调函数中，会根据 `reDelimiters` 中的各种正则，最后将匹配的 `match` 返回。
 
-
-
+```js
+// If `variable` is not specified wrap a with-statement around the generated
+// code to add the data object to the top of the scope chain.
+var variable = options.variable;
+if (!variable) {
+  source = 'with (obj) {\n' + source + '\n}\n';
+}
+```
+如果没有 `variable`，采用 `with` 语句包裹 `source`。
 
 ```js
-string = toString(string);
-options = assignInWith({}, options, settings, customDefaultsAssignIn);
+// Cleanup code by stripping empty strings.
+source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
+  .replace(reEmptyStringMiddle, '$1')
+  .replace(reEmptyStringTrailing, '$1;');
 ```
 
-对传入的 `string` 进行字符串转化，对 `options` 进行属性拷贝并传入 `customDefaultsAssignIn` 回调函数。
+如果传入了 `evaluateValue`，`isEvaluating` 就为 `true`,这里会使用 `replace` 方法，将 `reEmptyStringLeading` 匹配到的字符串替换为空字符串。
+
+```js
+/** Used to match empty string literals in compiled template source. */
+var reEmptyStringLeading = /\b__p \+= '';/g,
+  reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
+  reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
+```
+
+`reEmptyStringLeading` 用来匹配 `__p += '';` 字符串。
+
+连缀 2 个 `replace`，`$1` 表示将 `source` 替换成匹配到的第一个括号的内容。
+
+```js
+// Frame code as the function body.
+source = 'function(' + (variable || 'obj') + ') {\n' +
+  (variable
+    ? ''
+    : 'obj || (obj = {});\n'
+  ) +
+  "var __t, __p = ''" +
+  (isEscaping
+    ? ', __e = _.escape'
+    : ''
+  ) +
+  (isEvaluating
+    ? ', __j = Array.prototype.join;\n' +
+    "function print() { __p += __j.call(arguments, '') }\n"
+    : ';\n'
+  ) +
+  source +
+  'return __p\n}';
+```
+
+将 `source` 拼接成字符串 `function`，
+
+```js
+var result = attempt(function () {
+  return Function(importsKeys, sourceURL + 'return ' + source)
+    .apply(undefined, importsValues);
+});
+```
+
+申明 `result` 函数，调用 `attempt` 函数，并且传入回调函数，`result` 就是返回的生成模板的函数。
+
+```js
+// Provide the compiled function's source by its `toString` method or
+// the `source` property as a convenience for inlining compiled templates.
+result.source = source;
+if (isError(result)) {
+  throw result;
+}
+return result;
+```
+
+为 `result` 添加 `source` 字符串，并且判断  `result` 是否是 `error`，最后将 `result` 返回。
