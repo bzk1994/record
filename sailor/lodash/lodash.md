@@ -111,15 +111,7 @@ var runInContext = (function runInContext(context) {
   // 申明各种功能函数
   ...
   function lodash(value) {
-    if (isObjectLike(value) && !isArray(value) && !(value instanceof LazyWrapper)) {
-      if (value instanceof LodashWrapper) {
-        return value;
-      }
-      if (hasOwnProperty.call(value, '__wrapped__')) {
-        return wrapperClone(value);
-      }
-    }
-    return new LodashWrapper(value);
+   ...
   }
   // 将功能函数挂载到 lodash 上
   ...
@@ -128,6 +120,51 @@ var runInContext = (function runInContext(context) {
 ```
 
 `runInContext` 函数用来创建一个新的 `lodash` 函数，我们可以看在，在 `runInContext` 内部会申明 `lodash` 函数，并且在函数最后返回这个 `lodash` 函数。
+
+我们来看看 `lodash` 函数：
+
+```js
+function lodash(value) {
+  if (isObjectLike(value) && !isArray(value) && !(value instanceof LazyWrapper)) {
+    if (value instanceof LodashWrapper) {
+      return value;
+    }
+    if (hasOwnProperty.call(value, '__wrapped__')) {
+      return wrapperClone(value);
+    }
+  }
+  return new LodashWrapper(value);
+}
+```
+
+`lodash` 函数接收 `value`，也就是 `users` 对象, 
+在函数内部首先会进行一个 `if` 判断，3 个条件，`isObjectLike(value)` 是一个类对象、`!isArray(value) ` 不是一个数组、` !(value instanceof LazyWrapper)` 不是 `LazyWrapper` 构造函数的实例，如果都符合条件进入判断。
+
+如果 `value` 是 `LodashWrapper` 构造函数的实例，直接返回 `value`。
+
+判断如果 `value` 上有 `__wrapped__` 这个属性直接返回 `wrapperClone` 函数的调用返回，
+不满足 3 个条件或者在上面的判断中没有 `return` 的情况下说明是第一次调用 `lodash` 进行包装，
+此时的 `value` 还是一个单纯的对象，返回 `LodashWrapper` 构造函数的实例。
+
+我们接着往下看 `LodashWrapper` 构造函数：
+
+```js
+function LodashWrapper(value, chainAll) {
+  this.__wrapped__ = value;
+  this.__actions__ = [];
+  this.__chain__ = !!chainAll;
+  this.__index__ = 0;
+  this.__values__ = undefined;
+}
+```
+
+`LodashWrapper` 构造函数是创建 `lodash` 包装器对象的基本构造函数，这里会给实例添加几个私有属性。
+
+`value` 赋值给 `__wrapped__` 属性，在 `lodash` 函数中，如果有 `__wrapped__` 属性，会返回 `wrapperClone(value)`，
+`__actions__` 赋值空数组，`lazy evaluation` 惰性计算 `methods` 储存数组，
+`__chain__` 赋值为 `chainAll` 取非非，也就是转换成 `Boolean`，
+`__index__` 赋值为 0，
+`__values__` 赋值为 `undefined`。
 
 ```js
 // Export lodash.
@@ -276,7 +313,7 @@ result.__chain__ = chainAll;
 return result;
 ```
 
-调用 `object` 并且传入 `this.__wrapped__`，`object` 就是传入的 `lodash` 函数，`this.__wrapped__` 就是 栗子中传入的 `users`。
+调用 `object` 并且传入 `this.__wrapped__`，`object` 就是传入的 `lodash` 函数，`this.__wrapped__` 就是传入的参数。
 
 调用 `copyArray` 函数将 `this.__actions__` 赋值给 `actions` 以及 `result.__actions__`，然后以 `func`、`args`、`thisArg` 拼装成一个对象插入 `actions` 数组，将 `result.__chain__` 赋值为 `chainAll`，最后将 `result` 返回，这个也就是调用 `chain` 函数的返回，其实也就是调用 `lodash` 函数返回的 `LodashWrapper` 构造函数实例。
 
