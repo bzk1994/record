@@ -378,3 +378,24 @@ return func.apply(object, arrayPush([this.value()], arguments));
 ```
 
 如果 `chain || chainAll` 为真时没有 `return`，此时就会返回不支持链式调用的函数。
+
+## Lodash 调用方式
+
+`lodash` 有两种调用方式，一种是直接调用 `_` 上的方法：
+
+```js
+_.chunk(['a', 'b', 'c', 'd'], 2);
+// => [['a', 'b'], ['c', 'd']]
+```
+
+通过 `_` 调用 `lodash` 上的方法，这是比较常规的调用方法。
+
+我们也可以通过将将
+
+```js
+_([])
+```
+
+
+
+## Lodash Lazy 模式
