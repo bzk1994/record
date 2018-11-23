@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h1>{{message}}</h1>
+  </div>
+
+</body>
+
+<script>
+  const myMixin = {
+    data() {
+      return {
+        message: 'this is mixin message'
+      }
+    },
+    created() {
+      console.log('mixin created')
+    }
+  }
+
+  const vm = new Vue({
+    el: '#app',
+    mixins: [myMixin],
+    data() {
+      return {
+        message: 'this is vue instance message'
+      }
+    },
+    created() {
+      console.log('vue instance created')
+      // => mixin created
+      // => vue instance created
+      console.log(this.message)
+      // => this is vue instance message
+    }
+  })
+</script>
+
+</html>

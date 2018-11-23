@@ -31,7 +31,7 @@ cd vue && yarn install
 
 > 编辑 `config.js` 增加 `sourceMap`
 
-```base
+```js
   // vue/scripts/config.js
   ...
   function genConfig (name) {
@@ -47,7 +47,7 @@ cd vue && yarn install
 
 > 新建test.html
 
-```base
+```js
   <!DOCTYPE html>
   <html lang="en">
 
@@ -105,7 +105,7 @@ cd vue && yarn dev
 
 运行 `yarn dev` 相当于执行了 `package.json` 的 `rollup -w -c scripts/config.js --environment TARGET:web-full-dev`
 
-```base
+```js
 {
 ...
   "scripts": {
@@ -122,7 +122,7 @@ cd vue && yarn dev
 在 `src/scripts/config.js` 中
 编译的入口在  `src/platforms/web/entry-runtime-with-compiler.js` 中
 
-```base
+```js
 {
   'web-full-dev': {
     entry: resolve('web/entry-runtime-with-compiler.js'),
@@ -138,7 +138,7 @@ cd vue && yarn dev
 而 `entry-runtime-with-compiler.js` 也不是真正申明 `Vue` 构造函数的地方
 通过引用找到申明 `Vue` 的文件
 
-```base
+```js
 // entry-runtime-with-compiler.js
 import Vue from './runtime/index'
 
@@ -170,7 +170,7 @@ export default Vue
 
 在 `initMixin` 中增加了 `_init` 方法 让后在`Vue` 构造函数中调用
 
-```base
+```js
 export function initMixin (Vue: Class<Component>) {
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
@@ -194,7 +194,7 @@ export function initMixin (Vue: Class<Component>) {
 }
 ```
 
-```base
+```js
 export function initState(vm: Component) {
   vm._watchers = []
   const opts = vm.$options
@@ -216,7 +216,7 @@ export function initState(vm: Component) {
 
 只是一个语法糖而已
 
-```base
+```html
 <input
   :value="name"
   @input="name=$event.target.value">
@@ -226,7 +226,7 @@ export function initState(vm: Component) {
 
 ### 2. `Vue.use` 实现
 
-```base
+```js
 // vue/src/core/global-api/use.js
 /* @flow */
 
@@ -258,9 +258,10 @@ export function initUse(Vue: GlobalAPI) {
 ### mixins extends extned
 
 mixins extend 实现代码复用
+
 数据对象在内部会进行浅合并 (一层属性深度)，在和组件的数据发生冲突时以组件数据优先
 
-```base
+```js
 // 定义一个混入对象
 var myMixin = {
   created: function () {
@@ -282,7 +283,7 @@ var component = new Component() // => "hello from mixin!"
 ```
 
 
-```base
+```js
 /**
  * vue/src/core/util/options.js
  * Merge two option objects into a new one.
