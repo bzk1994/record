@@ -17,6 +17,17 @@
 </body>
 
 <script>
+  const myExtends = {
+    data() {
+      return {
+        message: 'this is extends message'
+      }
+    },
+    created() {
+      console.log('extends created')
+    }
+  }
+
   const myMixin = {
     data() {
       return {
@@ -31,6 +42,7 @@
   const vm = new Vue({
     el: '#app',
     mixins: [myMixin],
+    extends: myExtends,
     data() {
       return {
         message: 'this is vue instance message'

@@ -1,8 +1,8 @@
-# vue mixins && extend
+# vue mixins
 
-`vue` 提供了 `mixins` 这个 `API`，可以让我们将组件中的可复用功能抽取出来，放到 `mixin` 中，然后在组件中引入 `mixin` 即可，让组件显得不再臃肿，也提高了代码的可复用性。
+`vue` 提供了 `mixins` 这个 `API`，可以让我们将组件中的可复用功能抽取出来，放到 `mixin` 中，然后在组件中引入 `mixin`，让组件显得不再臃肿，也提高了代码的可复用性。
 
-如何理解 `mixins` 呢？我们可以将 `mixins` 理解成一个数组，数组中有单或多个 `mixin`，`mixin` 本质就是一个 `JS` 对象，它可以有 `data` `created` `methods` 等等等等 `vue` 实例中拥有的所有属性，甚至可以在 `mixin` 中再次嵌套 `mixins`，`It's amazing !`
+如何理解 `mixins` 呢 ？我们可以将 `mixins` 理解成一个数组，数组中有单或多个 `mixin`，`mixin` 的本质就是一个 `JS` 对象，它可以有 `data` `created` `methods` 等等等等 `vue` 实例中拥有的所有属性，甚至可以在 `mixin` 中再次嵌套 `mixins`，`It's amazing !`
 
 写个简单的栗子:
 
@@ -42,19 +42,15 @@ const vm = new Vue({
 })
 ```
 
-`miixn` 与 `Vue Instance` 合并时，会将 `created` 等钩子函数合并成数组，`mixin` 钩子先调用，当 `data`、`methods` 对象键值冲突时，以组件优先。
+`miixn` 与 `Vue Instance` 合并时，会将 `created` 等钩子函数合并成数组，`mixin` 的钩子优先调用，当 `data`、`methods` 对象键值冲突时，以组件优先。
 
-PS: 如果对 mixin 的概念还不太清的小伙伴，可以去 [vue 官方文档](https://cn.vuejs.org/v2/guide/mixins.html) 看一下 vuex 的基本概念和用法。
+PS: 如果对 mixin 的概念还不太清的小伙伴，可以去 [vue 官方文档](https://cn.vuejs.org/v2/guide/mixins.html) 看一下 `vue mixins` 的基本概念和用法。
 
+## mixin 实现
 
-关于属性合并的代码在 `vue/vue/src/core/util/options.js`。
+那 `mixins` 是如何实现的呢 ？当 `vue` 在实例化的时候，会调用 `mergeOptions` 函数进行 `options` 的合并，函数申明在 `vue/vue/src/core/util/options.js` 文件。
 
 ```js
-/**
- * vue/src/core/util/options.js
- * Merge two option objects into a new one.
- * Core utility used in both instantiation and inheritance.
- */
 export function mergeOptions(
   parent: Object,
   child: Object,
@@ -65,7 +61,7 @@ export function mergeOptions(
   if (extendsFrom) {
     parent = mergeOptions(parent, extendsFrom, vm)
   }
-  // 如果有 mixins 递归调用 mergeOptions 实现属性拷贝
+  // 如果有 child.mixins 递归调用 mergeOptions 实现属性拷贝
   if (child.mixins) {
     for (let i = 0, l = child.mixins.length; i < l; i++) {
       parent = mergeOptions(parent, child.mixins[i], vm)
@@ -89,12 +85,23 @@ export function mergeOptions(
 }
 ```
 
-其实当我们在 `vue` 实例中使用 `mixin` 时，会实现 `vue.$option` 和 `mixin` 属性的浅拷贝。
+在 `mergeOptions` 函数中，如果 `child.mixins` 为真，会递归调用 `mergeOptions` 实现属性拷贝。
+每次调用 `mergeOptions` 都会申明 `options` 空对象，`for...in` 循环，调用 `strat` 方法将 `key`、`value` 拷贝至 `options` 中，最后将 `options` 返回。
 
+```js
+const strats = config.optionMergeStrategies
+...
+optionMergeStrategies: Object.create(null),
+...
+```
 
-## 项目使用 
+`strats` 其实就是 `Object.create(null)`，简单覆盖原值，`vue` 也向外暴露了 `Vue.config.optionMergeStrategies`，可以实现自定义选项合并策略。
 
-当我们在项目中使用 `element-ui`:
+## 项目实践
+
+使用 `vue` 的小伙伴们，当然也少不了在项目中使用 `element-ui`。被比如使用 `Table` 表格的时候，免不了申明 `tableData`、`total`、`pageSize` 一些 `Table` 表格、`Pagination` 分页需要的参数。
+
+我们可以将重复的 `data`、`methods` 写在一个 `tableMixin` 中。
 
 ```js
 export default {
@@ -109,26 +116,117 @@ export default {
   },
 
   created() {
-    this.searchData && this.searchData()
+    this.searchData()
   },
 
   methods: {
+    // 预申明，防止报错
+    searchData() {},
+
     handleSizeChange(size) {
       this.pageSize = size
-      this.searchData && this.searchData()
+      this.searchData()
     },
 
     handleCurrentChange(page) {
       this.pageNo = page
-      this.searchData && this.searchData()
+      this.searchData()
     },
 
     handleSearchData() {
       this.pageNo = 1
-      this.searchData && this.searchData()
+      this.searchData()
     }
   }
 }
 ```
 
-避免申明，重复的方法
+当我们需要使用时直接引入即可：
+
+```js
+import tableMixin from './tableMixin'
+
+export default {
+  ...
+  mixins: [tableMixin],
+  methods: {
+    searchData() {
+      ...
+    }
+  }
+}
+```
+
+我们在组件内会重新申明 `searchData` 方法。当然，类似这种 `methods` 对象形式的 `key`，如果 `key` 相同，组件内的 `key` 会覆盖 `tableMixin` 中的 `key`。
+
+当然我们也可以在 `mixins` 中嵌套 `mixins`，申明 `axiosMixin`:
+
+```js
+import tableMixin from './tableMixin'
+
+export default {
+  mixins: [tableMixin],
+
+  methods: {
+    handleFetch(url) {
+      const { pageNo, pageSize } = this
+      this.loading = true
+
+      this.axios({
+        method: 'post',
+        url,
+        data: { ...this.params, pageNo, pageSize }
+      })
+        .then(({ data }) => {
+          ...
+          this.loading = false
+        })
+        .catch( error => {
+          this.loading = false
+        })
+    }
+  }
+}
+```
+
+引入 `axiosMixin`：
+
+```js
+import axiosMixin from './axiosMixin'
+
+export default {
+  ...
+  mixins: [axiosMixin],
+  created() {
+    this.handleFetch('/user/12345')
+  }
+}
+```
+
+在 `axios` 中，我们可以预先处理 `axios` 的 `success`、`error` 的后续调用。
+
+## extend
+
+顺便讲一下 `extend`，与 `mixins` 相似，只能传入一个 `options` 对象，并且 `mixins` 的优先级比较高，会覆盖 `extend` 同名 `key` 值。
+
+```js
+const extendsFrom = child.extends
+if (extendsFrom) {
+  parent = mergeOptions(parent, extendsFrom, vm)
+}
+
+if (child.mixins) {
+  for (let i = 0, l = child.mixins.length; i < l; i++) {
+    parent = mergeOptions(parent, child.mixins[i], vm)
+  }
+}
+```
+
+在 `mergeOptions` 函数中，会先对 `extends` 进行属性拷贝，然后再对 `mixin` 进行拷贝，虽然 `extends` 的同名 `key` 会被 `mixins` 的覆盖，但是 `extends` 是优先执行的。
+
+## 总结
+
+灵活运用 `mixin`，可以将组件内的重复代码提取出来，实现代码复用，也使我们的代码更加清晰，效率也大大提高，我们暂且将 `mixins` 称作是组件模块化。
+
+
+
