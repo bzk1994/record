@@ -16,17 +16,17 @@
 
 ## 带着问题去看源码
 
-* 0. global event bus 有何缺陷
-* 1. $store 如何注入到所有子组件
-* 2. mapState 实现
-* 3. mapGetter 如何映射
-* 4. Mutation 同步 && Action 异步
-* 5. dispatch 方法实现
-* 6. module 分割实现 && 局部状态 namespaced
-* 7. 如何调用 vue-devtools
-* 8. 内置 logger 插件实现
-* 9. hotUpdate
-* 10. 时间穿梭功能实现
+* 1. global event bus 有何缺陷
+* 2. $store 如何注入到所有子组件
+* 3. mapState 实现
+* 4. mapGetter 如何映射
+* 5. Mutation 同步 && Action 异步
+* 6. dispatch 方法实现
+* 7. module 分割实现 && 局部状态 namespaced
+* 8. 如何调用 vue-devtools
+* 9. 内置 logger 插件实现
+* 10. hotUpdate
+* 11. 时间穿梭功能实现
 
 ## 目录
 
@@ -94,7 +94,7 @@ export function install (_Vue) {
 }
 ```
 
-方法首先判断变量 `Vue` (store.js 顶部申明的变量) 是否与传入 `_Vue` 全等，如果全等并且在非生产环境，抛出异常。
+方法首先判断变量 `Vue` (`store.js` 顶部申明的变量) 是否与传入 `_Vue` 全等，如果全等并且在非生产环境，抛出异常。
 
 随后将传入的 `_Vue` 赋值给 `Vue`，这里主要是为了避免重复安装。
 
@@ -143,7 +143,7 @@ export default function (Vue) {
 1.0 重写 `_init` 方法 将 `vuexInit` 合并到   `_init` 方法中。
 
 在 `vuexInit` 方法中，首先判断如果有 `options.store` 说明是 `root` 节点，并且判断 `store` 是 `function` 就执行将函数返回值赋值给 `this.$store` ，否则 `options.store` 直接赋值。
-然后判断有父节点，并且父节点有 `$store`, 就将父节点的 `$store` 赋值给 `this.$store` ，这样就保证只有一个全局的 `$store` 变量
+然后判断有父节点，并且父节点有 `$store`, 就将父节点的 `$store` 赋值给 `this.$store` ，这样就保证只有一个全局的 `$store` 变量。
 
 ## class Store
 
@@ -266,9 +266,9 @@ const {
 } = options
 ```
 
-plugins: `vuex` 的插件，数组，会在后面循环调用。
+`plugins`: `vuex` 的插件，数组，会在后面循环调用。
 
-strict: 是否是严格模式，后面判断如果是严格模式的会执行 `enableStrictMode` 方法，确保只能通过 `mutation` 操作 `state`。
+`strict`: 是否是严格模式，后面判断如果是严格模式的会执行 `enableStrictMode` 方法，确保只能通过 `mutation` 操作 `state`。
 
 接下来就是一些初始参数的赋值。
 
@@ -324,7 +324,7 @@ this.strict = strict
 // and collects all module getters inside this._wrappedGetters
 installModule(this, state, [], this._modules.root)
 ```
-第一次调用将 `this`、`state`（this._modules.root.state）、空数组、`this._modules.root`（root module）作为参数传入。
+第一次调用将 `this`、`state`（`this._modules.root.state`）、空数组、`this._modules.root`（`root module`）作为参数传入。
 
 `installModule` 代码：
 
@@ -374,7 +374,8 @@ function installModule (store, rootState, path, module, hot) {
 首先先根据 `path` 判断是否是 `root`，刚开始传入的 `path` 为空数组， 所以是 `isRoot = true`,
 随后调用 `ModuleCollection` 类的 `getNamespace` 方法 根据 `path` 获取命名空间，因为 `this._modules` 是 `ModuleCollection` 类的实例。
 
-接着判断 `module.namespaced` 是否为 `true`, `namespaced` 是在每个 `module` 的配置中设置的，如果为 `true` 就将 `namespace` 为 `key`，`module` 为值存到 `construction` 的 `_modulesNamespaceMap` 变量上。
+接着判断 `module.namespaced` 是否为 `true`, `namespaced` 是在每个 `module` 的配置中设置的，如果为 `true` 就将 `namespace` 赋值为 `key`、`module` 为值存到 `construction` 的 `_modulesNamespaceMap` 变量上。
+
 在 `helper.js` 我们会用 `getModuleByNamespace` 获取 `_modulesNamespaceMap` 下对应命名空间模块。
 
 ```js
@@ -418,13 +419,13 @@ _withCommit (fn) {
 这里主要是为了保证修改 `state` 只能通过调用 `_withCommit`，会调用 `enableStrictMode` 去检测 `state` 是否以预期的方式改变，我们在使用 `vuex` 中，就是通过 `mutation` 去改变 `state`。
 
 
-调用 makeLocalContext 方法：
+调用 `makeLocalContext` 方法：
 
-js
+```js
 const local = module.context = makeLocalContext(store, namespace, path)
 ```
 
-`makeLocalContext` 主要用来初始化 `dispatch` `getter` `commit` `state`，通过 `defineProperties` 劫持 `getters` `state`。
+`makeLocalContext` 主要用来初始化 `dispatch`、`getter`、`commit`、`state`，通过 `defineProperties` 劫持 `getters`、`state`。
 
 ```js
 /**
@@ -485,9 +486,9 @@ function makeLocalContext (store, namespace, path) {
 }
 ```
 
-声明 `noNamespace` 变量判断是否有命名空间，然后创建 `local` 对象，改对象有两个属性 `dispatch` `commit`，它们的值分别是2个三元表达式，如果是没有命名空间的，`dispatch` 就赋值为 `store.dispatch`，有命名空间就拼上再返回，`commit` 也是一样的道理。
+声明 `noNamespace` 变量判断是否有命名空间，然后创建 `local` 对象，改对象有两个属性 `dispatch` `commit`，它们的值分别是 2 个三元表达式，如果是没有命名空间的，`dispatch` 就赋值为 `store.dispatch`，有命名空间就拼上再返回，`commit` 也是一样的道理。
 
-然后通过 `Object.defineProperties` 劫持 `local` 对象的 `getters` `state`。
+然后通过 `Object.defineProperties` 劫持 `local` 对象的 `getters`、`state`。
 
 ```js
 // getters and state object must be gotten lazily
@@ -535,8 +536,9 @@ function makeLocalGetters (store, namespace) {
 
 `makeLocalGetters` 接收 `store` 和 `namespace` 作为参数。
 首先申明 `gettersProxy` 变量，申明 `splitPos` 变量为命名空间长度，随后遍历 `store.getters` ,
-接着匹配应命名空间，失败就 `return` ，成功往下执行，然后取出命名空间后的 `getter` `type`,
-使用 `defineProperty` 为 `gettersProxy` 的 `localType` 添加 `get` 方法，劫持 `gettersProxy` 的 `localType` 的 `get` 返回 `store` 上对应的 `getter`，简单来说就是做了一个有命名空间情况下的代理。
+匹配命名空间，失败就 `return` ，成功往下执行。
+
+然后取出命名空间后的 `getter`、`type`，使用 `defineProperty` 为 `gettersProxy` 的 `localType` 添加 `get` 方法，劫持 `gettersProxy` 的 `localType` 的 `get` 返回 `store` 上对应的 `getter`，简单来说就是做了一个有命名空间情况下的代理。
 
 `makeLocalContext` 函数最后会将 `local` 返回。
 
@@ -544,9 +546,9 @@ function makeLocalGetters (store, namespace) {
 const local = module.context = makeLocalContext(store, namespace, path)
 ```
 
-将 `makeLocalContext` 返回保存到 `local` `module.context`。
+将 `makeLocalContext` 返回保存到 `local`、`module.context`。
 
-下面就是循环注册 `mutation` `action` `getter`。
+下面就是循环注册 `mutation`、`action`、`getter`。
 
 ```js
 module.forEachMutation((mutation, key) => {
@@ -566,7 +568,7 @@ module.forEachGetter((getter, key) => {
 })
 ```
 
-调用 `module` 类的 `forEachMutation` `forEachAction` `forEachGetter`，取出对应的 `mutations` `actions` `getters` 和回调函数作为参数。
+调用 `module` 类的 `forEachMutation`、`forEachAction`、`forEachGetter`，取出对应的 `mutations`、`actions`、`getters` 和回调函数作为参数。
 
 来看看 `registerMutation` 方法:
 
@@ -579,8 +581,9 @@ function registerMutation (store, type, handler, local) {
 }
 ```
 
-通过 `type` 取出 `store._mutations` 上对应的 `mutation`，没有就穿透赋值为空数组，然后将 `wrappedMutationHandler` 函数 `push` 到 `entry` 数组中，函数的参数也就是 `mutation` 时候的参数，函数中调用 `call` 将 `handler` 函数 `this` 指向 `store`, 并将 `local.state`，`payload` 作为参数传入，
-这样 `_mutations[types]` 储存了所有的 `mutation`。
+通过 `type` 取出 `store._mutations` 上对应的 `mutation`，没有就穿透赋值为空数组，然后将 `wrappedMutationHandler` 函数 `push` 到 `entry` 数组中，函数的参数也就是 `mutation` 时候的参数。
+
+函数中调用 `call` 将 `handler` 函数 `this` 指向 `store`, 并将 `local.state`，`payload` 作为参数传入，这样 `_mutations[types]` 储存了所有的 `mutation`。
 
 来看看 `registerMutation` 方法:
 
@@ -611,7 +614,7 @@ function registerAction (store, type, handler, local) {
 }
 ```
 
-通过 `type` 取出 `store._actions` 上对应的 `action`，没有就穿透赋值为空数组，然后将 `wrappedActionHandler` 函数 `push` 到 `entry` 数组中，函数中使用 `call` 将 `handler` 指向 `store`, `call` 的第二个参数是 `dispatch` `commit` `getters` 等包装后的对象，所以我们可以在 `commit` 的第一个参数中解构出需要的属性
+通过 `type` 取出 `store._actions` 上对应的 `action`，没有就穿透赋值为空数组，然后将 `wrappedActionHandler` 函数 `push` 到 `entry` 数组中，函数中使用 `call` 将 `handler` 指向 `store`, `call` 的第二个参数是 `dispatch`、`commit`、`getters` 等包装后的对象，所以我们可以在 `commit` 的第一个参数中解构出需要的属性。
 
 ```js
 // actions
@@ -625,6 +628,7 @@ const actions = {
 ```
 
 `payload` 也就是额外参数，`cb` 回调函数倒是不怎么用到。
+
 然后通过简易的 `isPromise` 方法判断 `res` 是否为 `Promise`，只是简单判断了 `then` 是是否为一个函数。
 
 ```js
@@ -659,7 +663,7 @@ function registerGetter (store, type, rawGetter, local) {
 ```
 
 开始判断如果有相同 `getter` 就抛出异常，
-没有的话就以 `type` 为 `key`，`wrappedGetter` 为 `value` 储存到 `store._wrappedGetters` 对象上，每一个 `getter` 都是一个 `function`。
+没有的话就以 `type` 为 `key`、`wrappedGetter` 为 `value` 储存到 `store._wrappedGetters` 对象上，每一个 `getter` 都是一个 `function`。
 
 
 循环注册 `mutation action getter` 后，只剩下最后一段代码：
@@ -679,6 +683,7 @@ forEachChild (fn) {
 ```
 
 `forEachChild` 方法也调用了 `forEachValue` 遍历 `_children` 的 `key` 循环调用传入的 `fn`。
+
 `_children` 是在 `ModuleCollection` 类中通过嵌套模块的递归注册建立父子关系的。
 
 最后递归调用 `installModule` 完成所以嵌套模块的安装，到此 `installModule` 方法结束。
@@ -763,6 +768,7 @@ forEachValue(wrappedGetters, (fn, key) => {
 ```
 
 将 `store` 的 `getters` 赋值为空对象， 取出保存所有注册 `getter` 的 `_wrappedGetters` 对象，申明 `computed` 对象。
+
 接着循环 `wrappedGetters` 对象，将对应的 `key` 以及 `fn` 保存到 `computed`，这里的 `fn` 就是注册 `getter` 的 `wrappedGetter` 函数。
 
 ```js
@@ -786,7 +792,9 @@ store._vm = new Vue({
 Vue.config.silent = silent
 ```
 
-保存 `Vue.config.silent` 变量，设置`Vue.config.silent = true`，取消 `Vue` 所有的日志与警告。然后生成一个新的 `Vue` 实例，将 `state` 和 `computed` 作为参数传入，然后恢复 `Vue.config.silent`，因为将 `store.getters` 的 `key`，代理到 `store._vm[key]`，所以我们可以通过访问 `this.$store.getters.key` 访问到 `store._vm[key]`。
+保存 `Vue.config.silent` 变量，设置`Vue.config.silent = true`，取消 `Vue` 所有的日志与警告。
+
+然后生成一个新的 `Vue` 实例，将 `state` 和 `computed` 作为参数传入，恢复 `Vue.config.silent`。因为将 `store.getters` 的 `key` 代理到 `store._vm[key]`，所以我们可以通过访问 `this.$store.getters.key` 访问到 `store._vm[key]`。
 
 ```js
 // enable strict mode for new vm
@@ -807,7 +815,7 @@ function enableStrictMode (store) {
 }
 ```
 
-`enableStrictMode` 将 `store` 作为参数，调用 `store._vm.$watch` 方法，也就是 Vue 实例的 `$watch` 方法，监测 `this._data.$$state` 的变化，就是生成新的 `Vue` 实例的时候传入的 `state`，判断不是生产模式，调用断言，如果 `store._committing` 是 `false`, 抛出异常，所以我们在使用 `vuex` 的时候，只能通过 `mutation` 方式改变 `store`。
+`enableStrictMode` 将 `store` 作为参数，调用 `store._vm.$watch` 方法，也就是 `Vue` 实例的 `$watch` 方法，监测 `this._data.$$state` 的变化，就是生成新的 `Vue` 实例的时候传入的 `state`，判断不是生产模式，调用断言，如果 `store._committing` 是 `false`, 抛出异常，所以我们在使用 `vuex` 的时候，只能通过 `mutation` 方式改变 `store`。
 
 `oldVm` 的注销：
 
@@ -847,7 +855,6 @@ if (Vue.config.devtools) {
 `constructor` 的末尾会判断 `Vue.config.devtools` 是否为真，调用 `devtoolPlugin` 方法，并将 `this` 作为参数传入，`devtoolPlugin` 实现请看 `插件 devtool` 部分。
 
 至此 `Store` 类的 `constructor` 部分结束，我们往下来看看 `Store` 类中的方法。
-
 
 代理 `state`:
 
@@ -909,7 +916,7 @@ commit (_type, _payload, _options) {
 }
 ```
 
-`commit` 接收3个参数，`_type` 就是 `mutation` 的 `type`，`_payload` 就是传入的参数，`_options` 参数会在下面调用，貌似没什么用处，只是用来判断是否 `console.warn`。
+`commit` 接收 3 个参数，`_type` 就是 `mutation` 的 `type`，`_payload` 就是传入的参数，`_options` 参数会在下面调用，貌似没什么用处，只是用来判断是否 `console.warn`。
 
 接下来调用 `unifyObjectStyle` 方法：
 
@@ -931,7 +938,7 @@ function unifyObjectStyle (type, payload, options) {
 
 接收 `commit` 的三个参数，判断 `type` 如果是一个对象，并且有 `type` 属性，将 `options` 赋值为 `payload`，`payload` 赋值为 `type`，`type` 赋值为 `type.type`。
 
-因为 `vuex` 允许对象风格的提交方式
+因为 `vuex` 允许对象风格的提交方式：
 
 ```js
 store.commit({
@@ -948,7 +955,7 @@ store.commit('increment', {
 })
 ```
 
-然后从 `unifyObjectStyle` 结构出 `type` `payload` `options`，将包装 `type` `payload` 成一个对象赋值给 `mutation` 变量，申明 `entry` 变量从储存所有 `mutation` 的 `this._mutations` 取出对应 `type` 的 `mutation`，没有对应 `mutation` 就 `return`，如果在非生产环境，顺便抛出个异常。
+然后从 `unifyObjectStyle` 结构出 `type`、`payload`、`options`，将包装 `type`、`payload` 成一个对象赋值给 `mutation` 变量，申明 `entry` 变量从储存所有 `mutation` 的 `this._mutations` 取出对应 `type` 的 `mutation`，没有对应 `mutation` 就 `return`，如果在非生产环境，顺便抛出个异常。
 
 ```js
 this._withCommit(() => {
@@ -998,7 +1005,9 @@ dispatch (_type, _payload) {
 }
 ```
 
-`dispatch` 接收2个参数，`action type` 和 `_payload` 参数，与 `commit` 一样调用 `unifyObjectStyle` 方法处理对象形式的 `dispatch`，解构出 `type` `payload`，申明 `action` 对象包装 `type` `payload`，申明 `entry` 变量从 `this._actions` 中取出对应的 `action`，没有对应 `action` 就 `return`，如果在非生产环境，顺便抛出个异常。
+`dispatch` 接收2个参数，`action type` 和 `_payload` 参数。
+
+与 `commit` 一样调用 `unifyObjectStyle` 方法处理对象形式的 `dispatch`，解构出 `type` `payload`，申明 `action` 对象包装 `type` `payload`，申明 `entry` 变量从 `this._actions` 中取出对应的 `action`，没有对应 `action` 就 `return`，如果在非生产环境，顺便抛出个异常。
 
 接着循环 `_actionSubscribers`：
 
@@ -1008,7 +1017,7 @@ this._subscribers.forEach(sub => sub(mutation, this.state))
 `_actionSubscribers` 是一个数组，循环调用里面的函数，并将 `action` `this.state` 传入。
 
 与 `commit` 不同的是，`dispatch` 最后会返回一个 `Promise`，
-`entry` 是注册 `action` 时储存 `wrappedActionHandler` 函数的数组，在注册 `action` 时会将其包装成 `promise` 所以在 `action` 中支持异步操作，这里判断 `entry` 长度，多个调用 Promise.all 方法，单个直接取第0个调用。
+`entry` 是注册 `action` 时储存 `wrappedActionHandler` 函数的数组，在注册 `action` 时会将其包装成 `promise`，所以在 `action` 中支持异步操作，这里判断 `entry` 长度，如果是多个调用 `Promise.all` 方法，单个直接取第 0 个调用。
 
 ### subscribe
 
@@ -1039,7 +1048,7 @@ function genericSubscribe (fn, subs) {
 }
 ```
 
-`genericSubscribe` 接收 `fn` 函数和一个 `subs` 数组作为参数，首先判断如果在 `subs` 没有 `fn` 函数，就往 `subs` `push` `fn` ，最后 `return` 一个 `function`，这个函数会取到当前函数在 `subs` 中的下标，然后使用 `splice` 从 `subs` 中删除，也就是说调用返回的函数可以停止订阅。
+`genericSubscribe` 接收 `fn` 函数和一个 `subs` 数组作为参数，首先判断如果在 `subs` 没有 `fn` 函数，就往 `subs` 数组 `push` `fn` ，最后 `return` 一个 `function`，这个函数会取到当前函数在 `subs` 中的下标，然后使用 `splice` 从 `subs` 中删除，也就是说调用返回的函数可以停止订阅。
 
 
 ### subscribeAction
@@ -1056,7 +1065,7 @@ subscribeAction (fn) {
 
 ### watch
 
-响应式地侦听 fn 的返回值，当值改变时调用回调函数。
+响应式地侦听 `fn` 的返回值，当值改变时调用回调函数。
 
 ```js
 watch (getter, cb, options) {
@@ -1071,7 +1080,7 @@ watch (getter, cb, options) {
 
 ### replaceState
 
-替换 store 的根状态。
+替换 `store` 的根状态。
 
 ```js
 replaceState (state) {
@@ -1105,7 +1114,8 @@ registerModule (path, rawModule, options = {}) {
 `registerModule` 方法接收 `path` 路径，`rawModule` 模块，`options` 配置作为参数。
 
 首先判断 `path` 如果为字符串，就转成字符串数组，
-在非生产环境断言，`path` 必须为一个数组，`path.length` 必须大于0，
+在非生产环境断言，`path` 必须为一个数组，`path.length` 必须大于 0。
+
 然后调用 `this._modules.register` 进行注册模块，`installModule` 进行模块安装，`resetStoreVM` 重设 `Vue` 实例。
 
 ### unregisterModule
@@ -1129,7 +1139,8 @@ unregisterModule (path) {
 }
 ```
 
-调用 `this._modules.unregister` 进行模块注销，调用 `_withCommit`，将回调函数传入，
+调用 `this._modules.unregister` 进行模块注销，调用 `_withCommit`，将回调函数传入。
+
 回调函数会调用 `getNestedState` 方法取出父 `module` 的 `state`，然后调用 `Vue.delete` 删除对应子模块，`resetStore` 进行 `store` 的重置，其他部分与 `registerModule` 一致。
 
 ### resetStore
@@ -1148,13 +1159,14 @@ function resetStore (store, hot) {
 }
 ```
 
-接收 `store` 和 是否 `hot` 最为参数，
-将 `store` 的 `_actions` `_mutations` `_wrappedGetters` `_modulesNamespaceMap` 置为 `null`，
+接收 `store` 和 是否 `hot` 作为参数，
+将 `store` 的 `_actions`、`_mutations`、`_wrappedGetters`、`_modulesNamespaceMap` 置为 `null`。
+
 调用 `installModule` 重新安装模块，调用 `resetStoreVM` 重设 `Vue` 实例。
 
 ### hotUpdate
 
-开发过程中热重载 mutation、module、action 和 getter:
+开发过程中热重载 `mutation`、`module`、`action` 和 `getter`:
 
 ```js
 hotUpdate (newOptions) {
@@ -1168,6 +1180,7 @@ hotUpdate (newOptions) {
 余下的方法基本都在上文讲述过，到此 `class Store` 结束。
 
 ## class ModuleCollection
+
 在上面初始参数的赋值中 `this._modules` 就是 `ModuleCollection` 类的实例。
 
 ```js
@@ -1196,7 +1209,7 @@ this._modules = new ModuleCollection(options)
 }
 ```
 
-来看看 ModuleCollection：
+来看看 `ModuleCollection：`
 
 ```js
 class ModuleCollection {
@@ -1261,16 +1274,18 @@ class ModuleCollection {
 }
 ```
 
-在 `ModuleCollection` 类的 `constructor` 中首先会执行类的 `register` 方法，将空数组、`rawRootModule`(也就是实例化的时候传入的 options)、false 最为最初参数传入。
+在 `ModuleCollection` 类的 `constructor` 中首先会执行类的 `register` 方法，将空数组、`rawRootModule`(也就是实例化的时候传入的 `options`)、`false` 最为最初参数传入。
 
 `register` 方法会递归调用，实现嵌套模块的收集
 首先会在非生产环境调用 `assertRawModule` 函数，对 `module` 进行一些断言判断，判断 `rawModule` 对象是否有 `getters` `mutations` `mutations` 为 `key` 值，然后根据预置的类型进行断言。
 
-随后就是实例化 `Module` 新建一个 `newModule`，判断 `path.length`，0 说明是 `root`， 将 `newModule` 保存到 `this.root` 上，
-然后判断 `rawModule.modules` 是否有嵌套 `modules`，
-有就调用 `forEachValue` 将 `modules`转换成数组，并且循环调用传入的回调函数，回调函数里又递归调用了 `this.register`，将 `path` 合并子模块的 `key`, 循环的子模块、`runtime` 作为参数传入，第二次进入 `register` 会进入 `else` 判断，调用 `Module` 类的 `getChild` `addChild`, 建立 `module` 的父子关系，如果仍然嵌套模块继续递归调用 `this.register`。
+随后就是实例化 `Module` 新建一个 `newModule`，判断 `path.length`，0 说明是 `root`， 将 `newModule` 保存到 `this.root` 上，然后判断 `rawModule.modules` 是否有嵌套 `modules`。
 
-forEachValue：
+有就调用 `forEachValue` 将 `modules`转换成数组，并且循环调用传入的回调函数，回调函数里又递归调用了 `this.register`，将 `path` 合并子模块的 `key`, 循环的子模块、`runtime` 作为参数传入。
+
+第二次进入 `register` 会进入 `else` 判断，调用 `Module` 类的 `getChild` `addChild`, 建立 `module` 的父子关系，如果仍然嵌套模块继续递归调用 `this.register`。
+
+`forEachValue`：
 
 ```js
 // object 转成数组 循环调用 fn
@@ -1281,7 +1296,7 @@ export function forEachValue (obj, fn) {
 
 ### assertRawModule
 
-上面说过，`assertRawModule` 负责对 `module` 进行一些断言判断，判断 `rawModule` 对象是否有 `getters` `mutations` `mutations` 为 `key` 值，然后根据预置的类型进行断言。
+上面说过，`assertRawModule` 负责对 `module` 进行一些断言判断，判断 `rawModule` 对象是否有 `getters`、`mutations`、`mutations` 为 `key` 值，然后根据预置的类型进行断言。
 
 
 ```js
@@ -1407,9 +1422,9 @@ export default class Module {
 }
 ```
 
-Module 类的 `constructor` 中会将传入的 `rawModule` `runtime` 保存，申明 `this._children`，主要是存放该模块的子模块，将 `rawModule.state` 取出保存到 `this.state` 上。
+`Module` 类的 `constructor` 中会将传入的 `rawModule` `runtime` 保存，申明 `this._children`，主要是存放该模块的子模块，将 `rawModule.state` 取出保存到 `this.state` 上。
 
-Module 类提供了很多方法： 
+`Module` 类提供了很多方法： 
 
 `namespaced` 通过双非取值返回一个 `布尔值` ，作为是否有命名空间的判断。
 
@@ -1426,7 +1441,7 @@ Module 类提供了很多方法：
 
 ### getNamespace
 
-根据 path 处理命名空间
+根据 `path` 处理命名空间：
 
 ```js
 getNamespace (path) {
@@ -1492,7 +1507,7 @@ export const createNamespacedHelpers = (namespace) => ({
 })
 ```
 
-可以看到 `helpers.js` 向外暴露了5个辅助工具函数，在 `vuex` 入口文件中包装成对象后暴露出去。
+可以看到 `helpers.js` 向外暴露了 5 个辅助工具函数，在 `vuex` 入口文件中包装成对象后暴露出去。
 
 ### mapState
 
@@ -1571,7 +1586,8 @@ function normalizeNamespace (fn) {
 }
 ```
 
-此时 `mapState` 就等于这个函数，它接收 `namespace` 、`map` 作为参数，`namespace` 就是命名空间，`map` 就是传过来的 `state` ，
+此时 `mapState` 就等于这个函数，它接收 `namespace` 、`map` 作为参数，`namespace` 就是命名空间，`map` 就是传过来的 `state`。
+
 判断 `namespace` 不是一个字符串，因为 `mapState` 第一个参数是可选的，如果不是字符串就说明没有命名空间，第一个参数就是传入的 `state`，将 `namespace` 赋值给 `map`，然后将 `namespace` 置为空字符串。进入 `else if` 判断 `namespace` 最后一个字符串是否是 `'/'`，没有就拼上 `'/'` 。
 
 当调用 `mapState` 的时候，就会返回 `fn(namespace, map)` 函数的运行后的结果，就是一个 `res` 对象。
@@ -1599,11 +1615,13 @@ function normalizeMap (map) {
 }
 ```
 
-经过 `normalizeMap` 函数处理后，会转化成一个数组， `[{key: key, val: fn}]` 的格式，调用 `forEach` 循环处理，在 `forEach` 的回调函数中，
+经过 `normalizeMap` 函数处理后，会转化成一个数组， `[{key: key, val: fn}]` 的格式，调用 `forEach` 循环处理，在 `forEach` 的回调函数中。
+
 使用解构取出 `key` 和 `value`，每一次循环就以 `key` 为键，`mappedState` 函数为 `value` 存入 `res` 对象，
 在 `mappedState` 函数中，声明 `state` 和 `getters` 变量保存 `this.$store.state` 和 `this.$store.getters`。
 
 接着判断传入的 `namespace`，如果有 `namespace` 就调用 `getModuleByNamespace` 函数搜索对应模块，如果没有搜索到就 `return`，有对应模块的话将对应模块的 `state` `getters` 赋值给声明的 `state` 和 `getters` 变量。
+
 `mappedState` 最后判断 `val` 是否是 `function`，是就调用 `call` 将 `val` 的 `this` 绑定到 `Vue` 实例，并将 `state` `getters` 作为参数传递，执行后返回，不是 `function` 根据 `key` 返回对应的 `state`。
 
 ### getModuleByNamespace
@@ -1679,7 +1697,7 @@ export const mapMutations = normalizeNamespace((namespace, mutations) => {
 
 `mapMutations` 处理过程与 `mapState` 相似，我看来看看传入 `normalizeNamespace` 的回调函数。
 
-首先也是申明 `res` 空对象，经过 `normalizeMap` 函数处理后的 `mutations` 调用 `forEach` 循环处理，在 `forEach` 的回调函数中， 使用解构取出 `key` 和 `value`，每一次循环就以 `key` 为键，`mappedMutation` 函数为 `value` 存入 `res` 对象， 在 `mappedMutation` 函数中，声明 `commit` 变量保存 `this.$store.commit` 。
+首先也是申明 `res` 空对象，经过 `normalizeMap` 函数处理后的 `mutations` 调用 `forEach` 循环处理，在 `forEach` 的回调函数中， 使用解构取出 `key` 和 `value`，每一次循环就以 `key` 为键、`mappedMutation` 函数为 `value` 存入 `res` 对象， 在 `mappedMutation` 函数中，声明 `commit` 变量保存 `this.$store.commit` 。
 
 判断传入的 `namespace`，如果有 `namespace` 就调用 `getModuleByNamespace` 函数搜索对应模块，如果没有搜索到就 `return`，有对应模块的话对应模块的将 `commit` 赋值给声明的 `commit` 变量。
 
@@ -1724,15 +1742,17 @@ export const mapGetters = normalizeNamespace((namespace, getters) => {
 
 我看来看看传入 `normalizeNamespace` 的回调函数。
 
-首先也是申明 `res` 空对象，经过 `normalizeMap` 函数处理后的 `getters` 调用 `forEach` 循环处理，在 `forEach` 的回调函数中， 使用解构取出 `key` 和 `value`，每一次循环就以 `key` 为键，`mappedGetter` 函数为 `value` 存入 `res` 对象，这里会将 `val` 赋值成 `namespace + val`，如果有命名空间，此时的 `val` 应该是类似这样的: `cart/cartProducts`。
+首先也是申明 `res` 空对象，经过 `normalizeMap` 函数处理后的 `getters` 调用 `forEach` 循环处理，在 `forEach` 的回调函数中， 使用解构取出 `key` 和 `value`，每一次循环就以 `key` 为键、`mappedGetter` 函数为 `value` 存入 `res` 对象，这里会将 `val` 赋值成 `namespace + val`，如果有命名空间，此时的 `val` 应该是类似这样的: `cart/cartProducts`。
 
-在 `mappedGetter` 函数中，首先判断如果有 `namespace` 并且调用 `getModuleByNamespace` 函数没有匹配到对应模块就直接 `return`。然后判断在非生产环境并且 `this.$store.getters` 没有对应的 `val` 就抛出异常并返回。接下来就是有对应模块的情况，直接返回 `this.$store.getters` 对应的 `getter`。
+在 `mappedGetter` 函数中，首先判断如果有 `namespace` 并且调用 `getModuleByNamespace` 函数没有匹配到对应模块就直接 `return`。
+
+然后判断在非生产环境并且 `this.$store.getters` 没有对应的 `val` 就抛出异常并返回。接下来就是有对应模块的情况，直接返回 `this.$store.getters` 对应的 `getter`。
 
 最后将 `res` 对象返回。
 
 ### mapActions
 
-`mapActions` 辅助函数将组件的 methods 映射为 store.dispatch 调用。
+`mapActions` 辅助函数将组件的 `methods` 映射为 `store.dispatch` 调用。
 
 来看一下具体实现：
 
@@ -1893,7 +1913,8 @@ export function deepCopy (obj, cache = []) {
 }
 ```
 
-`deepCopy` 接收一个 `obj` 和 `cache` 数组作为参数，初次调用时 `cache` 为空数组，
+`deepCopy` 接收一个 `obj` 和 `cache` 数组作为参数，初次调用时 `cache` 为空数组。
+
 首先判断 `obj` 全等于 `null` 或者 `obj` 的类型不等于 `object` 就返回 `obj`，接下来调用 `find`，将 `cache` 和 回调传入，会使用 `filter` 去过滤匹配的对象，`c.original` 全等于当前循环的 `obj` 对象 ，这里判断的是一个引用地址，`find` 函数会返回匹配 `f` 函数的第一个。
 
 如果有 `hit` 就说明是环形结构，直接返回 `hit.copy`。
@@ -1947,21 +1968,25 @@ export function isObject (obj) {
 }
 ```
 
-`isObject` 接收 `obj` 作为参数，返回 `obj` 不等于 `null` 并且 `obj` 的类型是 `object`，判断传入的对象是否是纯对象，返回 `Boolean` 。
+`isObject` 接收 `obj` 作为参数，返回 `obj` 不等于 `null` 并且 `obj` 的类型是 `object`，判断传入的对象是否是纯对象，返回 `Boolean`。
 
 ### isPromise
 
+```js
 export function isPromise (val) {
   return val && typeof val.then === 'function'
 }
+```
 
 `isPromise` 接收 `val` 作为参数，返回有 `val` 并且 `val` 的 `then` 是一个 `function`，只是简单判断一个有没有 `then` 方法。
 
 ### assert
 
+```js
 export function assert (condition, msg) {
   if (!condition) throw new Error(`[vuex] ${msg}`)
 }
+```
 
 `assert` 接收 `condition` 和 `msg` 作为参数，如果 `condition` 取非为真，就调用 `throw new Error` 抛出异常。
 
@@ -2082,8 +2107,9 @@ export default function createLogger ({
 
 `createLogger` 返回了一个函数，首先申明 `prevState` 变量，赋值为深拷贝后的 `store.state` 对象，
 调用 `store` 的 `subscribe` 方法添加事件订阅，传入一个回调函数，在回调函数中接收 `mutation` `state` 两个参数，判断 `logger` 的类型为 `undefined` 就 `return`。
+
 申明 `nextState` 变量，赋值为深拷贝后的回调函数中传入的 `state` 对象，
-接着判断 `filter` 函数，这个默认为 `true`，进入 `if` 循环后会申明 `time` 变量保存当前事件戳，申明 `formattedTime` 变量保存格式化后的时间， 申明 `formattedMutation` 保存处理后的经过 `mutationTransformer`处理后的 `mutation`，申明 `message` 保存默认信息，申明 `startMessage` 变量，根据传入的 `collapsed` 赋值为不同的打印方法，
+接着判断 `filter` 函数，这个默认为 `true`，进入 `if` 循环后会申明 `time` 变量保存当前事件戳，申明 `formattedTime` 变量保存格式化后的时间， 申明 `formattedMutation` 保存处理后的经过 `mutationTransformer`处理后的 `mutation`，申明 `message` 保存默认信息，申明 `startMessage` 变量，根据传入的 `collapsed` 赋值为不同的打印方法。
 
 ```js
 console.groupCollapsed: 设置折叠的分组信息
@@ -2106,7 +2132,6 @@ try {
 
 最后将 `prevState` 赋值为 `nextState`，保持状态更新。
 
-
 两个处理时间的函数：
 
 ```js
@@ -2122,8 +2147,9 @@ function pad (num, maxLength) {
 ```
 
 ## 问题总结
+
 ### global eventBus 有何缺陷
-eventBus 比较适合简单应用，但是随着需求增加，组件之间通信增多，eventBus 就显得不够直观，不方便我们管理，而且随着组件复用的增多，多个组件通信，又相互通信，就容易导致混乱。
+`eventBus` 比较适合简单应用，但是随着需求增加，组件之间通信增多，`eventBus` 就显得不够直观，不方便我们管理，而且随着组件复用的增多，多个组件通信，又相互通信，就容易导致混乱。
 
 ### $store 如何注入到所有子组件
 
@@ -2146,7 +2172,8 @@ function vuexInit () {
 }
 ```
 
-在 vuexInit 方法中，首先判断如果有 `this.$options.store` 说明是 root 节点，判断 store 如果是 function 就将函数执行后的返回赋值给 `this.$store` ，否则将 `options.store` 直接赋值给 `this.$store`。
+在 `vuexInit` 方法中，首先判断如果有 `this.$options.store` 说明是 `root` 节点，判断 `store` 如果是 `function` 就将函数执行后的返回赋值给 `this.$store` ，否则将 `options.store` 直接赋值给 `this.$store`。
+
 不是 `root` 节点就从父组件中获取 `$store`，这样就保证只有一个全局的 `$store`。
 
 ### mapState 实现
@@ -2176,7 +2203,7 @@ mapGetters({
 
 ### module 分割实现 && 局部状态 namespaced
 
-实例化 ModuleCollection
+实例化 `ModuleCollection`
 
 请看 `class ModuleCollection`。
 
