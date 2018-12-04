@@ -10,7 +10,7 @@
 
 > [阅读 vuex 源码的思维导图:](http://pdl69gzvn.bkt.clouddn.com/vuex.png)
 
-![阅读 vuex 源码的思维导图](https://ws1.sinaimg.cn/large/005CFxZdgy1fxurfc7hvtj34be2bbqv5.jpg)
+![阅读 vuex 源码的思维导图](https://sailor-1256168624.cos.ap-chengdu.myqcloud.com/vuex-mini.png)
 
 [vuex 的文档](https://vuex.vuejs.org/zh/) 对辅助看源码有不小的帮助，不妨在看源码之前仔细地撸一遍文档。
 
