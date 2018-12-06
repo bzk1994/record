@@ -176,9 +176,13 @@ export function installRenderHelpers (target: any) {
 }
 ```
 
-我们知道我们将 resolveFilter 挂载到了 Vue.prototype 上，在什么情况会调用这个 `_f` 函数呢？
+我们将 resolveFilter 挂载到了 Vue.prototype 上，在什么情况会调用这个 `_f` 函数呢？
 
-vue 在对模板进行编译的时候，会将模板字符解析成抽象语法树 AST，会将节点
+## 解析 filter
+
+vue 在对模板进行编译的时候，会将模板字符解析成抽象语法树 AST，那是如何解析 filter 的呢？
+
+通过 parseFilters 函数来解析 filter，函数在 src/compiler/parser/filter-parser.js 文件中：
 
 ```js
 function parseFilters(exp) {

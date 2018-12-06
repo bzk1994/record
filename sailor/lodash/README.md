@@ -60,3 +60,7 @@ not be working. Thank you for your patience.
 
 * [lodash](https://lodash.com/docs/4.17.10#chunk)
 * [lodash 中文文档](http://lodash.think2011.net/)
+
+## 扩展
+
+* shuffle Fisher-Yates shuffle 洗牌算法
