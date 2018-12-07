@@ -87,10 +87,9 @@
 
 > 智能提示当前项目所支持的样式
 
-### HTML Snippets
+### [HTML Snippets](https://marketplace.visualstudio.com/items?itemName=abusaidm.html-snippets)
 
 > H5 代码片段提示
-> [HTML Snippets](https://marketplace.visualstudio.com/items?itemName=abusaidm.html-snippets)
 
 ### [Import Cost](https://marketplace.visualstudio.com/items?itemName=wix.vscode-import-cost)
 
