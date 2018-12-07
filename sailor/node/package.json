@@ -1,0 +1,11 @@
+{
+  "name": "create-template",
+  "version": "1.0.0",
+  "description": "create template file in your project",
+  "main": "index.js",
+  "author": "hao.zhang",
+  "license": "MIT",
+  "dependencies": {
+    "file-saver": "^2.0.0"
+  }
+}
