@@ -24,19 +24,14 @@ function copy() {
 
 // 创建文件夹
 function makeTemplateDir(dir) {
-  // try {
-  //   const stat = fs.statSync(current)
-  //   console.log(`已经存在同名文件夹：${stat}`)
-  //   return Promise.resolve()
-  // } catch (error) {
-  //   return mkdir(dir)
-  //     .then(() => {
-  //       console.log(`创建${dir}文件夹成功！`)
-  //     })
-  //     .catch(err => {
-  //       console.error(err)
-  //     })
-  // }
+  fs.mkdirSync(dir)
+  // return mkdir(dir)
+  //   .then(() => {
+  //     console.log(`创建${dir}文件夹成功！`)
+  //   })
+  //   .catch(err => {
+  //     console.error(err)
+  //   })
 }
 
 // 循环创建文件夹
@@ -75,18 +70,32 @@ async function readTemplateFile(templateDir) {
 
     files.forEach(file => {
       const fileDir = path.join(templateDir, file)
-      fs.stat(fileDir, (err, stat) => {
+      fs.stat(fileDir, (err, stats) => {
         if (err) console.error(`获取 ${fileDir} 文件 stat 失败！`)
-        const isFile = stat.isFile()
-        const isDirectory = stat.isDirectory()
+        const isFile = stats.isFile()
+        const isDirectory = stats.isDirectory()
         if (isFile) {
           console.log(`${fileDir} 是文件！`)
           /**
            * 先创建文件夹与 argv 传入参数同名 process.argv[2] 获取需要生成的文件夹名
-           * 判断文件夹是否已经存在，存在抛出异常
+           * 判断文件夹是否已经存在
            * 将 fileDir 写入文件夹，可以加上特定参数
            */
-          await makeTemplateDir(path.join(__dirname, argv[2]))
+          const filePath = path.join(__dirname, argv[2])
+          try {
+            const stat = fs.statSync(filePath)
+            console.log(`已经存在同名文件夹：${argv[2]}`)
+            readAndWriteFile(
+              path.join(__dirname, fileDir),
+              path.join(__dirname, argv[2], fileDir)
+            )
+          } catch (error) {
+            fs.mkdirSync(filePath)
+            readAndWriteFile(
+              path.join(__dirname, fileDir),
+              path.join(__dirname, argv[2], fileDir)
+            )
+          }
         } else if (isDirectory) {
           console.log(`${fileDir} 是文件夹！`)
           readTemplateFile(fileDir)
@@ -96,13 +105,12 @@ async function readTemplateFile(templateDir) {
   })
 }
 
-function readAndWriteFile() {
-  readFile('./index.js').then(data => {
-    console.log(data.toString())
-    writeFile('./copy.js', data).then(data => {
-      console.log('writeFile 成功！')
-    })
-  })
+async function readAndWriteFile(source, copy) {
+  console.log('source', source)
+  console.log('copy', copy)
+  const data = await readFile(source)
+  const result = await writeFile(copy, data)
+  if (result) console.log('writeFile 成功！')
 }
 
 readTemplateFile(templateDir)
